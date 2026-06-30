@@ -145,6 +145,13 @@ td:first-child{color:var(--text); font-weight:600;}
 .expect-box .expect-label{font-size:11.5px; color:var(--green); text-transform:uppercase; letter-spacing:0.5px; font-weight:700; margin-bottom:6px;}
 .expect-box p{margin-bottom:0; color:#bcd9c0;}
 
+.verify-box{
+  background:rgba(0,194,224,0.06); border:1px solid rgba(0,194,224,0.25); border-radius:var(--radius);
+  padding:14px 18px; margin:10px 0 22px;
+}
+.verify-box .verify-label{font-size:11.5px; color:var(--teal); text-transform:uppercase; letter-spacing:0.5px; font-weight:700; margin-bottom:6px;}
+.verify-box p{margin-bottom:0; color:#a8dde8;}
+
 .step-flow{margin:20px 0;}
 .step{display:flex; gap:16px; margin-bottom:4px;}
 .step-rail{display:flex; flex-direction:column; align-items:center; flex-shrink:0;}
@@ -189,6 +196,13 @@ td:first-child{color:var(--text); font-weight:600;}
 .badge-os span.active{background:var(--teal-glow); border-color:var(--teal); color:var(--teal);}
 .os-block{display:none;}
 .os-block.active{display:block;}
+
+.prompt-meta{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;}
+.meta-pill{font-size:10.5px; padding:3px 9px; border-radius:14px; font-weight:600; letter-spacing:0.3px;}
+.meta-context{background:rgba(0,194,224,0.12); color:var(--teal);}
+.meta-task{background:rgba(163,113,247,0.15); color:var(--purple);}
+.meta-constraint{background:rgba(210,153,34,0.15); color:var(--amber);}
+.meta-output{background:rgba(63,185,80,0.15); color:var(--green);}
 
 /* ===== Footer ===== */
 footer{
@@ -240,8 +254,6 @@ footer{
 </header>
 
 <main>
-  <!-- TAB PANELS GET INSERTED HERE -->
-
   <div class="tabpanel active" id="tab-intro">
     <div class="toc-strip">
       <a href="#what-is-flutter">What is Flutter?</a>
@@ -476,7 +488,6 @@ dependencies:
       <span onclick="switchOS('install','linux',this)">Linux</span>
     </div>
 
-    <!-- WINDOWS -->
     <div class="os-block active" data-group="install" data-os="win">
       <div class="step-flow">
         <div class="step">
@@ -608,7 +619,6 @@ flutter run</code></pre>
       </div>
     </div>
 
-    <!-- MAC -->
     <div class="os-block" data-group="install" data-os="mac">
       <div class="step-flow">
         <div class="step">
@@ -704,7 +714,6 @@ flutter run</code></pre>
       </div>
     </div>
 
-    <!-- LINUX -->
     <div class="os-block" data-group="install" data-os="linux">
       <div class="step-flow">
         <div class="step">
@@ -906,176 +915,271 @@ flutter run</code></pre>
     </div>
   </div>
 
-    <div class="tabpanel" id="tab-handson">
-    <h2>Hands-on with Claude — your AI pair programmer</h2>
-    <p class="lead">This is where the training becomes practical instead of theoretical. You are going to generate real, working Flutter screens using Claude, run them on your emulator, and then ask Claude to modify them — exactly the workflow you'll use on real projects afterward.</p>
-
-    <h2>First: which "Claude" should you use, and when?</h2>
-    <p>There are two very different ways to bring Claude into this workflow, and picking the right one for the moment matters.</p>
-
-    <div class="grid2">
-      <div class="card accent">
-        <h4>Claude (chat — claude.ai or the desktop/web app)</h4>
-        <p><strong>Use this when:</strong> you're learning, exploring an idea, deciding what a screen should look like, or want to see code before anything touches your project. You read the code, copy it, and paste it into VS Code yourself.</p>
-        <p style="margin-bottom:0"><strong>Best for today's session</strong> — you stay in control of every change, and it's the safest way to learn what's actually happening.</p>
-      </div>
-      <div class="card purple">
-        <h4>Claude Code (terminal-based, works directly in your project)</h4>
-        <p><strong>Use this when:</strong> you already know what you want and you're comfortable letting Claude directly create, edit, and run files inside your real project folder, without you copy-pasting anything.</p>
-        <p style="margin-bottom:0"><strong>Best for later</strong> — once you're confident reading Flutter code, this becomes much faster for real project work.</p>
-      </div>
-    </div>
+  <div class="tabpanel" id="tab-handson">
+    <h2>Hands-on with Claude — building Khan Chacha's app together</h2>
+    <p class="lead">This is where the training becomes practical instead of theoretical. From this point on, every prompt builds toward one real thing: a small ordering app for Khan Chacha. You'll watch it grow screen by screen, feature by feature, with Claude doing the typing and you doing the deciding.</p>
 
     <div class="card warn">
-      <h4>About "dangerously skip permissions"</h4>
-      <p>Claude Code normally asks for your confirmation before it creates, edits, or deletes any file, and before running any command — this is a safety feature. There is a flag called <code>--dangerously-skip-permissions</code> that turns those confirmations off, letting Claude Code work uninterrupted.</p>
-      <p style="margin-bottom:0"><strong>For students in this training: do not use this flag.</strong> Keep the confirmations on. You want to see and approve every single change while you're still learning what Flutter code looks like — that's literally part of the learning. This flag exists for experienced developers running Claude Code inside fully disposable, sandboxed environments, not for someone editing their first Flutter app on their personal laptop.</p>
+      <h4>A note before you start — claude.ai vs Claude Code, and why this tab uses Claude Code</h4>
+      <p>You can absolutely use <strong>claude.ai</strong> (the chat) for every prompt below — copy the prompt, paste it into chat, copy the code block back out, paste it into the right file in VS Code yourself. That manual loop works and is genuinely useful while you're still learning to read Dart.</p>
+      <p>But this tab is written for <strong>Claude Code</strong> instead, run directly inside VS Code's terminal, for one practical reason: building Khan Chacha's app means creating and editing <em>many</em> files across <em>many</em> folders — models, screens, widgets, constants. Doing that by hand in chat means dozens of copy-paste round trips, and one mistyped folder name breaks the whole thing. Claude Code sees your actual project structure, creates the right files in the right folders itself, and shows you the exact change as a diff before applying it — so you stay in control without doing the manual labor.</p>
+      <p style="margin-bottom:0"><strong>The split that works best in practice:</strong> use <strong>Claude Code</strong> for the actual building — the prompts below. Keep <strong>claude.ai</strong> open in a separate tab for everything else: understanding why a piece of code works the way it does, pasting in a red terminal error to get it explained and fixed, asking for UI/design feedback on a screen you've built, or refining one of these prompts into something more specific to a feature you want next. Building and learning are different modes — Claude Code is your hands, claude.ai is your tutor.</p>
     </div>
 
-    <h2>How to actually run this hands-on section, step by step</h2>
+    <h2>One-time setup: installing and starting Claude Code</h2>
     <div class="step-flow">
       <div class="step">
         <div class="step-rail"><div class="step-dot">1</div><div class="step-line"></div></div>
         <div class="step-body">
-          <div class="step-title">Open your project folder in Visual Studio Code</div>
-          <div class="step-desc">Open VS Code, then go to <strong>File → Open Folder</strong>, and select your <code>maintenance_app</code> folder (or whatever you named it earlier). You should see the file explorer on the left fill up with <code>lib/</code>, <code>android/</code>, <code>pubspec.yaml</code>, and the rest.</div>
+          <div class="step-title">Install Node.js, if you don't already have it</div>
+          <div class="step-desc">Claude Code runs on Node.js. Check if you have it by running <code>node --version</code> in any terminal. If that errors out, download and install it from <a href="https://nodejs.org" target="_blank">nodejs.org</a> (the LTS version), then reopen your terminal.</div>
         </div>
       </div>
       <div class="step">
         <div class="step-rail"><div class="step-dot">2</div><div class="step-line"></div></div>
         <div class="step-body">
-          <div class="step-title">Open a terminal inside VS Code and start your emulator</div>
+          <div class="step-title">Install Claude Code</div>
           <div class="step-desc">
-            Go to the menu <strong>Terminal → New Terminal</strong> (or press <code>Ctrl+`</code>). This opens a terminal that's already pointed at your project folder. Run:
-            <pre><code>flutter run</code></pre>
-            Wait for your emulator to boot and the starter app to appear. Leave this terminal running — don't close it.
+            In any terminal, run:
+            <pre><code>npm install -g @anthropic-ai/claude-code</code></pre>
+            This installs the <code>claude</code> command globally on your machine, available from any folder afterward.
           </div>
         </div>
       </div>
       <div class="step">
         <div class="step-rail"><div class="step-dot">3</div><div class="step-line"></div></div>
         <div class="step-body">
-          <div class="step-title">Open Claude in a browser tab alongside VS Code</div>
-          <div class="step-desc">Go to <a href="https://claude.ai" target="_blank">claude.ai</a> and sign in (or create a free account if you don't have one — you'll need an email address and to verify it). Arrange your screen so you can see both VS Code and the Claude chat window — side by side works best if your screen is large enough, otherwise simply switch between them with Alt+Tab.</div>
+          <div class="step-title">Open your Khan Chacha project in VS Code, then open its terminal</div>
+          <div class="step-desc">File → Open Folder → your <code>khan_chacha</code> project folder. Then <strong>Terminal → New Terminal</strong> (or <code>Ctrl+\`</code>) so the terminal is already pointed at the project root.</div>
         </div>
       </div>
       <div class="step">
         <div class="step-rail"><div class="step-dot">4</div><div class="step-line"></div></div>
         <div class="step-body">
-          <div class="step-title">Copy a prompt from below, paste it into Claude, and press Enter</div>
-          <div class="step-desc">Every prompt below has a <strong>Copy</strong> button. Click it, switch to your Claude tab, click into the message box, paste (Ctrl+V), and press Enter. Claude will reply with a complete code file.</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-rail"><div class="step-dot">5</div><div class="step-line"></div></div>
-        <div class="step-body">
-          <div class="step-title">Copy Claude's code into your project</div>
+          <div class="step-title">Start Claude Code</div>
           <div class="step-desc">
-            In Claude's response, find the code block — hover over it and click the small copy icon in its corner. Switch to VS Code, open <code>lib/main.dart</code>, select everything inside it (<code>Ctrl+A</code>), delete it, and paste (<code>Ctrl+V</code>) Claude's code in its place. Save the file with <code>Ctrl+S</code>.
+            <pre><code>claude</code></pre>
+            The first time you run this, it'll ask you to log in (it opens a browser window for you to sign in with your Claude account). Once logged in, you'll see a conversational prompt right there in your terminal — this is where every prompt below gets typed or pasted.
           </div>
         </div>
       </div>
       <div class="step">
-        <div class="step-rail"><div class="step-dot">6</div></div>
+        <div class="step-rail"><div class="step-dot">5</div></div>
         <div class="step-body">
-          <div class="step-title">Watch hot reload update your emulator automatically</div>
-          <div class="step-desc">The moment you save, look at your emulator window — it should update within a second or two to show the new screen, without you doing anything else. If it doesn't update, click back into your terminal and press <code>r</code> followed by Enter to manually trigger a reload.</div>
+          <div class="step-title">Keep a second terminal running flutter run alongside it</div>
+          <div class="step-desc">Open a second VS Code terminal (click the <code>+</code> in the terminal panel) and run <code>flutter run</code> there, with your emulator already booted. Leave that one alone — Claude Code lives in the first terminal, your live app preview lives in the second. Every time Claude Code finishes a change and you approve it, switch to this second terminal's emulator window to see the result.</div>
         </div>
       </div>
     </div>
 
-    <h2>The 15 prompts — run these in order</h2>
-    <p>Each prompt below builds on the previous one's result. After pasting Claude's response into your project and seeing it run, read the "What to expect" box before moving to the next prompt — it tells you exactly what should appear and what new idea that prompt is teaching.</p>
+    <div class="card success">
+      <h4>How approving changes works</h4>
+      <p style="margin-bottom:0">After you send a prompt, Claude Code will explain what it's about to do, then show you the exact file content it wants to write — like a before/after diff. It'll ask something like "Do you want to make this edit?" with options to approve. Read what it's about to change, then approve. This is the safety behavior the warning below is about — keep it on.</p>
+    </div>
+
+    <div class="card warn">
+      <h4>About "dangerously skip permissions"</h4>
+      <p>There's a flag, <code>--dangerously-skip-permissions</code>, that turns off these confirmation prompts entirely, letting Claude Code edit files without asking each time.</p>
+      <p style="margin-bottom:0"><strong>For this training: do not use this flag.</strong> Keep every confirmation on. You want to see and approve each individual change while you're still learning what Flutter code looks like — that visibility is part of the learning, not friction to remove. This flag exists for experienced developers working inside fully disposable, sandboxed environments, not for someone building their first real app on their own laptop.</p>
+    </div>
+
+    <h2>How to read each prompt below</h2>
+    <p>Every prompt is broken into four labeled parts before the actual text — this is intentional, and it's the same structure you should use yourself once you start writing your own prompts:</p>
+    <div class="grid2">
+      <div class="card accent">
+        <h4><span class="pill pill-teal">Context</span></h4>
+        <p style="margin-bottom:0">What already exists, so Claude doesn't have to guess at your project's current state.</p>
+      </div>
+      <div class="card purple">
+        <h4><span class="pill pill-purple">Task</span></h4>
+        <p style="margin-bottom:0">The specific thing you want built, stated as an action.</p>
+      </div>
+      <div class="card amber">
+        <h4><span class="pill pill-amber">Constraints</span></h4>
+        <p style="margin-bottom:0">Rules about how to build it — naming, structure, what NOT to touch.</p>
+      </div>
+      <div class="card success">
+        <h4><span class="pill pill-green">Output</span></h4>
+        <p style="margin-bottom:0">What you expect to receive back and where it should land.</p>
+      </div>
+    </div>
+    <p>Each prompt's text already folds all four parts into one paste-ready block — the labels above are just so you understand <em>why</em> it's written the way it is, so you can write your own this way later.</p>
+
+    <h2>The build sequence — 12 prompts, run in order</h2>
+    <p>Paste each prompt directly into your Claude Code terminal exactly as written, press Enter, review the diff it shows you, and approve. After each one, a "What this does" box explains the prompt's purpose, and a "Verify it worked" box tells you exactly what to check before moving to the next prompt — including which files to open and what you should see running on your emulator.</p>
 
     <div class="prompt-box">
-      <div class="prompt-label">Prompt 1 of 15 — Understand the starting point<button class="copy-btn" onclick="copyPrompt(this,'p1')">Copy</button></div>
-      <div class="prompt-text" id="p1">Take this default Flutter counter app main.dart file and rewrite it with a comment above every single class and method explaining its role in plain English, as if explaining it to someone who has never written Dart before. Do not change any logic — only add comments.</div>
+      <div class="prompt-label">Prompt 1 of 12 — Set the foundation: the menu item model<button class="copy-btn" onclick="copyPrompt(this,'cc1')">Copy</button></div>
+      <div class="prompt-meta">
+        <span class="meta-pill meta-context">Context: fresh project</span>
+        <span class="meta-pill meta-task">Task: create model</span>
+        <span class="meta-pill meta-output">Output: 1 new file</span>
+      </div>
+      <div class="prompt-text" id="cc1">I'm building a Flutter app called Khan Chacha for a restaurant ordering experience. This is a fresh flutter create project with the default counter app still in main.dart.
+
+Create a MenuItem model class in lib/models/menu_item.dart with these fields: id (String), name (String), price (int, representing rupees), category (String, one of Starters/Main Course/Beverages/Desserts), and description (String). Use named constructor parameters with the required keyword. Add a short doc comment above the class explaining what it represents.
+
+Do not touch main.dart yet — this prompt is just the model file.</div>
     </div>
-    <div class="expect-box"><div class="expect-label">What to expect</div><p>The exact same counter app, but now every part of it is labeled. Read through it slowly with the class as a group before moving on — this is your map for everything that follows.</p></div>
+    <div class="expect-box"><div class="expect-label">What this does</div><p>Sets up the one piece of data every later screen depends on. A model class is the blueprint for "what a single menu item looks like" — every card, every form, every detail screen will be built around this shape.</p></div>
+    <div class="verify-box"><div class="verify-label">Verify it worked</div><p>Open <code>lib/models/menu_item.dart</code> in VS Code — it should now exist with the MenuItem class inside it. Nothing changes on your emulator yet, because main.dart hasn't been touched. That's expected.</p></div>
 
     <div class="prompt-box">
-      <div class="prompt-label">Prompt 2 of 15 — Build the first real screen<button class="copy-btn" onclick="copyPrompt(this,'p2')">Copy</button></div>
-      <div class="prompt-text" id="p2">Create a Flutter screen called HomeScreen showing 3 hardcoded maintenance request cards. Each card should show a product name, a request ID, and a last repair date. Use Scaffold, AppBar, and ListView with Card widgets. Keep it in a single main.dart file with no navigation yet.</div>
+      <div class="prompt-label">Prompt 2 of 12 — Build the home screen with sample data<button class="copy-btn" onclick="copyPrompt(this,'cc2')">Copy</button></div>
+      <div class="prompt-meta">
+        <span class="meta-pill meta-context">Context: model exists</span>
+        <span class="meta-pill meta-task">Task: build screen + sample data</span>
+        <span class="meta-pill meta-constraint">Constraint: hardcoded data only</span>
+        <span class="meta-pill meta-output">Output: 1 new file + main.dart updated</span>
+      </div>
+      <div class="prompt-text" id="cc2">Using the MenuItem model in lib/models/menu_item.dart, create a HomeScreen StatelessWidget in lib/screens/home_screen.dart that shows a Scaffold with an AppBar titled "Khan Chacha" and a ListView of Card widgets — one per menu item.
+
+Include 6 hardcoded sample MenuItem entries directly inside HomeScreen for now, covering all four categories: at least one Starters, two Main Course, two Beverages, one Desserts. Each card should show the item's name and its price formatted as "₹220".
+
+Update main.dart so the app's home screen is this new HomeScreen instead of the default counter app. Remove the old counter app code from main.dart entirely.</div>
     </div>
-    <div class="expect-box"><div class="expect-label">What to expect</div><p>A clean, static list of three cards. Ask yourselves: which part of the code is the AppBar, and which part is the ListView? Find both before continuing.</p></div>
+    <div class="expect-box"><div class="expect-label">What this does</div><p>This replaces Flutter's placeholder counter app with the actual first screen of Khan Chacha's app — a real list of menu items, even though the data is still hardcoded rather than coming from a database.</p></div>
+    <div class="verify-box"><div class="verify-label">Verify it worked</div><p>Check your emulator window (the one running <code>flutter run</code> in your second terminal) — it should now show "Khan Chacha" in the app bar and a list of 6 menu cards with prices in rupees. Open <code>lib/screens/home_screen.dart</code> and <code>lib/main.dart</code> to see how they connect via the import at the top of main.dart.</p></div>
 
     <div class="prompt-box">
-      <div class="prompt-label">Prompt 3 of 15 — Add color-coded status<button class="copy-btn" onclick="copyPrompt(this,'p3')">Copy</button></div>
-      <div class="prompt-text" id="p3">Add a status field to each request — Open, Pending, or Closed — and display it as a color-coded chip aligned to the right of each card: green for Open, amber for Pending, red for Closed.</div>
+      <div class="prompt-label">Prompt 3 of 12 — Add color-coded category chips<button class="copy-btn" onclick="copyPrompt(this,'cc3')">Copy</button></div>
+      <div class="prompt-meta">
+        <span class="meta-pill meta-context">Context: home_screen.dart exists</span>
+        <span class="meta-pill meta-task">Task: visual enhancement</span>
+        <span class="meta-pill meta-constraint">Constraint: specific colors per category</span>
+        <span class="meta-pill meta-output">Output: home_screen.dart edited</span>
+      </div>
+      <div class="prompt-text" id="cc3">In lib/screens/home_screen.dart, add a color-coded Chip to each menu item card showing its category, aligned to the right side of the card. Use these specific colors: Starters = amber, Main Course = deep orange, Beverages = blue, Desserts = pink.
+
+Keep all existing hardcoded sample data and card layout exactly as it is — only add the chip.</div>
     </div>
-    <div class="expect-box"><div class="expect-label">What to expect</div><p>The cards now look like a real app screen. This is the moment to ask: is this a StatelessWidget or a StatefulWidget, and why does that choice make sense here?</p></div>
+    <div class="expect-box"><div class="expect-label">What this does</div><p>Makes the menu visually scannable at a glance — a customer can tell category at a glance without reading every line, which is the entire point of color-coding in a real ordering app.</p></div>
+    <div class="verify-box"><div class="verify-label">Verify it worked</div><p>Your emulator's menu list should now show a colored chip on the right edge of every card, matching each item's category. Open <code>lib/screens/home_screen.dart</code> and find the Chip widget inside the card-building code to see how the color gets picked based on category.</p></div>
 
     <div class="prompt-box">
-      <div class="prompt-label">Prompt 4 of 15 — Reuse instead of repeat<button class="copy-btn" onclick="copyPrompt(this,'p4')">Copy</button></div>
-      <div class="prompt-text" id="p4">Refactor the card markup into its own reusable StatelessWidget called RequestCard, which takes productName, requestId, date, and status as constructor parameters. Show how HomeScreen now builds its list using this new RequestCard widget instead of repeating the same code three times.</div>
+      <div class="prompt-label">Prompt 4 of 12 — Extract a reusable MenuItemCard widget<button class="copy-btn" onclick="copyPrompt(this,'cc4')">Copy</button></div>
+      <div class="prompt-meta">
+        <span class="meta-pill meta-context">Context: card markup repeated inline</span>
+        <span class="meta-pill meta-task">Task: refactor into reusable widget</span>
+        <span class="meta-pill meta-constraint">Constraint: no visual change</span>
+        <span class="meta-pill meta-output">Output: 1 new file + home_screen.dart edited</span>
+      </div>
+      <div class="prompt-text" id="cc4">Refactor the card markup currently inline inside lib/screens/home_screen.dart into its own reusable StatelessWidget called MenuItemCard, placed in lib/widgets/menu_item_card.dart. It should take a single MenuItem as a constructor parameter and render exactly the same card — name, price, category chip — that home_screen.dart currently builds inline.
+
+Update HomeScreen to import and use this new MenuItemCard widget inside its ListView instead of building the card markup directly. The visible app should look completely identical after this change — this is a code organization improvement only, not a visual one.</div>
     </div>
-    <div class="expect-box"><div class="expect-label">What to expect</div><p>The visible screen looks identical, but the code is now organized — one definition of a card, reused three times. This is the "don't repeat yourself" lesson.</p></div>
+    <div class="expect-box"><div class="expect-label">What this does</div><p>This is the "don't repeat yourself" principle in action — instead of one big block of card-building code sitting inside HomeScreen, it becomes its own named, reusable piece. Later, every screen that needs to show a menu item card (search results, a favorites list) can reuse this same widget.</p></div>
+    <div class="verify-box"><div class="verify-label">Verify it worked</div><p>Your emulator should look exactly the same as before — no visual change. Open <code>lib/widgets/menu_item_card.dart</code> to see the extracted widget, and check <code>lib/screens/home_screen.dart</code> to confirm it's now noticeably shorter, since the card-building logic moved out.</p></div>
 
     <div class="prompt-box">
-      <div class="prompt-label">Prompt 5 of 15 — Add a second screen and navigation<button class="copy-btn" onclick="copyPrompt(this,'p5')">Copy</button></div>
-      <div class="prompt-text" id="p5">Add a second screen called DetailScreen. When a user taps any RequestCard, navigate to DetailScreen using Navigator.push and MaterialPageRoute, passing the full request's data along. DetailScreen should display the same fields in a larger size, plus a placeholder description field, and include a working back button in its AppBar.</div>
+      <div class="prompt-label">Prompt 5 of 12 — Add category filter chips with state<button class="copy-btn" onclick="copyPrompt(this,'cc5')">Copy</button></div>
+      <div class="prompt-meta">
+        <span class="meta-pill meta-context">Context: HomeScreen is StatelessWidget</span>
+        <span class="meta-pill meta-task">Task: convert to StatefulWidget + add filtering</span>
+        <span class="meta-pill meta-constraint">Constraint: must use setState</span>
+        <span class="meta-pill meta-output">Output: home_screen.dart edited</span>
+      </div>
+      <div class="prompt-text" id="cc5">Convert HomeScreen in lib/screens/home_screen.dart from a StatelessWidget into a StatefulWidget. Add a horizontal row of filter chips above the menu list: All, Starters, Main Course, Beverages, Desserts. Tapping a chip should filter the visible list to only that category, using setState to trigger the rebuild. "All" should show every item. Highlight whichever chip is currently selected.</div>
     </div>
-    <div class="expect-box"><div class="expect-label">What to expect</div><p>Your first real interactive behavior. Tap a card, see a new screen, tap back, return to the list. Try removing the back button code and see what happens — does Android's own back gesture still work?</p></div>
+    <div class="expect-box"><div class="expect-label">What this does</div><p>This is the conceptual turning point of the whole build — the screen now reacts to user input. setState is the mechanism that tells Flutter "something changed, redraw this part of the screen now." Every tap visibly updates what's on screen from this point forward.</p></div>
+    <div class="verify-box"><div class="verify-label">Verify it worked</div><p>On your emulator, tap each filter chip one at a time and confirm the menu list narrows to only that category, and tap "All" to confirm everything returns. Open <code>lib/screens/home_screen.dart</code> and find the <code>setState</code> call inside the chip's <code>onTap</code> or <code>onSelected</code> handler — that's the line actually driving this behavior.</p></div>
 
     <div class="prompt-box">
-      <div class="prompt-label">Prompt 6 of 15 — Introduce state and filtering<button class="copy-btn" onclick="copyPrompt(this,'p6')">Copy</button></div>
-      <div class="prompt-text" id="p6">Convert HomeScreen into a StatefulWidget. Add three filter buttons above the list — All, Open, and Closed. Tapping a filter button should update the visible list to show only matching requests, using setState to trigger the rebuild.</div>
+      <div class="prompt-label">Prompt 6 of 12 — Add a detail screen with navigation<button class="copy-btn" onclick="copyPrompt(this,'cc6')">Copy</button></div>
+      <div class="prompt-meta">
+        <span class="meta-pill meta-context">Context: cards aren't tappable yet</span>
+        <span class="meta-pill meta-task">Task: new screen + navigation</span>
+        <span class="meta-pill meta-constraint">Constraint: pass full MenuItem data</span>
+        <span class="meta-pill meta-output">Output: 1 new file + menu_item_card.dart edited</span>
+      </div>
+      <div class="prompt-text" id="cc6">Create a DetailScreen StatelessWidget in lib/screens/detail_screen.dart that takes a MenuItem as a constructor parameter and displays its name as a large heading, its full description, its price, and a back button in the AppBar.
+
+Update lib/widgets/menu_item_card.dart so tapping anywhere on a MenuItemCard navigates to DetailScreen using Navigator.push and MaterialPageRoute, passing along the tapped item's full MenuItem data.</div>
     </div>
-    <div class="expect-box"><div class="expect-label">What to expect</div><p>This is the conceptual turning point of the day. Every tap now visibly changes what's on screen through setState — pause here and make sure everyone in the room understands that setState is what tells Flutter "redraw this part of the screen now."</p></div>
+    <div class="expect-box"><div class="expect-label">What this does</div><p>This is the first real multi-screen behavior in the app — a customer taps a dish to see its full description before deciding to order, exactly like a real restaurant app's menu browsing flow.</p></div>
+    <div class="verify-box"><div class="verify-label">Verify it worked</div><p>Tap any menu card on your emulator — a new screen should open showing that item's name, description, and price, with a working back arrow. Tap back and confirm you land on the same filtered list you were on before. Open <code>lib/screens/detail_screen.dart</code> to see the new screen, and look inside <code>lib/widgets/menu_item_card.dart</code> for the <code>Navigator.push</code> call that connects the two.</p></div>
 
     <div class="prompt-box">
-      <div class="prompt-label">Prompt 7 of 15 — Organize data into its own file<button class="copy-btn" onclick="copyPrompt(this,'p7')">Copy</button></div>
-      <div class="prompt-text" id="p7">Move the hardcoded request list into a separate Request model class inside a new file called models/request.dart, using named constructor parameters for productName, requestId, date, and status. Update HomeScreen to import and use this new model.</div>
+      <div class="prompt-label">Prompt 7 of 12 — Add a quantity selector and order button<button class="copy-btn" onclick="copyPrompt(this,'cc7')">Copy</button></div>
+      <div class="prompt-meta">
+        <span class="meta-pill meta-context">Context: DetailScreen is static</span>
+        <span class="meta-pill meta-task">Task: add interactive quantity control</span>
+        <span class="meta-pill meta-constraint">Constraint: convert to StatefulWidget</span>
+        <span class="meta-pill meta-output">Output: detail_screen.dart edited</span>
+      </div>
+      <div class="prompt-text" id="cc7">Convert DetailScreen in lib/screens/detail_screen.dart into a StatefulWidget. Below the description, add a quantity selector with a minus button, a number display starting at 1, and a plus button — quantity should never go below 1. Below that, add an "Add to order" ElevatedButton that, when tapped, shows a SnackBar confirming something like "2 x Chicken Biryani added to order".</div>
     </div>
-    <div class="expect-box"><div class="expect-label">What to expect</div><p>Your first multi-file project. Note how a new folder called models appears inside lib/ — this is the moment the earlier folder structure lesson becomes concrete rather than abstract.</p></div>
+    <div class="expect-box"><div class="expect-label">What this does</div><p>This is the moment the app stops being a read-only menu and starts behaving like an actual ordering tool — a customer can now specify how many of an item they want and confirm an action, which is the core loop of any food-ordering app.</p></div>
+    <div class="verify-box"><div class="verify-label">Verify it worked</div><p>Open any item's detail screen, tap the plus button a few times to confirm the number increases, tap minus to confirm it stops at 1 and never goes negative, then tap "Add to order" and confirm a small message banner appears briefly at the bottom of the screen showing the correct quantity and item name.</p></div>
 
     <div class="prompt-box">
-      <div class="prompt-label">Prompt 8 of 15 — Simulate loading data<button class="copy-btn" onclick="copyPrompt(this,'p8')">Copy</button></div>
-      <div class="prompt-text" id="p8">Simulate an async data load: wrap the request list inside a Future.delayed for 2 seconds, show a CircularProgressIndicator while it's loading, and display the full list once it's ready. Use a FutureBuilder to manage this.</div>
+      <div class="prompt-label">Prompt 8 of 12 — Add a form to add new menu items<button class="copy-btn" onclick="copyPrompt(this,'cc8')">Copy</button></div>
+      <div class="prompt-meta">
+        <span class="meta-pill meta-context">Context: menu list is fixed at 6 items</span>
+        <span class="meta-pill meta-task">Task: add creation form</span>
+        <span class="meta-pill meta-constraint">Constraint: bottom sheet, not a new screen</span>
+        <span class="meta-pill meta-output">Output: home_screen.dart edited</span>
+      </div>
+      <div class="prompt-text" id="cc8">In lib/screens/home_screen.dart, add a FloatingActionButton with a plus icon. Tapping it should open a bottom sheet containing a form with: a text field for item name, a number text field for price, a dropdown for category (Starters/Main Course/Beverages/Desserts), and a text field for description. Submitting the form should add a new MenuItem to the top of the current list and close the bottom sheet, using setState to trigger the rebuild.</div>
     </div>
-    <div class="expect-box"><div class="expect-label">What to expect</div><p>A brief spinning loader appears for two seconds before the list shows up. This mimics exactly what happens later when your app talks to a real database or API — the loading delay is just simulated for now.</p></div>
+    <div class="expect-box"><div class="expect-label">What this does</div><p>This is the first form in the app, and the first time the list itself actually grows while the app is running rather than being fixed at startup — a meaningful milestone in how dynamic the app now feels.</p></div>
+    <div class="verify-box"><div class="verify-label">Verify it worked</div><p>Tap the floating plus button on your emulator, fill in a new dish (something fun — try adding "Mutton Seekh Kebab" under Starters), submit, and confirm it appears at the top of the home screen's list immediately, with the correct category chip color.</p></div>
 
     <div class="prompt-box">
-      <div class="prompt-label">Prompt 9 of 15 — Centralize your colors<button class="copy-btn" onclick="copyPrompt(this,'p9')">Copy</button></div>
-      <div class="prompt-text" id="p9">Create a new file called constants/app_colors.dart containing a single AppColors class with static const Color fields for every color currently used in the app — the status chip colors, the AppBar color, and any accent colors. Update every widget in the app to reference AppColors instead of hardcoded color values.</div>
+      <div class="prompt-label">Prompt 9 of 12 — Handle the empty filter state gracefully<button class="copy-btn" onclick="copyPrompt(this,'cc9')">Copy</button></div>
+      <div class="prompt-meta">
+        <span class="meta-pill meta-context">Context: filtering to zero results shows blank</span>
+        <span class="meta-pill meta-task">Task: add empty state UI</span>
+        <span class="meta-pill meta-output">Output: home_screen.dart edited</span>
+      </div>
+      <div class="prompt-text" id="cc9">In lib/screens/home_screen.dart, if the currently filtered menu list has zero items, show a centered icon (a restaurant or food-related icon) with a friendly message like "No dishes in this category yet" instead of a blank list area.</div>
     </div>
-    <div class="expect-box"><div class="expect-label">What to expect</div><p>The visible app doesn't change at all — but now if you wanted to rebrand the whole app to different colors, you'd only edit one file instead of hunting through every screen.</p></div>
+    <div class="expect-box"><div class="expect-label">What this does</div><p>A blank white screen always looks broken to a real user, even when the app is technically working correctly. This teaches conditional rendering inside build — checking a condition and choosing what to display based on it.</p></div>
+    <div class="verify-box"><div class="verify-label">Verify it worked</div><p>Tap a category filter that currently has no items (or temporarily imagine one does), or simply check the logic handles it — the cleanest test is filtering to a category right after the app starts if your sample data happens to leave one category light, or by mentally confirming with Claude Code which category is currently empty in your sample set.</p></div>
 
     <div class="prompt-box">
-      <div class="prompt-label">Prompt 10 of 15 — Add a form to create new entries<button class="copy-btn" onclick="copyPrompt(this,'p10')">Copy</button></div>
-      <div class="prompt-text" id="p10">Add a floating action button (a circular "+" button) to HomeScreen. Tapping it should open a bottom sheet containing a form with a text field for product name and a dropdown for status. Submitting the form should add a new request card to the top of the list.</div>
+      <div class="prompt-label">Prompt 10 of 12 — Centralize the color scheme<button class="copy-btn" onclick="copyPrompt(this,'cc10')">Copy</button></div>
+      <div class="prompt-meta">
+        <span class="meta-pill meta-context">Context: colors hardcoded across files</span>
+        <span class="meta-pill meta-task">Task: extract to single constants file</span>
+        <span class="meta-pill meta-constraint">Constraint: warm red/orange brand color</span>
+        <span class="meta-pill meta-output">Output: 1 new file + multiple files edited</span>
+      </div>
+      <div class="prompt-text" id="cc10">Create a single AppColors class in lib/constants/app_colors.dart with static const Color fields for every color currently used anywhere in the app: the AppBar color, each category chip color, and the "Add to order" button color. Use a warm red/orange (something like #D84315) as the primary brand color, fitting a restaurant brand.
+
+Update every file in lib/screens and lib/widgets that currently uses a hardcoded Color value to reference AppColors instead. The visible app should look the same or better (more consistent), not broken — list every file you changed at the end.</div>
     </div>
-    <div class="expect-box"><div class="expect-label">What to expect</div><p>Your first form-handling and your first time mutating a list while the app is running. This is a genuine milestone — celebrate it with the class.</p></div>
+    <div class="expect-box"><div class="expect-label">What this does</div><p>Right now, if Khan Chacha wanted to rebrand to a different color tomorrow, you'd have to hunt through every file. This centralizes every color decision into one place — change the brand color once, and it updates everywhere automatically.</p></div>
+    <div class="verify-box"><div class="verify-label">Verify it worked</div><p>Open <code>lib/constants/app_colors.dart</code> and confirm it lists every color the app uses. Check your emulator — the AppBar should now show the new warm red/orange brand color. Open one or two of the screen files Claude lists as changed and confirm they now say <code>AppColors.something</code> instead of a raw color value.</p></div>
 
     <div class="prompt-box">
-      <div class="prompt-label">Prompt 11 of 15 — Handle the empty case gracefully<button class="copy-btn" onclick="copyPrompt(this,'p11')">Copy</button></div>
-      <div class="prompt-text" id="p11">If the filtered request list has zero results, show a centered icon and a friendly message instead of a blank screen.</div>
+      <div class="prompt-label">Prompt 11 of 12 — Write a widget test<button class="copy-btn" onclick="copyPrompt(this,'cc11')">Copy</button></div>
+      <div class="prompt-meta">
+        <span class="meta-pill meta-context">Context: no tests exist yet</span>
+        <span class="meta-pill meta-task">Task: write one widget test</span>
+        <span class="meta-pill meta-output">Output: test file created</span>
+      </div>
+      <div class="prompt-text" id="cc11">Write a Flutter widget test in test/home_screen_test.dart that confirms HomeScreen renders without errors and shows at least one MenuItemCard when given the app's default sample data. Keep the test simple — one clear assertion is enough for now.</div>
     </div>
-    <div class="expect-box"><div class="expect-label">What to expect</div><p>Filter to a status with no matching cards and see the friendly empty message instead of a blank page. This teaches conditional logic inside the build method.</p></div>
+    <div class="expect-box"><div class="expect-label">What this does</div><p>This is your first contact with automated testing — a way to mechanically confirm a screen still works correctly, without manually tapping through the app every single time you make a change.</p></div>
+    <div class="verify-box"><div class="verify-label">Verify it worked</div><p>In your terminal (a third one, or reuse the flutter run terminal after stopping it with <code>q</code>), run <code>flutter test</code>. You should see a message confirming the test passed, with a green checkmark or "All tests passed" summary.</p></div>
 
     <div class="prompt-box">
-      <div class="prompt-label">Prompt 12 of 15 — Remember the user's choice<button class="copy-btn" onclick="copyPrompt(this,'p12')">Copy</button></div>
-      <div class="prompt-text" id="p12">Add the shared_preferences package to this project and use it to remember which filter (All, Open, or Closed) was last selected, so the app reopens with that same filter still applied.</div>
+      <div class="prompt-label">Prompt 12 of 12 — Explain what shipping actually means<button class="copy-btn" onclick="copyPrompt(this,'cc12')">Copy</button></div>
+      <div class="prompt-meta">
+        <span class="meta-pill meta-context">Context: app runs only on emulator so far</span>
+        <span class="meta-pill meta-task">Task: explain, no code change</span>
+        <span class="meta-pill meta-output">Output: explanation in terminal</span>
+      </div>
+      <div class="prompt-text" id="cc12">Explain in plain English exactly what the command flutter build apk --release would produce for this Khan Chacha project, where the resulting file would be saved inside the project folder, and how that differs from what happens right now when I run flutter run during development. Don't run the command — just explain it.</div>
     </div>
-    <div class="expect-box"><div class="expect-label">What to expect</div><p>This is the first time you'll deliberately edit pubspec.yaml and run flutter pub get yourselves. Close the app fully and reopen it — your last filter choice should still be selected.</p></div>
+    <div class="expect-box"><div class="expect-label">What this does</div><p>This prompt produces no code at all — it's a deliberate pause to make sure the gap between "running on my emulator" and "a real file I could install on any Android phone" is fully understood before moving on.</p></div>
+    <div class="verify-box"><div class="verify-label">Verify it worked</div><p>Read Claude Code's explanation in the terminal. You should come away able to explain, in your own words, where the .apk file would land and why a release build is different from the debug build you've been running all session.</p></div>
 
-    <div class="prompt-box">
-      <div class="prompt-label">Prompt 13 of 15 — Adapt to different screen sizes<button class="copy-btn" onclick="copyPrompt(this,'p13')">Copy</button></div>
-      <div class="prompt-text" id="p13">Make the card list show a single column on narrow screens and two columns on wide screens such as tablets, using LayoutBuilder to detect the available width.</div>
+    <div class="card success">
+      <h4>Where to go from here</h4>
+      <p style="margin-bottom:0">At this point you have a real, working, multi-screen Khan Chacha app — built feature by feature, with you approving every change along the way. The Working with Data tab next door shows you how to swap the hardcoded sample menu for a real menu coming from a database, using the exact same Claude Code workflow you just practiced.</p>
     </div>
-    <div class="expect-box"><div class="expect-label">What to expect</div><p>If you have access to a tablet-sized emulator, switch to it and watch the layout change shape automatically. This is the same idea as responsive web design, just for an app.</p></div>
-
-    <div class="prompt-box">
-      <div class="prompt-label">Prompt 14 of 15 — Write your first automated test<button class="copy-btn" onclick="copyPrompt(this,'p14')">Copy</button></div>
-      <div class="prompt-text" id="p14">Write a simple Flutter widget test that confirms HomeScreen displays exactly 3 request cards when given 3 mock requests as test data.</div>
-    </div>
-    <div class="expect-box"><div class="expect-label">What to expect</div><p>Run it with flutter test in your terminal. You should see a message confirming the test passed. This is your first contact with automated testing — a habit worth building early.</p></div>
-
-    <div class="prompt-box">
-      <div class="prompt-label">Prompt 15 of 15 — Understand what shipping actually means<button class="copy-btn" onclick="copyPrompt(this,'p15')">Copy</button></div>
-      <div class="prompt-text" id="p15">Explain in plain English exactly what the command flutter build apk --release produces, where the resulting file is saved inside the project, and how this differs from what happens when I run flutter run during development.</div>
-    </div>
-    <div class="expect-box"><div class="expect-label">What to expect</div><p>This prompt doesn't generate code — it gets Claude to explain a concept. Use this as the closing discussion before moving to the capstone project, so everyone understands the leap from "running on my emulator" to "a real file I could install on any Android phone."</p></div>
   </div>
 
   <div class="tabpanel" id="tab-database">
@@ -1097,14 +1201,14 @@ flutter run</code></pre>
         <div class="step-rail"><div class="step-dot">2</div><div class="step-line"></div></div>
         <div class="step-body">
           <div class="step-title">Wait, because this takes time</div>
-          <div class="step-desc">Network requests are never instant. While waiting, your screen shows a loading spinner instead of nothing — this is exactly what the FutureBuilder pattern from Prompt 8 in the previous tab was rehearsing.</div>
+          <div class="step-desc">Network requests are never instant. While waiting, your screen shows a loading spinner instead of nothing — this is exactly what the FutureBuilder pattern from the Hands-On tab was rehearsing.</div>
         </div>
       </div>
       <div class="step">
         <div class="step-rail"><div class="step-dot">3</div></div>
         <div class="step-body">
           <div class="step-title">Convert the response into widgets</div>
-          <div class="step-desc">The data usually arrives as JSON (a structured text format). Your app converts that JSON into Dart objects (like the Request model class from Prompt 7), then builds a card widget for each one.</div>
+          <div class="step-desc">The data usually arrives as JSON (a structured text format). Your app converts that JSON into Dart objects (like the MenuItem model class), then builds a card widget for each one.</div>
         </div>
       </div>
     </div>
@@ -1128,14 +1232,14 @@ flutter run</code></pre>
     <pre><code><span class="kw">import</span> <span class="str">'package:http/http.dart'</span> <span class="kw">as</span> http;
 <span class="kw">import</span> <span class="str">'dart:convert'</span>;
 
-<span class="cls">Future</span>&lt;<span class="cls">List</span>&lt;<span class="cls">Request</span>&gt;&gt; fetchRequests() <span class="kw">async</span> {
-  <span class="kw">final</span> response = <span class="kw">await</span> http.get(<span class="cls">Uri</span>.parse(<span class="str">'https://your-api.com/requests'</span>));
+<span class="cls">Future</span>&lt;<span class="cls">List</span>&lt;<span class="cls">MenuItem</span>&gt;&gt; fetchMenuItems() <span class="kw">async</span> {
+  <span class="kw">final</span> response = <span class="kw">await</span> http.get(<span class="cls">Uri</span>.parse(<span class="str">'https://your-api.com/menu'</span>));
 
   <span class="kw">if</span> (response.statusCode == <span class="str">200</span>) {
     <span class="cls">List</span> data = jsonDecode(response.body);
-    <span class="kw">return</span> data.map((item) => <span class="cls">Request</span>.fromJson(item)).toList();
+    <span class="kw">return</span> data.map((item) => <span class="cls">MenuItem</span>.fromJson(item)).toList();
   } <span class="kw">else</span> {
-    <span class="kw">throw</span> <span class="cls">Exception</span>(<span class="str">'Failed to load requests'</span>);
+    <span class="kw">throw</span> <span class="cls">Exception</span>(<span class="str">'Failed to load menu'</span>);
   }
 }</code></pre>
     <p>Notice the words <code>async</code> and <code>await</code> — these mean "this function involves waiting for something, so pause here until the answer comes back, without freezing the rest of the app." This is conceptually identical to async/await in most modern programming languages, just written with Dart's syntax.</p>
@@ -1144,7 +1248,7 @@ flutter run</code></pre>
     <div class="grid2">
       <div class="card accent">
         <h4>Writing the model class</h4>
-        <p style="margin-bottom:0">Given a sample of your real JSON data, Claude can generate the exact Dart model class (like Request) with a correct <code>fromJson</code> method, saving you from manually mapping every field by hand.</p>
+        <p style="margin-bottom:0">Given a sample of your real JSON data, Claude can generate the exact Dart model class (like MenuItem) with a correct <code>fromJson</code> method, saving you from manually mapping every field by hand.</p>
       </div>
       <div class="card accent">
         <h4>Writing the fetch logic</h4>
@@ -1152,7 +1256,7 @@ flutter run</code></pre>
       </div>
       <div class="card accent">
         <h4>Connecting it to your UI</h4>
-        <p style="margin-bottom:0">Claude can wire your existing HomeScreen to use FutureBuilder with this real fetch function instead of the simulated 2-second delay from Prompt 8 — swapping fake data for real data with minimal changes to the screen itself.</p>
+        <p style="margin-bottom:0">Claude can wire your existing HomeScreen to use FutureBuilder with this real fetch function instead of simulated hardcoded data — swapping fake data for real data with minimal changes to the screen itself.</p>
       </div>
       <div class="card accent">
         <h4>Explaining unfamiliar database services</h4>
@@ -1163,7 +1267,7 @@ flutter run</code></pre>
     <h2>A prompt you can use right now to explore this</h2>
     <div class="prompt-box">
       <div class="prompt-label">Database connection starter prompt<button class="copy-btn" onclick="copyPrompt(this,'db1')">Copy</button></div>
-      <div class="prompt-text" id="db1">I have a Flutter app with a Request model that has fields: id, productName, requestDate, and status. I want to fetch a list of these from a REST API at the URL https://example.com/api/requests which returns JSON in this shape: [{"id": "REQ-001", "productName": "AC Filter", "requestDate": "2025-06-14", "status": "Open"}]. Write the complete fetchRequests function using the http package, including error handling, and show me how to wire it into a FutureBuilder inside my HomeScreen.</div>
+      <div class="prompt-text" id="db1">I have a Flutter app with a MenuItem model that has fields: id, name, price, and category. I want to fetch a list of these from a REST API at the URL https://example.com/api/menu which returns JSON in this shape: [{"id": "ITEM-001", "name": "Chicken Biryani", "price": 220, "category": "Main Course"}]. Write the complete fetchMenuItems function using the http package, including error handling, and show me how to wire it into a FutureBuilder inside my HomeScreen.</div>
     </div>
     <div class="expect-box"><div class="expect-label">What to expect</div><p>Claude will generate a working fetch function and explain how to plug it into the screen you already built. Replace the example URL with your real API's address once you have one set up.</p></div>
 
@@ -1183,7 +1287,7 @@ flutter run</code></pre>
     </div>
 
     <h2>What you're building</h2>
-    <p>A small two-screen Flutter app: a home screen listing items (you can theme it as maintenance requests, products, tasks, or anything relevant to your own interest — Khan Chacha order items.</p>
+    <p>A small two-screen Flutter app for Khan Chacha: a home screen listing menu items, and a detail screen for each item. This mirrors a real ordering app's first version.</p>
 
     <div class="card success">
       <h4>Why this is the right size for today</h4>
@@ -1195,21 +1299,21 @@ flutter run</code></pre>
 
     <div class="prompt-box">
       <div class="prompt-label">The capstone prompt — copy this entire block<button class="copy-btn" onclick="copyPrompt(this,'capstone1')">Copy</button></div>
-      <div class="prompt-text" id="capstone1">Build a complete, small, two-screen Flutter app called "Track It" for tracking maintenance requests. Requirements:
+      <div class="prompt-text" id="capstone1">Build a complete, small, two-screen Flutter app called "Khan Chacha" for browsing a restaurant menu and placing simple orders. Requirements:
 
-1. A Request model class in models/request.dart with fields: id (String), productName (String), requestDate (String), status (String, one of Open/Pending/Closed), and description (String).
+1. A MenuItem model class in models/menu_item.dart with fields: id (String), name (String), price (int), category (String, one of Starters/Main Course/Beverages/Desserts), and description (String).
 
-2. A HomeScreen (StatefulWidget) that shows a list of requests as cards, each displaying productName, requestDate, and a color-coded status chip (green=Open, amber=Pending, red=Closed). Include 5 sample hardcoded requests covering all three statuses.
+2. A HomeScreen (StatefulWidget) that shows a list of menu items as cards, each displaying name, price formatted as rupees, and a color-coded category chip. Include 6 sample hardcoded items covering all four categories.
 
-3. Three filter chips above the list (All, Open, Closed) that filter the visible list using setState.
+3. Four filter chips above the list (All, Starters, Main Course, Beverages, Desserts) that filter the visible list using setState.
 
-4. Tapping any card navigates to a DetailScreen showing all fields of that request in a larger, clearly laid out view, with a working back button.
+4. Tapping any card navigates to a DetailScreen showing the item's full description, price, and a quantity selector with an "Add to order" button, with a working back button.
 
-5. A floating action button on HomeScreen that opens a bottom sheet with a simple form (text field for product name, dropdown for status) to add a new request to the top of the list.
+5. A floating action button on HomeScreen that opens a bottom sheet with a simple form (text field for item name, number field for price, dropdown for category) to add a new menu item to the top of the list.
 
 6. If the filtered list is empty, show a centered icon and friendly message instead of a blank screen.
 
-7. Use a clean, consistent color scheme defined in a single AppColors class in constants/app_colors.dart, with a teal/blue primary color suitable for a professional utility app.
+7. Use a clean, consistent color scheme defined in a single AppColors class in constants/app_colors.dart, with a warm red/orange primary color suitable for a restaurant brand.
 
 8. Organize the code across multiple files following Flutter best practices (separate files for models, screens, widgets, and constants) rather than putting everything in main.dart.
 
@@ -1223,8 +1327,8 @@ Give me each file separately with its full file path clearly labeled, so I can c
         <div class="step-body">
           <div class="step-title">Create a brand-new project for this capstone</div>
           <div class="step-desc">
-            In your terminal: <pre><code>flutter create track_it
-cd track_it
+            In your terminal: <pre><code>flutter create khan_chacha
+cd khan_chacha
 flutter run</code></pre>
             Confirm the default starter app appears before continuing — this guarantees a clean starting point.
           </div>
@@ -1234,7 +1338,7 @@ flutter run</code></pre>
         <div class="step-rail"><div class="step-dot">2</div><div class="step-line"></div></div>
         <div class="step-body">
           <div class="step-title">Paste the capstone prompt into Claude</div>
-          <div class="step-desc">Claude will respond with several separate code blocks, each labeled with a file path like <code>lib/models/request.dart</code> or <code>lib/screens/home_screen.dart</code>. Read through the whole response once before doing anything in VS Code, just to see the shape of what's coming.</div>
+          <div class="step-desc">Claude will respond with several separate code blocks, each labeled with a file path like <code>lib/models/menu_item.dart</code> or <code>lib/screens/home_screen.dart</code>. Read through the whole response once before doing anything in VS Code, just to see the shape of what's coming.</div>
         </div>
       </div>
       <div class="step">
@@ -1242,7 +1346,7 @@ flutter run</code></pre>
         <div class="step-body">
           <div class="step-title">Create matching folders and files in VS Code</div>
           <div class="step-desc">
-            In the VS Code file explorer, right-click on <code>lib</code> and choose <strong>New Folder</strong> for each folder Claude mentioned (typically <code>models</code>, <code>screens</code>, <code>widgets</code>, <code>constants</code>). Then right-click each folder and choose <strong>New File</strong> to create the specific files Claude named, such as <code>request.dart</code> inside <code>models</code>.
+            In the VS Code file explorer, right-click on <code>lib</code> and choose <strong>New Folder</strong> for each folder Claude mentioned (typically <code>models</code>, <code>screens</code>, <code>widgets</code>, <code>constants</code>). Then right-click each folder and choose <strong>New File</strong> to create the specific files Claude named, such as <code>menu_item.dart</code> inside <code>models</code>.
           </div>
         </div>
       </div>
@@ -1264,7 +1368,7 @@ flutter run</code></pre>
         <div class="step-rail"><div class="step-dot">6</div></div>
         <div class="step-body">
           <div class="step-title">Test every feature on your emulator</div>
-          <div class="step-desc">Tap through every filter chip, open a few detail screens and tap back, add a new request through the form, and try filtering down to an empty result to see the friendly empty state. If anything doesn't behave the way you expected, that's your cue for the next step below.</div>
+          <div class="step-desc">Tap through every filter chip, open a few detail screens and tap back, add a new menu item through the form, and try filtering down to an empty result to see the friendly empty state. If anything doesn't behave the way you expected, that's your cue for the next step below.</div>
         </div>
       </div>
     </div>
@@ -1325,7 +1429,7 @@ flutter run</code></pre>
 
     <div class="faq-item" onclick="toggleFaq(this)">
       <div class="faq-q">When should I use Claude (the chat) versus Claude Code (the terminal tool)?<span class="faq-arrow">▾</span></div>
-      <div class="faq-a">Use Claude chat when you're still learning, want to see code before it touches your project, or want full manual control over what gets pasted where — this is the recommended approach for this entire training. Claude Code, which works directly inside your project files, is better suited for later, once you're comfortable reading Flutter code quickly and want a faster workflow for established projects.</div>
+      <div class="faq-a">Use Claude chat when you're learning a concept, want to ask "why" something works a certain way, need help fixing an error message, or want feedback on a UI decision — anywhere a conversation helps more than a direct file edit. Use Claude Code when you already know what feature you want built and you'd rather it land directly in your project files without you copy-pasting. Most experienced Flutter+Claude workflows end up using both in the same session: Claude Code to build, Claude chat to understand and troubleshoot.</div>
     </div>
 
     <div class="faq-item" onclick="toggleFaq(this)">
@@ -1348,8 +1452,6 @@ flutter run</code></pre>
       <div class="faq-a">No — and that's by design for this training. Your actual job is to read Flutter code confidently enough to understand what Claude generates, recognize when something looks wrong, and describe clearly what change you want next. Memorizing syntax becomes useful later as you get more hands-on practice, but it is not a prerequisite for being productive starting today.</div>
     </div>
   </div>
-
-  <div id="panel-root"></div>
 </main>
 
 <footer>
