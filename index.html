@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flutter Foundations — Koenig Solutions × RR Skillverse</title>
+<style>
+:root{
+  --bg:#0d1117; --bg2:#11161d; --card:#161b22; --border:#26303d; --border-soft:#1d2530;
+  --text:#e6edf3; --text-dim:#9da7b3; --text-faint:#6b7480;
+  --teal:#00c2e0; --teal-deep:#0082A0; --teal-glow:rgba(0,194,224,0.12);
+  --green:#3fb950; --amber:#d29922; --red:#f85149; --purple:#a371f7;
+  --radius:10px; --maxw:980px;
+  --code-bg:#0a0e14;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.65; font-size:16px;
+}
+a{color:var(--teal); text-decoration:none;}
+a:hover{text-decoration:underline;}
+code{
+  font-family:"SF Mono",Consolas,"Courier New",monospace;
+  background:var(--code-bg); color:#7ee787; padding:2px 6px; border-radius:4px; font-size:0.88em;
+}
+pre{
+  background:var(--code-bg); border:1px solid var(--border-soft); border-radius:var(--radius);
+  padding:14px 16px; overflow-x:auto; font-family:"SF Mono",Consolas,"Courier New",monospace;
+  font-size:13.5px; line-height:1.6; margin:14px 0; position:relative;
+}
+pre code{background:none; padding:0; color:#c9d1d9;}
+.kw{color:#ff7b72;} .cls{color:#79c0ff;} .str{color:#a5d6ff;} .cmt{color:#6e7681;} .fn{color:#d2a8ff;}
+
+/* ===== Header ===== */
+header{
+  background:linear-gradient(180deg, #0f141b 0%, var(--bg) 100%);
+  border-bottom:1px solid var(--border-soft);
+  padding:28px 24px 0;
+  position:sticky; top:0; z-index:100;
+}
+.header-inner{max-width:var(--maxw); margin:0 auto;}
+.brand-row{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:18px;}
+.brand-left{display:flex; align-items:center; gap:12px;}
+.logo-mark{
+  width:40px; height:40px; border-radius:10px;
+  background:linear-gradient(135deg, var(--teal) 0%, var(--teal-deep) 100%);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:18px; color:#001318; flex-shrink:0;
+}
+.brand-title{font-size:15px; font-weight:600; color:var(--text); letter-spacing:0.2px;}
+.brand-sub{font-size:12.5px; color:var(--text-faint);}
+.koenig-badge{
+  font-size:11.5px; color:var(--text-dim); border:1px solid var(--border);
+  padding:5px 12px; border-radius:20px; white-space:nowrap;
+}
+h1.page-title{font-size:28px; font-weight:700; margin-bottom:6px; letter-spacing:-0.3px;}
+.page-subtitle{font-size:15px; color:var(--text-dim); margin-bottom:22px; max-width:640px;}
+
+/* ===== Tab nav ===== */
+.tabnav{
+  display:flex; gap:4px; overflow-x:auto; padding-bottom:0;
+  scrollbar-width:none; -ms-overflow-style:none;
+}
+.tabnav::-webkit-scrollbar{display:none;}
+.tabnav button{
+  background:none; border:none; color:var(--text-dim); font-size:13.5px; font-weight:500;
+  padding:12px 16px; cursor:pointer; white-space:nowrap; border-bottom:2px solid transparent;
+  transition:color .15s, border-color .15s; font-family:inherit;
+}
+.tabnav button:hover{color:var(--text);}
+.tabnav button.active{color:var(--teal); border-bottom-color:var(--teal);}
+
+/* ===== Main content ===== */
+main{max-width:var(--maxw); margin:0 auto; padding:36px 24px 60px;}
+.tabpanel{display:none;}
+.tabpanel.active{display:block; animation:fadein .25s ease;}
+@keyframes fadein{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);}}
+
+h2{font-size:22px; font-weight:700; margin:38px 0 14px; letter-spacing:-0.2px;}
+h2:first-child{margin-top:0;}
+h3{font-size:17px; font-weight:600; margin:24px 0 10px; color:var(--text);}
+p{margin-bottom:14px; color:#c5ccd4;}
+p.lead{font-size:17px; color:var(--text); margin-bottom:20px;}
+ul,ol{margin:10px 0 16px 22px; color:#c5ccd4;}
+li{margin-bottom:8px;}
+strong{color:var(--text); font-weight:600;}
+em.analogy-tag{color:var(--purple); font-style:normal; font-weight:600; font-size:12.5px; text-transform:uppercase; letter-spacing:0.4px;}
+
+.card{
+  background:var(--card); border:1px solid var(--border-soft); border-radius:var(--radius);
+  padding:18px 20px; margin:16px 0;
+}
+.card.accent{border-left:3px solid var(--teal);}
+.card.warn{border-left:3px solid var(--amber);}
+.card.danger{border-left:3px solid var(--red);}
+.card.success{border-left:3px solid var(--green);}
+.card.purple{border-left:3px solid var(--purple);}
+.card h4{font-size:13px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-faint); margin-bottom:8px; font-weight:600;}
+
+.analogy-box{
+  background:var(--teal-glow); border:1px solid rgba(0,194,224,0.25); border-radius:var(--radius);
+  padding:16px 18px; margin:18px 0;
+}
+.analogy-box p{color:var(--text); margin-bottom:0;}
+.analogy-box p:not(:last-child){margin-bottom:10px;}
+
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:16px 0;}
+.grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin:16px 0;}
+@media (max-width:720px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+table{width:100%; border-collapse:collapse; margin:16px 0; font-size:14px;}
+th{text-align:left; color:var(--text-faint); font-size:12px; text-transform:uppercase; letter-spacing:0.4px; padding:9px 12px; border-bottom:1px solid var(--border);}
+td{padding:10px 12px; border-bottom:1px solid var(--border-soft); color:#c5ccd4; vertical-align:top;}
+td:first-child{color:var(--text); font-weight:600;}
+
+.pill{display:inline-block; font-size:11.5px; padding:3px 10px; border-radius:20px; font-weight:600; margin:2px 4px 2px 0;}
+.pill-teal{background:rgba(0,194,224,0.15); color:var(--teal);}
+.pill-green{background:rgba(63,185,80,0.15); color:var(--green);}
+.pill-amber{background:rgba(210,153,34,0.15); color:var(--amber);}
+.pill-red{background:rgba(248,81,73,0.15); color:var(--red);}
+.pill-purple{background:rgba(163,113,247,0.15); color:var(--purple);}
+
+/* ===== Copy-able prompt boxes ===== */
+.prompt-box{
+  background:#15101f; border:1px solid rgba(163,113,247,0.3); border-radius:var(--radius);
+  padding:16px 18px; margin:14px 0; position:relative;
+}
+.prompt-label{font-size:11.5px; color:var(--purple); text-transform:uppercase; letter-spacing:0.5px; font-weight:700; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;}
+.prompt-text{font-size:14px; color:#e8e0f7; line-height:1.65; font-style:italic; white-space:pre-wrap;}
+.copy-btn{
+  background:rgba(163,113,247,0.15); border:1px solid rgba(163,113,247,0.4); color:var(--purple);
+  font-size:12px; padding:5px 12px; border-radius:6px; cursor:pointer; font-weight:600;
+  font-family:inherit; transition:background .15s;
+}
+.copy-btn:hover{background:rgba(163,113,247,0.28);}
+.copy-btn.copied{background:rgba(63,185,80,0.2); color:var(--green); border-color:rgba(63,185,80,0.4);}
+
+.expect-box{
+  background:rgba(63,185,80,0.07); border:1px solid rgba(63,185,80,0.25); border-radius:var(--radius);
+  padding:14px 18px; margin:10px 0 22px;
+}
+.expect-box .expect-label{font-size:11.5px; color:var(--green); text-transform:uppercase; letter-spacing:0.5px; font-weight:700; margin-bottom:6px;}
+.expect-box p{margin-bottom:0; color:#bcd9c0;}
+
+.step-flow{margin:20px 0;}
+.step{display:flex; gap:16px; margin-bottom:4px;}
+.step-rail{display:flex; flex-direction:column; align-items:center; flex-shrink:0;}
+.step-dot{
+  width:30px; height:30px; border-radius:50%; background:var(--card); border:2px solid var(--teal);
+  display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:var(--teal); flex-shrink:0;
+}
+.step-dot.done{background:var(--teal); color:#001318;}
+.step-line{width:2px; flex:1; background:var(--border); margin:4px 0; min-height:20px;}
+.step-body{padding-bottom:28px; flex:1;}
+.step-title{font-size:15.5px; font-weight:600; color:var(--text); margin-bottom:4px;}
+.step-desc{font-size:14px; color:var(--text-dim);}
+
+.faq-item{border-bottom:1px solid var(--border-soft);}
+.faq-q{
+  padding:16px 0; cursor:pointer; display:flex; justify-content:space-between; align-items:center;
+  font-size:15px; font-weight:600; color:var(--text); user-select:none;
+}
+.faq-q:hover{color:var(--teal);}
+.faq-arrow{transition:transform .2s; color:var(--text-faint); font-size:14px;}
+.faq-item.open .faq-arrow{transform:rotate(180deg); color:var(--teal);}
+.faq-a{display:none; padding:0 0 18px; color:#c5ccd4; font-size:14.5px; line-height:1.7;}
+.faq-item.open .faq-a{display:block;}
+
+.toc-strip{
+  display:flex; gap:8px; flex-wrap:wrap; margin:18px 0 28px; padding:14px; background:var(--card);
+  border:1px solid var(--border-soft); border-radius:var(--radius);
+}
+.toc-strip a{
+  font-size:12.5px; color:var(--text-dim); padding:5px 11px; border:1px solid var(--border); border-radius:16px;
+}
+.toc-strip a:hover{color:var(--teal); border-color:var(--teal); text-decoration:none;}
+
+.cmd-table-row{display:flex; gap:14px; padding:10px 0; border-bottom:1px solid var(--border-soft); align-items:flex-start;}
+.cmd-table-row code{min-width:200px; flex-shrink:0;}
+.cmd-table-row .cmd-desc{font-size:13.5px; color:var(--text-dim); padding-top:2px;}
+
+.badge-os{display:inline-flex; gap:6px; margin-bottom:16px;}
+.badge-os span{
+  font-size:12px; padding:5px 13px; border-radius:16px; border:1px solid var(--border); color:var(--text-dim); cursor:pointer;
+}
+.badge-os span.active{background:var(--teal-glow); border-color:var(--teal); color:var(--teal);}
+.os-block{display:none;}
+.os-block.active{display:block;}
+
+/* ===== Footer ===== */
+footer{
+  border-top:1px solid var(--border-soft); margin-top:40px; padding:36px 24px;
+  background:var(--bg2);
+}
+.footer-inner{max-width:var(--maxw); margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;}
+.footer-brand{font-size:13.5px; color:var(--text-dim);}
+.footer-brand strong{color:var(--text);}
+.footer-links{display:flex; gap:18px; font-size:13px;}
+.footer-links a{color:var(--text-faint);}
+.footer-links a:hover{color:var(--teal);}
+.footer-bottom{text-align:center; font-size:12px; color:var(--text-faint); margin-top:20px; padding-top:20px; border-top:1px solid var(--border-soft); max-width:var(--maxw); margin-left:auto; margin-right:auto;}
+
+@media (max-width:600px){
+  h1.page-title{font-size:22px;}
+  .brand-title{font-size:13.5px;}
+  main{padding:24px 16px 50px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand-row">
+      <div class="brand-left">
+        <div class="logo-mark">RR</div>
+        <div>
+          <div class="brand-title">Flutter Foundations — Day 4</div>
+          <div class="brand-sub">Koenig Solutions Trainer Series</div>
+        </div>
+      </div>
+      <div class="koenig-badge">Koenig Solutions × RR Skillverse</div>
+    </div>
+    <h1 class="page-title">Getting Started Without Getting Lost</h1>
+    <p class="page-subtitle">A hands-on Flutter guide built for students with zero Flutter background — using Claude as your AI pair-programmer from day one.</p>
+    <nav class="tabnav" id="tabnav">
+      <button data-tab="intro" class="active">Why Flutter</button>
+      <button data-tab="howworks">How Flutter Works</button>
+      <button data-tab="install">Installation</button>
+      <button data-tab="syntax">Reading the Code</button>
+      <button data-tab="handson">Hands-On with Claude</button>
+      <button data-tab="database">Working with Data</button>
+      <button data-tab="capstone">Capstone Project</button>
+      <button data-tab="discuss">Questions &amp; Discussion</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- TAB PANELS GET INSERTED HERE -->
+
+  <div class="tabpanel active" id="tab-intro">
+    <div class="toc-strip">
+      <a href="#what-is-flutter">What is Flutter?</a>
+      <a href="#what-is-dart">What is Dart?</a>
+      <a href="#why-flutter">Why this choice</a>
+      <a href="#one-codebase">One codebase, many apps</a>
+      <a href="#vs-others">Flutter vs the alternatives</a>
+    </div>
+
+    <h2 id="what-is-flutter">What exactly is Flutter?</h2>
+    <p class="lead">Flutter is a free, open-source toolkit made by Google for building apps. You write your app once, in one language, and Flutter turns that into a real Android app, a real iOS app, a real Windows app, a real website — all from the same source code.</p>
+
+    <div class="analogy-box">
+      <p><em class="analogy-tag">Analogy</em></p>
+      <p>Think of Flutter like a tailor who can stitch the exact same design of shirt in three different fabrics — cotton for summer, wool for winter, silk for a wedding — without you having to design the shirt three separate times. You design it once. Flutter decides how to "stitch" it for each platform (Android, iOS, Windows) using that platform's native materials underneath.</p>
+    </div>
+
+    <p>What makes Flutter unusual is <strong>how</strong> it does this. Most cross-platform tools (like older hybrid app frameworks) wrap a website inside an app shell, which always feels a bit sluggish and "not quite native." Flutter does something different: it draws every single pixel on the screen itself, using its own rendering engine called <strong>Skia</strong> (and on newer versions, <strong>Impeller</strong>). It doesn't ask Android or iOS to draw the buttons for it — it draws them itself, which is why a Flutter app on Android and the same app on iPhone look pixel-for-pixel identical, and why it feels just as smooth as a native app.</p>
+
+    <h2 id="what-is-dart">What is Dart, and why does Flutter use it?</h2>
+    <p>Dart is the programming language you'll actually type. It was also built by Google, specifically designed to pair with Flutter. If you've never written Dart before, here's the important reassurance: <strong>Dart is not Python, even though some of the syntax looks friendly like Python.</strong> Dart is a strongly-typed, compiled language — closer in spirit to Java or TypeScript than to Python. You'll see semicolons, curly braces, and explicit types, just written in a clean, modern style.</p>
+
+    <div class="analogy-box">
+      <p><em class="analogy-tag">Analogy</em></p>
+      <p>If Flutter is the toolkit (the hammer, the saw, the blueprint system), Dart is the language those blueprints are written in. You can't separate them in practice — learning Flutter always means learning a bit of Dart along the way, the same way learning ASP.NET always means knowing some C#.</p>
+    </div>
+
+    <h2 id="why-flutter">Why is Flutter a good choice for a project like Khan Chacha or The Soft Grid?</h2>
+    <p>For a real business — a restaurant ordering app, a retail/e-commerce storefront, a small SaaS tool — the question is almost never "which language is technically superior." It's "what gets us a working app on both Android and iPhone, fastest, with the smallest team, without it looking cheap." Flutter wins that question for most small-to-mid businesses for four concrete reasons:</p>
+
+    <div class="grid2">
+      <div class="card accent">
+        <h4>One team, one codebase</h4>
+        <p style="margin-bottom:0">You don't need a separate Android developer and a separate iOS developer. One Flutter developer ships both. For a small business, that alone can cut development cost by close to half.</p>
+      </div>
+      <div class="card accent">
+        <h4>It looks and feels premium</h4>
+        <p style="margin-bottom:0">Because Flutter draws its own UI, animations, transitions, and custom designs (like a branded ordering flow for Khan Chacha) look polished on both platforms without the "this was clearly built cheap" feeling some hybrid apps have.</p>
+      </div>
+      <div class="card accent">
+        <h4>Fast iteration during development</h4>
+        <p style="margin-bottom:0">Hot reload (which you'll see in the Installation tab) means a developer can change a button's color and see it update on the phone in under a second — without restarting the whole app. This dramatically shortens the build-test-fix loop.</p>
+      </div>
+      <div class="card accent">
+        <h4>Strong AI tooling support</h4>
+        <p style="margin-bottom:0">Because Flutter's code structure is predictable and well-documented, tools like Claude are excellent at generating, explaining, and modifying Flutter UI — which is exactly what today's session is built around.</p>
+      </div>
+    </div>
+
+    <h2 id="one-codebase">"One codebase, both apps" — what does that actually mean?</h2>
+    <p>When you ran <code>flutter create</code> earlier and saw folders named <code>android</code>, <code>ios</code>, <code>windows</code> appear, that confused a lot of people the first time — including your trainer when he started. Here is the clean way to think about it:</p>
+
+    <div class="analogy-box">
+      <p><em class="analogy-tag">Analogy</em></p>
+      <p>Imagine you wrote one recipe for a cake. To actually bake it, you still need an oven — and ovens come in different brands and plug types. The <code>android/</code> folder is essentially a tiny "Android-shaped plug adapter" that lets your one recipe (your Dart code in <code>lib/</code>) run inside an Android phone's oven. The <code>ios/</code> folder is the same adapter, shaped for Apple's oven instead. You never touch the adapters. You only ever touch the recipe.</p>
+    </div>
+
+    <p>In practice this means: <strong>you will write 100% of your code inside the <code>lib/</code> folder.</strong> The other platform folders exist quietly in the background, and Flutter uses them automatically the moment you ask it to build a real Android or iOS app.</p>
+
+    <h2 id="vs-others">How Flutter compares to the alternatives</h2>
+    <table>
+      <tr><th>Approach</th><th>How the UI is drawn</th><th>Typical feel</th><th>Code shared across platforms</th></tr>
+      <tr><td>Flutter</td><td>Flutter draws every pixel itself (Skia/Impeller engine)</td><td>Consistently smooth, near-native, identical on both platforms</td><td>~95%</td></tr>
+      <tr><td>React Native</td><td>Bridges to the platform's real native UI components</td><td>Good, but can feel slightly different on Android vs iPhone</td><td>~80%</td></tr>
+      <tr><td>Native (Kotlin + Swift)</td><td>The operating system draws everything directly</td><td>Best possible performance</td><td>0% — every screen written twice</td></tr>
+    </table>
+
+    <div class="card warn">
+      <h4>Where Flutter is not the best fit</h4>
+      <p style="margin-bottom:0">If an app needs extremely deep integration with platform-specific hardware (certain AR/VR features, very specialized camera processing) or must shave off every last millisecond of performance, native development can still win. But for the vast majority of business apps — ordering systems, dashboards, internal tools, e-commerce — Flutter is the pragmatic, fast choice.</p>
+    </div>
+  </div>
+
+  <div class="tabpanel" id="tab-howworks">
+    <div class="toc-strip">
+      <a href="#widget-idea">Everything is a widget</a>
+      <a href="#cli-explained">The flutter CLI</a>
+      <a href="#emulator-explained">What is an emulator?</a>
+      <a href="#folder-structure">Folder structure</a>
+      <a href="#run-flow">What happens when you hit Run</a>
+      <a href="#vscode-vs-studio">VS Code vs Android Studio</a>
+    </div>
+
+    <h2 id="widget-idea">The one idea that unlocks everything: "Everything is a widget"</h2>
+    <p class="lead">In Flutter, literally every visible thing on screen — and many invisible structural things too — is called a <strong>widget</strong>. A button is a widget. A row of text is a widget. The spacing around a button is a widget. Even the whole screen is one big widget made up of smaller widgets nested inside each other.</p>
+
+    <div class="analogy-box">
+      <p><em class="analogy-tag">Analogy</em></p>
+      <p>Think of widgets like Russian nesting dolls (Matryoshka). The outermost doll is your whole screen. Inside it sits a slightly smaller doll (say, a list). Inside that sits an even smaller doll (one card in the list). Inside that, an even smaller doll (the text inside the card). When Claude generates Flutter code for you, what it's really doing is describing this entire nested-doll structure in one block of code — that's why the code often looks deeply indented, with brackets inside brackets inside brackets. It's not messy code; it's the nesting being made visible.</p>
+    </div>
+
+    <p>There are two flavors of widgets you'll meet constantly:</p>
+    <div class="grid2">
+      <div class="card success">
+        <h4>StatelessWidget</h4>
+        <p style="margin-bottom:0">Shows information and never changes on its own. A name tag is a good comparison — once written, it doesn't update itself. Use this for things like a product card that just displays data it was given.</p>
+      </div>
+      <div class="card amber">
+        <h4>StatefulWidget</h4>
+        <p style="margin-bottom:0">Has memory and can redraw itself when something changes. A live scoreboard is a good comparison — the number on it changes as the game progresses. Use this for filters, counters, forms — anything the user interacts with that needs to visually update.</p>
+      </div>
+    </div>
+
+    <h2 id="cli-explained">What is the Flutter CLI, and what can it actually do?</h2>
+    <p>CLI stands for Command Line Interface — it's simply the <code>flutter</code> word you type into a terminal followed by an instruction. You already met <code>flutter create</code> and <code>flutter run</code>. Here is the fuller toolbox, because there's quite a lot more it can do beyond just creating a project:</p>
+
+    <div class="card">
+      <div class="cmd-table-row"><code>flutter create app_name</code><div class="cmd-desc">Scaffolds a brand-new project folder with everything needed to get started.</div></div>
+      <div class="cmd-table-row"><code>flutter run</code><div class="cmd-desc">Builds your app and launches it on whichever device or emulator is currently connected.</div></div>
+      <div class="cmd-table-row"><code>flutter pub get</code><div class="cmd-desc">Downloads any packages (third-party code libraries) listed in your project's dependency file.</div></div>
+      <div class="cmd-table-row"><code>flutter pub add package_name</code><div class="cmd-desc">Adds a new package to your project automatically — for example, a package for talking to a database.</div></div>
+      <div class="cmd-table-row"><code>flutter doctor</code><div class="cmd-desc">A full health check of your entire setup — tells you exactly what's missing or misconfigured.</div></div>
+      <div class="cmd-table-row"><code>flutter devices</code><div class="cmd-desc">Lists every device or emulator Flutter can currently see and could run your app on.</div></div>
+      <div class="cmd-table-row"><code>flutter emulators</code><div class="cmd-desc">Lists the virtual Android phones you've created, so you can start one without opening Android Studio.</div></div>
+      <div class="cmd-table-row"><code>flutter clean</code><div class="cmd-desc">Deletes old build files. This single command quietly fixes a large share of confusing build errors.</div></div>
+      <div class="cmd-table-row"><code>flutter build apk</code><div class="cmd-desc">Produces a real, installable Android app file (.apk) — the final product you'd share or publish.</div></div>
+      <div class="cmd-table-row"><code>flutter analyze</code><div class="cmd-desc">Scans your code for mistakes and bad practices before you even run it — like a spellchecker for code.</div></div>
+      <div class="cmd-table-row"><code>flutter test</code><div class="cmd-desc">Runs any automated tests you've written, to confirm your app behaves the way you expect.</div></div>
+    </div>
+
+    <h2 id="emulator-explained">What is an emulator, in plain terms?</h2>
+    <p>An emulator is a fully virtual phone that runs as a window on your laptop. It isn't a picture or a video of a phone — it's an actual simulated Android device, with its own simulated screen, storage, and operating system, running entirely in software on your PC.</p>
+
+    <div class="analogy-box">
+      <p><em class="analogy-tag">Analogy</em></p>
+      <p>It's similar to how a flight simulator lets a pilot practice flying without a real plane — except here, it's a phone simulator, and it behaves close enough to a real device that testing your app on it is a trustworthy substitute for testing on an actual phone, most of the time.</p>
+    </div>
+
+    <p>You create and manage these emulators using Android Studio's built-in <strong>AVD Manager</strong> (Android Virtual Device Manager). Once created, you don't need to keep opening Android Studio — you can launch that same emulator directly from a terminal or from VS Code afterward.</p>
+
+    <div class="card warn">
+      <h4>"But I'm not building for Android specifically — why do I need this?"</h4>
+      <p style="margin-bottom:0">Because on a Windows laptop, there is no way to preview an iPhone app live (Apple only allows their iOS Simulator to run on a Mac). So even when your final target is iOS, or both platforms, the Android emulator becomes your everyday "see it live" tool during development on Windows. The Dart code you write is the same regardless of which emulator you're previewing it on — the visual result is what changes per platform, not your source code.</p>
+    </div>
+
+    <h2 id="folder-structure">The folder structure, explained without jargon</h2>
+    <p>When you ran <code>flutter create</code>, here's everything that appeared, and which of it you'll actually need to think about:</p>
+
+    <pre><code><span class="cmt">my_app/</span>
+├── <strong>lib/</strong>              <span class="cmt">← YOUR CODE LIVES HERE. Almost everything you do happens in this folder.</span>
+│   └── main.dart       <span class="cmt">← the starting point of your app</span>
+├── android/            <span class="cmt">← auto-generated. You will basically never open this.</span>
+├── ios/                <span class="cmt">← auto-generated. You will basically never open this.</span>
+├── windows/, web/, etc. <span class="cmt">← same idea — generated wrappers for each platform.</span>
+├── test/               <span class="cmt">← where automated tests live, if you write any.</span>
+├── <strong>pubspec.yaml</strong>      <span class="cmt">← lists which third-party packages your app uses.</span>
+└── pubspec.lock        <span class="cmt">← records the exact package versions actually installed.</span></code></pre>
+
+    <div class="card success">
+      <h4>The one rule that removes most of the confusion</h4>
+      <p style="margin-bottom:0">If a folder's name matches an operating system (android, ios, windows, macos, linux, web) — it's generated scaffolding, and you can ignore it completely. Everything you write by hand goes inside <code>lib/</code>. That single rule resolves almost all the "which folder do I touch" confusion.</p>
+    </div>
+
+    <h3>What's inside <code>pubspec.yaml</code>?</h3>
+    <p>This file is your project's master list of dependencies and basic metadata — its name, version, and which external packages it relies on. You'll edit this file by hand occasionally, especially when adding a new capability (like talking to a database).</p>
+    <pre><code>name: my_app
+description: A maintenance tracking app
+
+dependencies:
+  flutter:
+    sdk: flutter
+  <span class="str">http</span>: ^1.2.0        <span class="cmt"># lets the app talk to web APIs</span>
+  <span class="str">intl</span>: ^0.19.0       <span class="cmt"># lets the app format dates nicely</span></code></pre>
+    <p>After you add a new line here, you run <code>flutter pub get</code> to actually download it — the same way you'd restore packages in any other ecosystem.</p>
+
+    <h2 id="run-flow">What actually happens the moment you click Run</h2>
+    <div class="step-flow">
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">1</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Your Dart code gets compiled</div>
+          <div class="step-desc">Everything inside <code>lib/</code> is translated from human-readable Dart into a form the machine can run quickly.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">2</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Flutter's rendering engine gets attached to the platform shell</div>
+          <div class="step-desc">The "Android adapter" folder from earlier gets combined with Flutter's drawing engine, so your app knows how to actually paint pixels on that specific device.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">3</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">A real installable app file gets produced</div>
+          <div class="step-desc">Everything bundles into one file — on Android this is an .apk — ready to be installed on a device.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">4</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">That file gets pushed onto the emulator and launched</div>
+          <div class="step-desc">Just like installing any app — except it's happening automatically, onto your virtual phone, in the background.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">5</div></div>
+        <div class="step-body">
+          <div class="step-title">Your first screen appears, and hot reload takes over</div>
+          <div class="step-desc">From this point on, every time you save a code change, Flutter quietly injects just that change into the running app — without redoing steps 1 through 4. That's why changes appear in under a second.</div>
+        </div>
+      </div>
+    </div>
+
+    <h2 id="vscode-vs-studio">VS Code vs Android Studio — when to use which</h2>
+    <div class="grid2">
+      <div class="card accent">
+        <h4>Visual Studio Code</h4>
+        <p>Lightweight, fast, and what you'll use for actually writing your Dart code day to day. With the Flutter extension installed, it gives you code completion, inline errors, a Run/Debug button, and a device picker. This is where 90% of your time will be spent.</p>
+        <p style="margin-bottom:0"><strong>Use it for:</strong> writing code, running the app, hot reload, debugging.</p>
+      </div>
+      <div class="card purple">
+        <h4>Android Studio</h4>
+        <p>Heavier, originally built for native Android development. You mainly go here for two specific jobs: the <strong>AVD Manager</strong> (to create and manage emulators) and the <strong>SDK Manager</strong> (to install Android SDK components, including the command-line tools you needed during installation).</p>
+        <p style="margin-bottom:0"><strong>Use it for:</strong> one-time setup, creating emulators, managing SDK versions. Not for daily coding.</p>
+      </div>
+    </div>
+
+    <div class="card warn">
+      <h4>Important: there's no "project file" lock-in</h4>
+      <p style="margin-bottom:0">Unlike some development environments where opening a project in a different tool means a different project format, a Flutter project is just a normal folder. Opening it in VS Code or in Android Studio is purely a choice of which window you want to look at it through — the underlying project doesn't change or get converted.</p>
+    </div>
+  </div>
+
+  <div class="tabpanel" id="tab-install">
+    <h2>Installation guide — Windows, macOS, and Linux</h2>
+    <p class="lead">Follow the steps for your operating system in order. Don't skip ahead even if a step looks optional — each step depends on the previous one being correctly finished.</p>
+
+    <div class="badge-os">
+      <span class="active" onclick="switchOS('install','win',this)">Windows</span>
+      <span onclick="switchOS('install','mac',this)">macOS</span>
+      <span onclick="switchOS('install','linux',this)">Linux</span>
+    </div>
+
+    <!-- WINDOWS -->
+    <div class="os-block active" data-group="install" data-os="win">
+      <div class="step-flow">
+        <div class="step">
+          <div class="step-rail"><div class="step-dot">1</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Download and extract the Flutter SDK</div>
+            <div class="step-desc">
+              Go to <a href="https://docs.flutter.dev/get-started/install/windows" target="_blank">docs.flutter.dev/get-started/install/windows</a> and download the latest stable SDK as a zip file. Extract it to a simple path with <strong>no spaces and no special characters</strong>:
+              <pre><code>C:\flutter</code></pre>
+              <strong>Important:</strong> do not extract it inside <code>C:\Program Files\</code> — the space in that folder name will break Flutter's tools later. Right-click the downloaded zip and choose "Extract All," then point it to <code>C:\</code> directly so the result is exactly <code>C:\flutter</code>.
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-rail"><div class="step-dot">2</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Add Flutter to your system PATH</div>
+            <div class="step-desc">
+              This step tells Windows "whenever someone types <code>flutter</code> in any terminal window, look inside this folder." Without it, your terminal won't recognize the word <code>flutter</code> at all.
+              <ol>
+                <li>Click the Windows search bar and type <strong>"Edit the system environment variables"</strong> — click the matching result.</li>
+                <li>In the window that opens, click the button labeled <strong>Environment Variables</strong>.</li>
+                <li>In the top section labeled <strong>User variables</strong>, find the row named <strong>Path</strong>, select it, and click <strong>Edit</strong>.</li>
+                <li>Click <strong>New</strong>, and type exactly: <code>C:\flutter\bin</code></li>
+                <li>Click OK on every window to save and close them all.</li>
+                <li><strong>Close any terminal windows you already had open</strong>, then open a brand new one — the change only applies to terminals opened after this point.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-rail"><div class="step-dot">3</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Verify Flutter is recognized</div>
+            <div class="step-desc">
+              In your new terminal window, type:
+              <pre><code>flutter --version</code></pre>
+              <div class="expect-box">
+                <div class="expect-label">What you should see</div>
+                <p>A block of text showing a Flutter version number, a Dart version number, and a few lines about "Framework" and "Engine." If instead you see <code>'flutter' is not recognized</code>, the PATH step above didn't save correctly — redo step 2 carefully.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-rail"><div class="step-dot">4</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Install Android Studio</div>
+            <div class="step-desc">
+              Download it from <a href="https://developer.android.com/studio" target="_blank">developer.android.com/studio</a> and run the installer. Keep all the default options checked during setup — these include the Android SDK, SDK Platform, and Android Virtual Device support, all of which Flutter needs later.
+              <p style="margin-top:10px">After installation finishes and Android Studio opens for the first time, you need one more piece that is <strong>not</strong> installed by default:</p>
+              <ol>
+                <li>On the Android Studio welcome screen, click <strong>More Actions</strong>, then choose <strong>SDK Manager</strong>.</li>
+                <li>Click the tab labeled <strong>SDK Tools</strong> (not "SDK Platforms" — that's a different tab).</li>
+                <li>Find and check the box for <strong>Android SDK Command-line Tools (latest)</strong>.</li>
+                <li>Click <strong>Apply</strong>, then <strong>OK</strong>, and let it download — this is roughly 150–200MB.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-rail"><div class="step-dot">5</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Accept the Android licenses</div>
+            <div class="step-desc">
+              Back in your terminal, type:
+              <pre><code>flutter doctor --android-licenses</code></pre>
+              It will show you several license agreements one at a time. For each one, type the letter <code>y</code> and press Enter. This usually repeats 5 to 7 times — keep typing <code>y</code> and Enter until it stops asking and returns you to a normal prompt.
+              <div class="expect-box">
+                <div class="expect-label">If you get stuck here</div>
+                <p>If it says <code>Android sdkmanager not found</code>, that means step 4's "Command-line Tools" install either didn't finish or wasn't checked. Go back into the SDK Manager and confirm that checkbox is ticked, then try this command again.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-rail"><div class="step-dot">6</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Install Visual Studio Code and the Flutter extension</div>
+            <div class="step-desc">
+              Download VS Code from <a href="https://code.visualstudio.com" target="_blank">code.visualstudio.com</a> and install it normally. Once it opens:
+              <ol>
+                <li>Click the square icon on the far-left sidebar that looks like four small blocks (this is the Extensions panel), or press <code>Ctrl+Shift+X</code>.</li>
+                <li>Type <strong>Flutter</strong> into the search box at the top.</li>
+                <li>Click <strong>Install</strong> on the extension simply named "Flutter" (published by the Dart Team). This automatically installs the Dart extension alongside it — you don't need to install that one separately.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-rail"><div class="step-dot">7</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Run the full health check</div>
+            <div class="step-desc">
+              <pre><code>flutter doctor</code></pre>
+              <div class="expect-box">
+                <div class="expect-label">What you should see</div>
+                <p>A list of checks, most marked with a green checkmark. You specifically need green checks next to: <strong>Flutter</strong>, <strong>Android toolchain</strong>, and <strong>VS Code</strong>. Warnings about Chrome or a connected physical device can be safely ignored for emulator-based work.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-rail"><div class="step-dot">8</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Create your first virtual phone (emulator)</div>
+            <div class="step-desc">
+              In Android Studio, click the small phone-and-arrow icon in the top toolbar labeled <strong>Device Manager</strong> (or find it under the "More Actions" menu on the welcome screen). Click <strong>Create Device</strong>, choose a phone like <strong>Pixel 8</strong>, choose a system image when prompted (pick the one marked "Recommended," and let it download if needed), then click <strong>Finish</strong>.
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-rail"><div class="step-dot">9</div></div>
+          <div class="step-body">
+            <div class="step-title">Create your first project and run it</div>
+            <div class="step-desc">
+              In your terminal, navigate to a folder where you want your projects to live, then run:
+              <pre><code>flutter create maintenance_app
+cd maintenance_app
+flutter run</code></pre>
+              <div class="expect-box">
+                <div class="expect-label">What you should see</div>
+                <p>The first run takes around 60–90 seconds because it's compiling everything for the first time. Your emulator (started automatically if it wasn't already running, or you may need to start it manually from Android Studio first) will show a simple app with a number and a "+" button — this is Flutter's built-in starter app, proof everything is correctly wired together.</p>
+              </div>
+              <p style="margin-top:10px">While it's running, your terminal is now listening for single-key commands. Try typing the letter <code>r</code> and pressing Enter — this triggers hot reload. Type <code>q</code> to quit when you're done exploring.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAC -->
+    <div class="os-block" data-group="install" data-os="mac">
+      <div class="step-flow">
+        <div class="step">
+          <div class="step-rail"><div class="step-dot">1</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Install Homebrew, if you don't already have it</div>
+            <div class="step-desc">
+              Homebrew is a package manager that makes installing developer tools on a Mac much simpler. Open the Terminal app and paste this, then press Enter:
+              <pre><code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code></pre>
+              If a message appears saying Homebrew is already installed, you can skip straight to step 2.
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-rail"><div class="step-dot">2</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Install Flutter</div>
+            <div class="step-desc">
+              <pre><code>brew install --cask flutter</code></pre>
+              This installs Flutter and automatically sets up the PATH for you — a notable convenience compared to Windows. Verify it worked:
+              <pre><code>flutter --version</code></pre>
+              <div class="expect-box">
+                <div class="expect-label">What you should see</div>
+                <p>Version numbers for Flutter and Dart, similar to the Windows output. If the command isn't recognized, close Terminal completely and reopen it, then try again.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-rail"><div class="step-dot">3</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Install Xcode (only needed if you'll preview on the iOS Simulator)</div>
+            <div class="step-desc">
+              Open the Mac App Store, search for <strong>Xcode</strong>, and install it — this is a large download (around 12GB) so it can take a while. Once installed, run these two commands in Terminal:
+              <pre><code>sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+sudo xcodebuild -runFirstLaunch</code></pre>
+              <div class="card warn" style="margin-top:10px">
+                <p style="margin-bottom:0">For today's training session, the Android emulator works perfectly well even on a Mac, and is simpler to set up. Treat Xcode as optional unless you specifically need to preview on an iPhone simulator.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-rail"><div class="step-dot">4</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Install Android Studio and accept licenses</div>
+            <div class="step-desc">
+              <pre><code>brew install --cask android-studio</code></pre>
+              Open Android Studio once it's installed, go to <strong>More Actions → SDK Manager → SDK Tools tab</strong>, check <strong>Android SDK Command-line Tools</strong>, and click Apply. Then in Terminal:
+              <pre><code>flutter doctor --android-licenses</code></pre>
+              Type <code>y</code> and Enter for each prompt until it finishes.
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-rail"><div class="step-dot">5</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Install VS Code and the Flutter extension</div>
+            <div class="step-desc">
+              <pre><code>brew install --cask visual-studio-code</code></pre>
+              Open VS Code, press <code>Cmd+Shift+X</code>, search for <strong>Flutter</strong>, and click Install.
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-rail"><div class="step-dot">6</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Run flutter doctor</div>
+            <div class="step-desc">
+              <pre><code>flutter doctor</code></pre>
+              <div class="expect-box">
+                <div class="expect-label">What you should see</div>
+                <p>Green checks next to Flutter, Android toolchain (or Xcode, if installed), and VS Code.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-rail"><div class="step-dot">7</div></div>
+          <div class="step-body">
+            <div class="step-title">Create and run your first project</div>
+            <div class="step-desc">
+              <pre><code>flutter create maintenance_app
+cd maintenance_app
+flutter run</code></pre>
+              <div class="expect-box">
+                <div class="expect-label">What you should see</div>
+                <p>The Flutter starter counter app launches inside your chosen emulator, after roughly a minute of first-time build work.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LINUX -->
+    <div class="os-block" data-group="install" data-os="linux">
+      <div class="step-flow">
+        <div class="step">
+          <div class="step-rail"><div class="step-dot">1</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Install required system libraries</div>
+            <div class="step-desc">
+              <pre><code>sudo apt-get update
+sudo apt-get install -y curl git unzip xz-utils zip libglu1-mesa</code></pre>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-rail"><div class="step-dot">2</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Download Flutter and add it to your PATH</div>
+            <div class="step-desc">
+              <pre><code>git clone https://github.com/flutter/flutter.git -b stable ~/flutter</code></pre>
+              Then open your shell configuration file (usually <code>~/.bashrc</code>) in a text editor and add this line at the very bottom:
+              <pre><code>export PATH="$PATH:$HOME/flutter/bin"</code></pre>
+              Save the file, then run <code>source ~/.bashrc</code> to apply the change immediately, or simply close and reopen your terminal.
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-rail"><div class="step-dot">3</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Install Android Studio and accept licenses</div>
+            <div class="step-desc">
+              Download the .tar.gz file from <a href="https://developer.android.com/studio" target="_blank">developer.android.com/studio</a>, extract it, then run the <code>studio.sh</code> file found inside its <code>bin/</code> folder to launch the setup wizard. Once it's done, open the SDK Manager from inside Android Studio, switch to the SDK Tools tab, and check <strong>Android SDK Command-line Tools</strong>. Then back in your terminal:
+              <pre><code>flutter doctor --android-licenses</code></pre>
+              Type <code>y</code> and Enter for each prompt.
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-rail"><div class="step-dot">4</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Install VS Code</div>
+            <div class="step-desc">
+              <pre><code>sudo snap install --classic code</code></pre>
+              Open VS Code, go to Extensions, search for <strong>Flutter</strong>, and install it.
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-rail"><div class="step-dot">5</div></div>
+          <div class="step-body">
+            <div class="step-title">Verify and run your first project</div>
+            <div class="step-desc">
+              <pre><code>flutter doctor</code></pre>
+              Once everything shows green, create and run your project:
+              <pre><code>flutter create maintenance_app
+cd maintenance_app
+flutter run</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Pre-class checklist</h2>
+    <p>Before your training session begins, confirm every one of these is true on your machine:</p>
+    <div class="card success">
+      <ul style="margin-bottom:0">
+        <li><code>flutter --version</code> returns a version number without errors</li>
+        <li><code>flutter doctor</code> shows no red errors next to Flutter or your chosen platform toolchain</li>
+        <li>The VS Code Flutter extension is installed and visible in your Extensions list</li>
+        <li>At least one emulator has been created and successfully boots up</li>
+        <li><code>flutter create test_app</code> followed by <code>flutter run</code> shows the default counter app on your emulator</li>
+        <li>While that app is running, pressing <code>r</code> in the terminal updates the app within a second or two (this confirms hot reload is working)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tabpanel" id="tab-syntax">
+    <h2>Reading Dart and Flutter code — what you're actually looking at</h2>
+    <p class="lead">You don't need to memorize how to write Dart from scratch. Your job during this training is to <strong>read and confidently modify</strong> what Claude generates for you. This page covers the patterns you'll see constantly, written plainly enough that the syntax stops feeling unfamiliar.</p>
+
+    <div class="card warn">
+      <h4>First, an important clarification</h4>
+      <p style="margin-bottom:0">Dart often gets compared to Python because both can look clean and readable. But Dart is not Python. Dart requires semicolons at the end of most lines, uses curly braces <code>{ }</code> to group code, and is strongly typed — meaning you usually declare what kind of value a variable holds. If you've seen any Java, C#, JavaScript, or TypeScript before, Dart will feel much closer to those.</p>
+    </div>
+
+    <h2>The entry point: every Flutter app starts the same way</h2>
+    <p>Open any <code>main.dart</code> file and you'll always find this shape at the top:</p>
+    <pre><code><span class="kw">void</span> main() {
+  runApp(<span class="kw">const</span> <span class="cls">MyApp</span>());
+}</code></pre>
+    <p>Read this exactly as it sounds: "When the app starts, build and display MyApp." The word <code>void</code> simply means this function doesn't hand back a result to anything — it just performs an action. Everything your app does, ultimately, traces back to this one line.</p>
+
+    <h2>Classes — the building blocks of every screen</h2>
+    <p>A widget is written as a <strong>class</strong>. If "class" feels like a heavy word, think of it simply as a labeled container that bundles together some data and the instructions for what to do with that data.</p>
+    <pre><code><span class="kw">class</span> <span class="cls">RequestCard</span> <span class="kw">extends</span> <span class="cls">StatelessWidget</span> {
+  <span class="kw">final</span> <span class="cls">String</span> productName;
+  <span class="kw">final</span> <span class="cls">String</span> status;
+
+  <span class="kw">const</span> <span class="cls">RequestCard</span>({<span class="kw">super</span>.key, <span class="kw">required this</span>.productName, <span class="kw">required this</span>.status});
+
+  <span class="ann">@override</span>
+  <span class="cls">Widget</span> build(<span class="cls">BuildContext</span> context) {
+    <span class="kw">return</span> <span class="cls">Card</span>(child: <span class="cls">Text</span>(productName));
+  }
+}</code></pre>
+    <p>Breaking this down piece by piece:</p>
+    <ul>
+      <li><code>class RequestCard extends StatelessWidget</code> — "I'm creating something called RequestCard, and it behaves like a Stateless widget (it just displays things, doesn't change on its own)."</li>
+      <li><code>final String productName;</code> — "This card will always have a piece of text called productName, and once it's set, it can't be changed." The word <code>final</code> means "locked after being set once."</li>
+      <li><code>const RequestCard({...})</code> — this is the <strong>constructor</strong>: the recipe for how to create one of these cards, listing what information it needs to be handed.</li>
+      <li><code>required this.productName</code> — "You must give me a productName when you create this card — it's not optional."</li>
+      <li><code>Widget build(BuildContext context)</code> — every widget has this method. It's the part that actually describes what should appear on screen.</li>
+    </ul>
+
+    <h2>Variables — three ways you'll see them declared</h2>
+    <pre><code><span class="kw">var</span> name = <span class="str">'Air Conditioner'</span>;       <span class="cmt">// Dart figures out the type automatically</span>
+<span class="cls">String</span> name = <span class="str">'Air Conditioner'</span>;    <span class="cmt">// you stated the type explicitly: a String (text)</span>
+<span class="kw">final</span> id = <span class="str">'REQ-001'</span>;             <span class="cmt">// set once, can never be changed afterward</span></code></pre>
+    <p>You'll see <code>String</code> (text), <code>int</code> (whole numbers), <code>double</code> (decimal numbers), and <code>bool</code> (true or false) most often as types.</p>
+
+    <h2>Lists and maps — Dart's version of arrays and dictionaries</h2>
+    <pre><code><span class="cmt">// A List — an ordered collection of items, same idea as an array</span>
+<span class="cls">List</span>&lt;<span class="cls">String</span>&gt; statuses = [<span class="str">'Open'</span>, <span class="str">'Pending'</span>, <span class="str">'Closed'</span>];
+
+<span class="cmt">// A Map — pairs of keys and values, same idea as a dictionary</span>
+<span class="cls">Map</span>&lt;<span class="cls">String</span>, <span class="cls">Color</span>&gt; statusColors = {
+  <span class="str">'Open'</span>: <span class="cls">Colors</span>.green,
+  <span class="str">'Closed'</span>: <span class="cls">Colors</span>.red,
+};</code></pre>
+
+    <h2>String interpolation — inserting variables into text</h2>
+    <p>Instead of manually joining pieces of text together, Dart lets you drop a variable directly inside a string using a dollar sign:</p>
+    <pre><code><span class="kw">final</span> name = <span class="str">'AC Filter'</span>;
+<span class="kw">final</span> count = <span class="str">3</span>;
+
+<span class="cls">Text</span>(<span class="str">'Request: $name'</span>)                  <span class="cmt">// → "Request: AC Filter"</span>
+<span class="cls">Text</span>(<span class="str">'Total: ${count + 1} items'</span>)       <span class="cmt">// → "Total: 4 items" — curly braces let you run a calculation inline</span></code></pre>
+
+    <h2>Functions — including the short "arrow" style</h2>
+    <pre><code><span class="cmt">// A normal function, written out fully</span>
+<span class="cls">Color</span> getColor(<span class="cls">String</span> status) {
+  <span class="kw">if</span> (status == <span class="str">'Open'</span>) <span class="kw">return</span> <span class="cls">Colors</span>.green;
+  <span class="kw">return</span> <span class="cls">Colors</span>.red;
+}
+
+<span class="cmt">// The same function, written using arrow shorthand — common in Flutter code</span>
+<span class="cls">Color</span> getColor(<span class="cls">String</span> s) => s == <span class="str">'Open'</span> ? <span class="cls">Colors</span>.green : <span class="cls">Colors</span>.red;</code></pre>
+    <p>That <code>=&gt;</code> arrow simply means "this function's entire body is just this one expression — skip the curly braces and the word <code>return</code>." You'll see this constantly in Claude-generated code, especially for short, simple functions.</p>
+
+    <h2>Named parameters — the curly braces inside function calls</h2>
+    <p>This is one of the patterns that confuses newcomers most, because it looks unusual at first:</p>
+    <pre><code><span class="kw">class</span> <span class="cls">StatusChip</span> <span class="kw">extends</span> <span class="cls">StatelessWidget</span> {
+  <span class="kw">final</span> <span class="cls">String</span> label;     <span class="cmt">// required — must always be provided</span>
+  <span class="kw">final</span> <span class="cls">Color</span>? color;    <span class="cmt">// optional — the ? means "this can be left empty"</span>
+
+  <span class="kw">const</span> <span class="cls">StatusChip</span>({
+    <span class="kw">super</span>.key,
+    <span class="kw">required this</span>.label,
+    <span class="kw">this</span>.color,
+  });
+}</code></pre>
+    <p>The curly braces <code>{ }</code> inside the constructor mean "these parameters are named" — meaning when you actually use this widget elsewhere, you must write the parameter's name before its value, like <code>StatusChip(label: 'Open', color: Colors.green)</code> rather than just listing values in order. This is Flutter's way of making widget code self-explanatory just by reading it, even with dozens of parameters.</p>
+
+    <h2>Putting it all together — a complete, small, real widget</h2>
+    <p>Here is a complete, working widget combining everything above. Read it top to bottom now that you have the vocabulary:</p>
+    <pre><code><span class="kw">class</span> <span class="cls">RequestCard</span> <span class="kw">extends</span> <span class="cls">StatelessWidget</span> {
+  <span class="kw">final</span> <span class="cls">String</span> productName;
+  <span class="kw">final</span> <span class="cls">String</span> date;
+  <span class="kw">final</span> <span class="cls">String</span> status;
+
+  <span class="kw">const</span> <span class="cls">RequestCard</span>({
+    <span class="kw">super</span>.key,
+    <span class="kw">required this</span>.productName,
+    <span class="kw">required this</span>.date,
+    <span class="kw">required this</span>.status,
+  });
+
+  <span class="cls">Color</span> get statusColor {
+    <span class="kw">if</span> (status == <span class="str">'Open'</span>) <span class="kw">return</span> <span class="cls">Colors</span>.green;
+    <span class="kw">if</span> (status == <span class="str">'Pending'</span>) <span class="kw">return</span> <span class="cls">Colors</span>.amber;
+    <span class="kw">return</span> <span class="cls">Colors</span>.red;
+  }
+
+  <span class="ann">@override</span>
+  <span class="cls">Widget</span> build(<span class="cls">BuildContext</span> context) {
+    <span class="kw">return</span> <span class="cls">Card</span>(
+      child: <span class="cls">ListTile</span>(
+        title: <span class="cls">Text</span>(productName),
+        subtitle: <span class="cls">Text</span>(date),
+        trailing: <span class="cls">Chip</span>(
+          label: <span class="cls">Text</span>(status),
+          backgroundColor: statusColor,
+        ),
+      ),
+    );
+  }
+}</code></pre>
+    <div class="card success">
+      <p style="margin-bottom:0">If you can now read this and explain in plain English what each line does, you're ready to start modifying Claude's output confidently — which is exactly what the next tab walks you through.</p>
+    </div>
+  </div>
+
+    <div class="tabpanel" id="tab-handson">
+    <h2>Hands-on with Claude — your AI pair programmer</h2>
+    <p class="lead">This is where the training becomes practical instead of theoretical. You are going to generate real, working Flutter screens using Claude, run them on your emulator, and then ask Claude to modify them — exactly the workflow you'll use on real projects afterward.</p>
+
+    <h2>First: which "Claude" should you use, and when?</h2>
+    <p>There are two very different ways to bring Claude into this workflow, and picking the right one for the moment matters.</p>
+
+    <div class="grid2">
+      <div class="card accent">
+        <h4>Claude (chat — claude.ai or the desktop/web app)</h4>
+        <p><strong>Use this when:</strong> you're learning, exploring an idea, deciding what a screen should look like, or want to see code before anything touches your project. You read the code, copy it, and paste it into VS Code yourself.</p>
+        <p style="margin-bottom:0"><strong>Best for today's session</strong> — you stay in control of every change, and it's the safest way to learn what's actually happening.</p>
+      </div>
+      <div class="card purple">
+        <h4>Claude Code (terminal-based, works directly in your project)</h4>
+        <p><strong>Use this when:</strong> you already know what you want and you're comfortable letting Claude directly create, edit, and run files inside your real project folder, without you copy-pasting anything.</p>
+        <p style="margin-bottom:0"><strong>Best for later</strong> — once you're confident reading Flutter code, this becomes much faster for real project work.</p>
+      </div>
+    </div>
+
+    <div class="card warn">
+      <h4>About "dangerously skip permissions"</h4>
+      <p>Claude Code normally asks for your confirmation before it creates, edits, or deletes any file, and before running any command — this is a safety feature. There is a flag called <code>--dangerously-skip-permissions</code> that turns those confirmations off, letting Claude Code work uninterrupted.</p>
+      <p style="margin-bottom:0"><strong>For students in this training: do not use this flag.</strong> Keep the confirmations on. You want to see and approve every single change while you're still learning what Flutter code looks like — that's literally part of the learning. This flag exists for experienced developers running Claude Code inside fully disposable, sandboxed environments, not for someone editing their first Flutter app on their personal laptop.</p>
+    </div>
+
+    <h2>How to actually run this hands-on section, step by step</h2>
+    <div class="step-flow">
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">1</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Open your project folder in Visual Studio Code</div>
+          <div class="step-desc">Open VS Code, then go to <strong>File → Open Folder</strong>, and select your <code>maintenance_app</code> folder (or whatever you named it earlier). You should see the file explorer on the left fill up with <code>lib/</code>, <code>android/</code>, <code>pubspec.yaml</code>, and the rest.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">2</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Open a terminal inside VS Code and start your emulator</div>
+          <div class="step-desc">
+            Go to the menu <strong>Terminal → New Terminal</strong> (or press <code>Ctrl+`</code>). This opens a terminal that's already pointed at your project folder. Run:
+            <pre><code>flutter run</code></pre>
+            Wait for your emulator to boot and the starter app to appear. Leave this terminal running — don't close it.
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">3</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Open Claude in a browser tab alongside VS Code</div>
+          <div class="step-desc">Go to <a href="https://claude.ai" target="_blank">claude.ai</a> and sign in (or create a free account if you don't have one — you'll need an email address and to verify it). Arrange your screen so you can see both VS Code and the Claude chat window — side by side works best if your screen is large enough, otherwise simply switch between them with Alt+Tab.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">4</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Copy a prompt from below, paste it into Claude, and press Enter</div>
+          <div class="step-desc">Every prompt below has a <strong>Copy</strong> button. Click it, switch to your Claude tab, click into the message box, paste (Ctrl+V), and press Enter. Claude will reply with a complete code file.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">5</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Copy Claude's code into your project</div>
+          <div class="step-desc">
+            In Claude's response, find the code block — hover over it and click the small copy icon in its corner. Switch to VS Code, open <code>lib/main.dart</code>, select everything inside it (<code>Ctrl+A</code>), delete it, and paste (<code>Ctrl+V</code>) Claude's code in its place. Save the file with <code>Ctrl+S</code>.
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">6</div></div>
+        <div class="step-body">
+          <div class="step-title">Watch hot reload update your emulator automatically</div>
+          <div class="step-desc">The moment you save, look at your emulator window — it should update within a second or two to show the new screen, without you doing anything else. If it doesn't update, click back into your terminal and press <code>r</code> followed by Enter to manually trigger a reload.</div>
+        </div>
+      </div>
+    </div>
+
+    <h2>The 15 prompts — run these in order</h2>
+    <p>Each prompt below builds on the previous one's result. After pasting Claude's response into your project and seeing it run, read the "What to expect" box before moving to the next prompt — it tells you exactly what should appear and what new idea that prompt is teaching.</p>
+
+    <div class="prompt-box">
+      <div class="prompt-label">Prompt 1 of 15 — Understand the starting point<button class="copy-btn" onclick="copyPrompt(this,'p1')">Copy</button></div>
+      <div class="prompt-text" id="p1">Take this default Flutter counter app main.dart file and rewrite it with a comment above every single class and method explaining its role in plain English, as if explaining it to someone who has never written Dart before. Do not change any logic — only add comments.</div>
+    </div>
+    <div class="expect-box"><div class="expect-label">What to expect</div><p>The exact same counter app, but now every part of it is labeled. Read through it slowly with the class as a group before moving on — this is your map for everything that follows.</p></div>
+
+    <div class="prompt-box">
+      <div class="prompt-label">Prompt 2 of 15 — Build the first real screen<button class="copy-btn" onclick="copyPrompt(this,'p2')">Copy</button></div>
+      <div class="prompt-text" id="p2">Create a Flutter screen called HomeScreen showing 3 hardcoded maintenance request cards. Each card should show a product name, a request ID, and a last repair date. Use Scaffold, AppBar, and ListView with Card widgets. Keep it in a single main.dart file with no navigation yet.</div>
+    </div>
+    <div class="expect-box"><div class="expect-label">What to expect</div><p>A clean, static list of three cards. Ask yourselves: which part of the code is the AppBar, and which part is the ListView? Find both before continuing.</p></div>
+
+    <div class="prompt-box">
+      <div class="prompt-label">Prompt 3 of 15 — Add color-coded status<button class="copy-btn" onclick="copyPrompt(this,'p3')">Copy</button></div>
+      <div class="prompt-text" id="p3">Add a status field to each request — Open, Pending, or Closed — and display it as a color-coded chip aligned to the right of each card: green for Open, amber for Pending, red for Closed.</div>
+    </div>
+    <div class="expect-box"><div class="expect-label">What to expect</div><p>The cards now look like a real app screen. This is the moment to ask: is this a StatelessWidget or a StatefulWidget, and why does that choice make sense here?</p></div>
+
+    <div class="prompt-box">
+      <div class="prompt-label">Prompt 4 of 15 — Reuse instead of repeat<button class="copy-btn" onclick="copyPrompt(this,'p4')">Copy</button></div>
+      <div class="prompt-text" id="p4">Refactor the card markup into its own reusable StatelessWidget called RequestCard, which takes productName, requestId, date, and status as constructor parameters. Show how HomeScreen now builds its list using this new RequestCard widget instead of repeating the same code three times.</div>
+    </div>
+    <div class="expect-box"><div class="expect-label">What to expect</div><p>The visible screen looks identical, but the code is now organized — one definition of a card, reused three times. This is the "don't repeat yourself" lesson.</p></div>
+
+    <div class="prompt-box">
+      <div class="prompt-label">Prompt 5 of 15 — Add a second screen and navigation<button class="copy-btn" onclick="copyPrompt(this,'p5')">Copy</button></div>
+      <div class="prompt-text" id="p5">Add a second screen called DetailScreen. When a user taps any RequestCard, navigate to DetailScreen using Navigator.push and MaterialPageRoute, passing the full request's data along. DetailScreen should display the same fields in a larger size, plus a placeholder description field, and include a working back button in its AppBar.</div>
+    </div>
+    <div class="expect-box"><div class="expect-label">What to expect</div><p>Your first real interactive behavior. Tap a card, see a new screen, tap back, return to the list. Try removing the back button code and see what happens — does Android's own back gesture still work?</p></div>
+
+    <div class="prompt-box">
+      <div class="prompt-label">Prompt 6 of 15 — Introduce state and filtering<button class="copy-btn" onclick="copyPrompt(this,'p6')">Copy</button></div>
+      <div class="prompt-text" id="p6">Convert HomeScreen into a StatefulWidget. Add three filter buttons above the list — All, Open, and Closed. Tapping a filter button should update the visible list to show only matching requests, using setState to trigger the rebuild.</div>
+    </div>
+    <div class="expect-box"><div class="expect-label">What to expect</div><p>This is the conceptual turning point of the day. Every tap now visibly changes what's on screen through setState — pause here and make sure everyone in the room understands that setState is what tells Flutter "redraw this part of the screen now."</p></div>
+
+    <div class="prompt-box">
+      <div class="prompt-label">Prompt 7 of 15 — Organize data into its own file<button class="copy-btn" onclick="copyPrompt(this,'p7')">Copy</button></div>
+      <div class="prompt-text" id="p7">Move the hardcoded request list into a separate Request model class inside a new file called models/request.dart, using named constructor parameters for productName, requestId, date, and status. Update HomeScreen to import and use this new model.</div>
+    </div>
+    <div class="expect-box"><div class="expect-label">What to expect</div><p>Your first multi-file project. Note how a new folder called models appears inside lib/ — this is the moment the earlier folder structure lesson becomes concrete rather than abstract.</p></div>
+
+    <div class="prompt-box">
+      <div class="prompt-label">Prompt 8 of 15 — Simulate loading data<button class="copy-btn" onclick="copyPrompt(this,'p8')">Copy</button></div>
+      <div class="prompt-text" id="p8">Simulate an async data load: wrap the request list inside a Future.delayed for 2 seconds, show a CircularProgressIndicator while it's loading, and display the full list once it's ready. Use a FutureBuilder to manage this.</div>
+    </div>
+    <div class="expect-box"><div class="expect-label">What to expect</div><p>A brief spinning loader appears for two seconds before the list shows up. This mimics exactly what happens later when your app talks to a real database or API — the loading delay is just simulated for now.</p></div>
+
+    <div class="prompt-box">
+      <div class="prompt-label">Prompt 9 of 15 — Centralize your colors<button class="copy-btn" onclick="copyPrompt(this,'p9')">Copy</button></div>
+      <div class="prompt-text" id="p9">Create a new file called constants/app_colors.dart containing a single AppColors class with static const Color fields for every color currently used in the app — the status chip colors, the AppBar color, and any accent colors. Update every widget in the app to reference AppColors instead of hardcoded color values.</div>
+    </div>
+    <div class="expect-box"><div class="expect-label">What to expect</div><p>The visible app doesn't change at all — but now if you wanted to rebrand the whole app to different colors, you'd only edit one file instead of hunting through every screen.</p></div>
+
+    <div class="prompt-box">
+      <div class="prompt-label">Prompt 10 of 15 — Add a form to create new entries<button class="copy-btn" onclick="copyPrompt(this,'p10')">Copy</button></div>
+      <div class="prompt-text" id="p10">Add a floating action button (a circular "+" button) to HomeScreen. Tapping it should open a bottom sheet containing a form with a text field for product name and a dropdown for status. Submitting the form should add a new request card to the top of the list.</div>
+    </div>
+    <div class="expect-box"><div class="expect-label">What to expect</div><p>Your first form-handling and your first time mutating a list while the app is running. This is a genuine milestone — celebrate it with the class.</p></div>
+
+    <div class="prompt-box">
+      <div class="prompt-label">Prompt 11 of 15 — Handle the empty case gracefully<button class="copy-btn" onclick="copyPrompt(this,'p11')">Copy</button></div>
+      <div class="prompt-text" id="p11">If the filtered request list has zero results, show a centered icon and a friendly message instead of a blank screen.</div>
+    </div>
+    <div class="expect-box"><div class="expect-label">What to expect</div><p>Filter to a status with no matching cards and see the friendly empty message instead of a blank page. This teaches conditional logic inside the build method.</p></div>
+
+    <div class="prompt-box">
+      <div class="prompt-label">Prompt 12 of 15 — Remember the user's choice<button class="copy-btn" onclick="copyPrompt(this,'p12')">Copy</button></div>
+      <div class="prompt-text" id="p12">Add the shared_preferences package to this project and use it to remember which filter (All, Open, or Closed) was last selected, so the app reopens with that same filter still applied.</div>
+    </div>
+    <div class="expect-box"><div class="expect-label">What to expect</div><p>This is the first time you'll deliberately edit pubspec.yaml and run flutter pub get yourselves. Close the app fully and reopen it — your last filter choice should still be selected.</p></div>
+
+    <div class="prompt-box">
+      <div class="prompt-label">Prompt 13 of 15 — Adapt to different screen sizes<button class="copy-btn" onclick="copyPrompt(this,'p13')">Copy</button></div>
+      <div class="prompt-text" id="p13">Make the card list show a single column on narrow screens and two columns on wide screens such as tablets, using LayoutBuilder to detect the available width.</div>
+    </div>
+    <div class="expect-box"><div class="expect-label">What to expect</div><p>If you have access to a tablet-sized emulator, switch to it and watch the layout change shape automatically. This is the same idea as responsive web design, just for an app.</p></div>
+
+    <div class="prompt-box">
+      <div class="prompt-label">Prompt 14 of 15 — Write your first automated test<button class="copy-btn" onclick="copyPrompt(this,'p14')">Copy</button></div>
+      <div class="prompt-text" id="p14">Write a simple Flutter widget test that confirms HomeScreen displays exactly 3 request cards when given 3 mock requests as test data.</div>
+    </div>
+    <div class="expect-box"><div class="expect-label">What to expect</div><p>Run it with flutter test in your terminal. You should see a message confirming the test passed. This is your first contact with automated testing — a habit worth building early.</p></div>
+
+    <div class="prompt-box">
+      <div class="prompt-label">Prompt 15 of 15 — Understand what shipping actually means<button class="copy-btn" onclick="copyPrompt(this,'p15')">Copy</button></div>
+      <div class="prompt-text" id="p15">Explain in plain English exactly what the command flutter build apk --release produces, where the resulting file is saved inside the project, and how this differs from what happens when I run flutter run during development.</div>
+    </div>
+    <div class="expect-box"><div class="expect-label">What to expect</div><p>This prompt doesn't generate code — it gets Claude to explain a concept. Use this as the closing discussion before moving to the capstone project, so everyone understands the leap from "running on my emulator" to "a real file I could install on any Android phone."</p></div>
+  </div>
+
+  <div class="tabpanel" id="tab-database">
+    <h2>Working with real data — connecting Flutter to a database</h2>
+    <p class="lead">You've already studied databases before this training, so this tab focuses specifically on the one piece you haven't done yet: how a Flutter app actually fetches data from a database and shows it on screen, and how Claude can help you build that connection.</p>
+
+    <h2>The fundamental shape of every data-driven app screen</h2>
+    <p>No matter which database you use — SQL Server, PostgreSQL, Firebase, or anything else — the pattern your Flutter app follows is always the same three steps:</p>
+
+    <div class="step-flow">
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">1</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Ask for the data</div>
+          <div class="step-desc">Your Flutter app sends a request — usually over the internet, to an API — asking "give me the list of maintenance requests."</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">2</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Wait, because this takes time</div>
+          <div class="step-desc">Network requests are never instant. While waiting, your screen shows a loading spinner instead of nothing — this is exactly what the FutureBuilder pattern from Prompt 8 in the previous tab was rehearsing.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">3</div></div>
+        <div class="step-body">
+          <div class="step-title">Convert the response into widgets</div>
+          <div class="step-desc">The data usually arrives as JSON (a structured text format). Your app converts that JSON into Dart objects (like the Request model class from Prompt 7), then builds a card widget for each one.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="analogy-box">
+      <p><em class="analogy-tag">Analogy</em></p>
+      <p>Think of your Flutter app as a waiter at a restaurant, and the database as the kitchen. The waiter (your app) doesn't cook the food (store the data) — they walk to the kitchen, ask for what the customer ordered, wait while it's prepared, then bring it back and present it nicely on a plate (the widgets on screen). The waiter is never directly reaching into the fridge — there's always a clear request-and-response step in between.</p>
+    </div>
+
+    <h2>Where does the "asking" actually happen?</h2>
+    <p>This middle layer — the thing your app actually talks to — is usually called an <strong>API</strong> (Application Programming Interface). Your database almost never talks directly to your phone app for security and structural reasons. Instead:</p>
+
+    <pre><code>Flutter App  →  API (a web server)  →  Database
+   (phone)        (the "waiter's          (the "kitchen,"
+                   kitchen window")        where data lives)</code></pre>
+
+    <p>In Flutter, the most common package for talking to an API is simply called <code>http</code> — the same package you saw mentioned in the pubspec.yaml example earlier in this guide.</p>
+
+    <h2>A real, minimal example: fetching a list from an API</h2>
+    <p>Here's what that "ask, wait, convert" pattern actually looks like in code, kept deliberately simple:</p>
+    <pre><code><span class="kw">import</span> <span class="str">'package:http/http.dart'</span> <span class="kw">as</span> http;
+<span class="kw">import</span> <span class="str">'dart:convert'</span>;
+
+<span class="cls">Future</span>&lt;<span class="cls">List</span>&lt;<span class="cls">Request</span>&gt;&gt; fetchRequests() <span class="kw">async</span> {
+  <span class="kw">final</span> response = <span class="kw">await</span> http.get(<span class="cls">Uri</span>.parse(<span class="str">'https://your-api.com/requests'</span>));
+
+  <span class="kw">if</span> (response.statusCode == <span class="str">200</span>) {
+    <span class="cls">List</span> data = jsonDecode(response.body);
+    <span class="kw">return</span> data.map((item) => <span class="cls">Request</span>.fromJson(item)).toList();
+  } <span class="kw">else</span> {
+    <span class="kw">throw</span> <span class="cls">Exception</span>(<span class="str">'Failed to load requests'</span>);
+  }
+}</code></pre>
+    <p>Notice the words <code>async</code> and <code>await</code> — these mean "this function involves waiting for something, so pause here until the answer comes back, without freezing the rest of the app." This is conceptually identical to async/await in most modern programming languages, just written with Dart's syntax.</p>
+
+    <h2>Where Claude genuinely helps the most with database work</h2>
+    <div class="grid2">
+      <div class="card accent">
+        <h4>Writing the model class</h4>
+        <p style="margin-bottom:0">Given a sample of your real JSON data, Claude can generate the exact Dart model class (like Request) with a correct <code>fromJson</code> method, saving you from manually mapping every field by hand.</p>
+      </div>
+      <div class="card accent">
+        <h4>Writing the fetch logic</h4>
+        <p style="margin-bottom:0">Claude can write the full async function that calls your specific API endpoint, handles errors gracefully, and converts the response — exactly the pattern shown above, tailored to your actual data shape.</p>
+      </div>
+      <div class="card accent">
+        <h4>Connecting it to your UI</h4>
+        <p style="margin-bottom:0">Claude can wire your existing HomeScreen to use FutureBuilder with this real fetch function instead of the simulated 2-second delay from Prompt 8 — swapping fake data for real data with minimal changes to the screen itself.</p>
+      </div>
+      <div class="card accent">
+        <h4>Explaining unfamiliar database services</h4>
+        <p style="margin-bottom:0">If your project ends up using something like Firebase or Supabase instead of a traditional SQL database, Claude can explain how that specific service's Flutter package works, since the basic "ask, wait, convert" shape stays the same either way.</p>
+      </div>
+    </div>
+
+    <h2>A prompt you can use right now to explore this</h2>
+    <div class="prompt-box">
+      <div class="prompt-label">Database connection starter prompt<button class="copy-btn" onclick="copyPrompt(this,'db1')">Copy</button></div>
+      <div class="prompt-text" id="db1">I have a Flutter app with a Request model that has fields: id, productName, requestDate, and status. I want to fetch a list of these from a REST API at the URL https://example.com/api/requests which returns JSON in this shape: [{"id": "REQ-001", "productName": "AC Filter", "requestDate": "2025-06-14", "status": "Open"}]. Write the complete fetchRequests function using the http package, including error handling, and show me how to wire it into a FutureBuilder inside my HomeScreen.</div>
+    </div>
+    <div class="expect-box"><div class="expect-label">What to expect</div><p>Claude will generate a working fetch function and explain how to plug it into the screen you already built. Replace the example URL with your real API's address once you have one set up.</p></div>
+
+    <div class="card warn">
+      <h4>A note on what today's session does and doesn't cover</h4>
+      <p style="margin-bottom:0">Setting up the actual database and API server is a separate, larger topic from Flutter itself — that's backend work, and you've already studied database fundamentals separately. Today's goal is narrower and specific: understanding the shape of how a Flutter screen requests, waits for, and displays data, so that whenever your backend is ready, connecting to it is a small, well-understood step rather than a mystery.</p>
+    </div>
+  </div>
+
+  <div class="tabpanel" id="tab-capstone">
+    <h2>Capstone project — prove to yourself this actually works</h2>
+    <p class="lead">This is the moment where everything from today comes together. The goal of this capstone isn't to build something huge — it's to build something small enough to finish today, but real enough that you walk away knowing: "I can describe an app to Claude, and Claude can build it with me, and I understand every part of what got built."</p>
+
+    <div class="analogy-box">
+      <p><em class="analogy-tag">Analogy</em></p>
+      <p>Think of today as learning to drive in an empty parking lot before getting on the road. You now know what every pedal and dial does. This capstone is your first short drive around the block — not a long highway trip, just enough to prove the fundamentals are solid.</p>
+    </div>
+
+    <h2>What you're building</h2>
+    <p>A small two-screen Flutter app: a home screen listing items (you can theme it as maintenance requests, products, tasks, or anything relevant to your own interest — Khan Chacha order items, The Soft Grid product catalog, whatever feels personal to you), and a detail screen showing more information when you tap an item. It includes a working filter, a way to add new items, and is fully navigable.</p>
+
+    <div class="card success">
+      <h4>Why this is the right size for today</h4>
+      <p style="margin-bottom:0">It uses every single concept covered in this guide — widgets, StatelessWidget and StatefulWidget, navigation, setState, a model class, a form — without requiring a real backend or database connection, which you'll add as a next step after today.</p>
+    </div>
+
+    <h2>The complete capstone prompt</h2>
+    <p>This is a single, large, complete prompt. Copy it exactly as written, paste it into Claude, and let it generate the entire small project in one go. Because it's detailed and specific, Claude will generate clean, complete code rather than something vague.</p>
+
+    <div class="prompt-box">
+      <div class="prompt-label">The capstone prompt — copy this entire block<button class="copy-btn" onclick="copyPrompt(this,'capstone1')">Copy</button></div>
+      <div class="prompt-text" id="capstone1">Build a complete, small, two-screen Flutter app called "Track It" for tracking maintenance requests. Requirements:
+
+1. A Request model class in models/request.dart with fields: id (String), productName (String), requestDate (String), status (String, one of Open/Pending/Closed), and description (String).
+
+2. A HomeScreen (StatefulWidget) that shows a list of requests as cards, each displaying productName, requestDate, and a color-coded status chip (green=Open, amber=Pending, red=Closed). Include 5 sample hardcoded requests covering all three statuses.
+
+3. Three filter chips above the list (All, Open, Closed) that filter the visible list using setState.
+
+4. Tapping any card navigates to a DetailScreen showing all fields of that request in a larger, clearly laid out view, with a working back button.
+
+5. A floating action button on HomeScreen that opens a bottom sheet with a simple form (text field for product name, dropdown for status) to add a new request to the top of the list.
+
+6. If the filtered list is empty, show a centered icon and friendly message instead of a blank screen.
+
+7. Use a clean, consistent color scheme defined in a single AppColors class in constants/app_colors.dart, with a teal/blue primary color suitable for a professional utility app.
+
+8. Organize the code across multiple files following Flutter best practices (separate files for models, screens, widgets, and constants) rather than putting everything in main.dart.
+
+Give me each file separately with its full file path clearly labeled, so I can create each one in my VS Code project.</div>
+    </div>
+
+    <h2>How to actually build this, step by step</h2>
+    <div class="step-flow">
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">1</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Create a brand-new project for this capstone</div>
+          <div class="step-desc">
+            In your terminal: <pre><code>flutter create track_it
+cd track_it
+flutter run</code></pre>
+            Confirm the default starter app appears before continuing — this guarantees a clean starting point.
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">2</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Paste the capstone prompt into Claude</div>
+          <div class="step-desc">Claude will respond with several separate code blocks, each labeled with a file path like <code>lib/models/request.dart</code> or <code>lib/screens/home_screen.dart</code>. Read through the whole response once before doing anything in VS Code, just to see the shape of what's coming.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">3</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Create matching folders and files in VS Code</div>
+          <div class="step-desc">
+            In the VS Code file explorer, right-click on <code>lib</code> and choose <strong>New Folder</strong> for each folder Claude mentioned (typically <code>models</code>, <code>screens</code>, <code>widgets</code>, <code>constants</code>). Then right-click each folder and choose <strong>New File</strong> to create the specific files Claude named, such as <code>request.dart</code> inside <code>models</code>.
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">4</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Copy each code block into its matching file</div>
+          <div class="step-desc">For each file Claude gave you, click the copy icon on that specific code block in Claude's response, open the matching empty file in VS Code, paste, and save with <code>Ctrl+S</code>. Repeat for every file. Don't skip the existing <code>main.dart</code> — Claude will have rewritten it too, to import and use your new screens.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">5</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Save everything and watch it build</div>
+          <div class="step-desc">Once every file is saved, check your terminal — if <code>flutter run</code> is still active, it should automatically detect the changes and reload. If you see red error text in the terminal, that almost always means one file references another file that hasn't been created yet, or a folder name doesn't quite match what's written in an import line — check the exact spelling and path Claude used.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">6</div></div>
+        <div class="step-body">
+          <div class="step-title">Test every feature on your emulator</div>
+          <div class="step-desc">Tap through every filter chip, open a few detail screens and tap back, add a new request through the form, and try filtering down to an empty result to see the friendly empty state. If anything doesn't behave the way you expected, that's your cue for the next step below.</div>
+        </div>
+      </div>
+    </div>
+
+    <h2>When something doesn't work — your troubleshooting prompt</h2>
+    <p>This is just as important a skill as building the app in the first place. When you hit a red error in your terminal, don't panic and don't guess randomly — paste the actual error back to Claude.</p>
+    <div class="prompt-box">
+      <div class="prompt-label">Troubleshooting prompt template<button class="copy-btn" onclick="copyPrompt(this,'capstone2')">Copy</button></div>
+      <div class="prompt-text" id="capstone2">I'm getting this error in my Flutter terminal when I try to run my app: [paste the full red error text here]. Here's my main.dart file: [paste your current main.dart content here]. What's causing this, and how do I fix it?</div>
+    </div>
+    <div class="expect-box"><div class="expect-label">What to expect</div><p>Claude will identify the likely cause (almost always a missing import, a typo in a file path, or a mismatched widget parameter) and give you the exact corrected code. This loop — hit an error, paste it to Claude, apply the fix, save, reload — is the real day-to-day workflow of professional Flutter development with AI assistance.</p></div>
+
+    <h2>The real point of this exercise</h2>
+    <div class="card purple">
+      <p>By the end of this capstone, you should genuinely feel something shift: you are no longer just watching Flutter code appear — you understand the folder it belongs in, what kind of widget it is, why it's structured the way it is, and how to ask for a change when something isn't quite right. That is the actual skill this training builds.</p>
+      <p style="margin-bottom:0">Claude is not replacing your understanding — it's removing the typing and boilerplate so you can spend your attention on decisions: what should this app do, what should it look like, what's the right next feature. You direct. Claude executes. That partnership is the real outcome of today, far more than any single line of Dart code.</p>
+    </div>
+  </div>
+
+  <div class="tabpanel" id="tab-discuss">
+    <h2>Questions and discussion</h2>
+    <p class="lead">A running collection of the exact questions raised during this training, answered the same way they were answered live — so you can revisit them anytime, or share this page with someone who missed the session.</p>
+
+    <div class="faq-item open" onclick="toggleFaq(this)">
+      <div class="faq-q">What is Dart, really, and is it like Python?<span class="faq-arrow">▾</span></div>
+      <div class="faq-a">Dart is the programming language behind Flutter, created by Google specifically to pair with it. Despite looking clean and approachable, Dart is not Python — it requires semicolons, uses curly braces to group code, and is strongly typed. If you've seen Java, C#, JavaScript, or TypeScript, Dart will feel far more familiar than Python does.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Why does flutter create generate android, ios, and windows folders even if I only care about one platform?<span class="faq-arrow">▾</span></div>
+      <div class="faq-a">Because Flutter's whole value proposition is writing once and running everywhere. Each of those folders is a thin native "adapter" that lets your one set of Dart code run inside that specific platform's environment. You never edit these folders directly — all of your actual work happens inside the lib folder, regardless of which platform you eventually ship to.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">If I'm not targeting Android, why do I need Android Studio at all?<span class="faq-arrow">▾</span></div>
+      <div class="faq-a">Android Studio isn't there because you're building an Android app — it's there because it's the easiest way to get the Android SDK and a virtual phone (emulator) onto your computer. On Windows or Linux, there's no other live-preview option besides the Android emulator (Apple only allows their iOS Simulator to run on a Mac). So even iOS-focused developers on Windows install Android Studio purely for its emulator and SDK tools, then write 100% of their actual code in VS Code.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">What exactly is an emulator?<span class="faq-arrow">▾</span></div>
+      <div class="faq-a">An emulator is a fully virtual phone running as a window on your computer — not a picture or video, but an actual simulated Android device with its own screen, storage, and operating system, running entirely in software. You create and manage these through Android Studio's Device Manager, and once created, you can launch and use them directly from VS Code or the terminal without reopening Android Studio.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">What is the difference between VS Code and Android Studio for daily work?<span class="faq-arrow">▾</span></div>
+      <div class="faq-a">VS Code is lightweight and is where you'll write your Dart code, run your app, and use hot reload — this is where 90% of your time will be spent. Android Studio is heavier and mainly useful for two setup tasks: creating/managing emulators (Device Manager) and installing Android SDK components (SDK Manager). There's no project format lock-in either way — both tools simply open the same project folder.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">What does "hot reload" actually mean, and how is it different from "hot restart"?<span class="faq-arrow">▾</span></div>
+      <div class="faq-a">Hot reload takes your latest code change and injects just that change into the already-running app, keeping all of your current screen state intact — this is why it's near-instant. Hot restart fully restarts the app from scratch, clearing all state, which is occasionally necessary if a change doesn't seem to be taking effect through hot reload alone (for example, changes to certain low-level setup code).</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Why does main.dart call two other methods/classes instead of doing everything itself?<span class="faq-arrow">▾</span></div>
+      <div class="faq-a">This is intentional separation of responsibilities, not unnecessary complexity. main() simply starts the engine. The next class (commonly MyApp) configures the whole app — its theme, title, and which screen to show first. The class after that (commonly MyHomePage or HomeScreen) is the actual screen content the user interacts with. Splitting these apart means each piece can be understood, tested, and changed independently.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">When should I use Claude (the chat) versus Claude Code (the terminal tool)?<span class="faq-arrow">▾</span></div>
+      <div class="faq-a">Use Claude chat when you're still learning, want to see code before it touches your project, or want full manual control over what gets pasted where — this is the recommended approach for this entire training. Claude Code, which works directly inside your project files, is better suited for later, once you're comfortable reading Flutter code quickly and want a faster workflow for established projects.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Should I ever use the "dangerously skip permissions" flag with Claude Code?<span class="faq-arrow">▾</span></div>
+      <div class="faq-a">Not while you're learning. That flag turns off Claude Code's confirmation prompts before it edits or deletes files, which removes an important safety check and an important learning opportunity — seeing exactly what's about to change. It's intended for experienced developers working in fully disposable, sandboxed environments, not for students working on their personal laptop during a training session.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Why does my app need a loading spinner just to show a list of data?<span class="faq-arrow">▾</span></div>
+      <div class="faq-a">Because fetching data from a database or API always takes some amount of time — even a fast connection has a noticeable delay compared to instantly displaying something already in memory. Showing a loading spinner during that gap (using a pattern called FutureBuilder) is simply honest, good UX — it tells the user "something is happening," rather than leaving the screen blank and looking broken.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">My code has a red error in the terminal. What's the fastest way to fix it with Claude's help?<span class="faq-arrow">▾</span></div>
+      <div class="faq-a">Copy the full error text exactly as it appears, and paste it to Claude along with the relevant file's current content. Claude can almost always pinpoint the exact cause — commonly a missing import statement, a typo in a file path, or a widget being given a parameter it doesn't expect — and will give you the corrected code directly. This error-paste-fix loop is the real, everyday workflow of working with AI assistance.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Do I need to memorize Dart syntax to be productive with Flutter and Claude?<span class="faq-arrow">▾</span></div>
+      <div class="faq-a">No — and that's by design for this training. Your actual job is to read Flutter code confidently enough to understand what Claude generates, recognize when something looks wrong, and describe clearly what change you want next. Memorizing syntax becomes useful later as you get more hands-on practice, but it is not a prerequisite for being productive starting today.</div>
+    </div>
+  </div>
+
+  <div id="panel-root"></div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <strong>Koenig Solutions</strong> — Corporate Training Delivery<br>
+      Trainer: Raushan Ranjan, Microsoft Certified Trainer
+    </div>
+    <div class="footer-links">
+      <a href="https://rrskillverse.in" target="_blank">RR Skillverse</a>
+      <a href="https://www.koenig-solutions.com" target="_blank">Koenig Solutions</a>
+      <a href="https://docs.flutter.dev" target="_blank">Flutter Docs</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    Powered by RR Skillverse (Raushan Ranjan) · Built for Koenig Solutions training programs · © 2026
+  </div>
+</footer>
+
+<script>
+function switchTab(name){
+  document.querySelectorAll('.tabpanel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.querySelectorAll('.tabnav button').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.tabnav button[data-tab="'+name+'"]').classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+  history.replaceState(null, '', '#'+name);
+}
+document.getElementById('tabnav').addEventListener('click', e=>{
+  const btn = e.target.closest('button');
+  if(btn) switchTab(btn.dataset.tab);
+});
+window.addEventListener('DOMContentLoaded', ()=>{
+  const hash = window.location.hash.replace('#','');
+  if(hash && document.getElementById('tab-'+hash)) switchTab(hash);
+});
+
+function copyPrompt(btn, id){
+  const text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    const orig = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = orig; btn.classList.remove('copied'); }, 1800);
+  });
+}
+
+function toggleFaq(el){
+  el.classList.toggle('open');
+}
+
+function switchOS(group, os, btn){
+  document.querySelectorAll('.os-block[data-group="'+group+'"]').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.os-block[data-group="'+group+'"][data-os="'+os+'"]').classList.add('active');
+  btn.parentElement.querySelectorAll('span').forEach(s=>s.classList.remove('active'));
+  btn.classList.add('active');
+}
+</script>
+
+</body>
+</html>
