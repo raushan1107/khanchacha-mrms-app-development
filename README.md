@@ -2,7 +2,7 @@
 
 A self-contained, single-page reference site for the **Flutter Foundations: Getting Started Without Getting Lost** training module — built for students with zero Flutter background, learning to use Claude as an AI pair-programmer from day one.
 
-**Live site:** enable GitHub Pages on this repo (see below) and your guide will be live at `https://<your-username>.github.io/<repo-name>/`
+**Live site:** enable GitHub Pages on this repo (see below) and your guide will be live at `https://raushan1107.github.io/khanchacha-mrms-app-development/`
 
 ---
 
