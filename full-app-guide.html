@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Khan Chacha MRMS — Full App Build Guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;700&display=swap');
+
+:root {
+  --navy:   #0d1b2a;
+  --navy2:  #112236;
+  --navy3:  #1a2f47;
+  --purple: #7c3aed;
+  --teal:   #0082A0;
+  --cyan:   #00c2e0;
+  --gold:   #f59e0b;
+  --green:  #10b981;
+  --red:    #ef4444;
+  --text:   #e2e8f0;
+  --muted:  #8da2b5;
+  --border: rgba(255,255,255,0.07);
+  --card:   rgba(255,255,255,0.04);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--navy);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;}
+
+/* HEADER */
+.site-header{background:linear-gradient(135deg,#1e0a3c 0%,var(--navy2) 55%,#0a2a3a 100%);border-bottom:1px solid var(--border);padding:28px 32px 20px;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;}
+.home-link{display:inline-flex;align-items:center;gap:6px;font-size:.76rem;font-weight:600;color:var(--muted);background:rgba(255,255,255,0.05);border:1px solid var(--border);padding:5px 13px;border-radius:20px;text-decoration:none;transition:color .15s,border-color .15s;white-space:nowrap;}
+.home-link:hover{color:var(--cyan);border-color:rgba(0,194,224,.4);}
+.site-header h1{font-family:'Space Grotesk',sans-serif;font-size:1.85rem;font-weight:700;background:linear-gradient(90deg,#a78bfa,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;}
+.site-header p{color:var(--muted);font-size:0.82rem;margin-top:5px;letter-spacing:.4px;}
+.badge-row{display:flex;gap:8px;flex-wrap:wrap;}
+.badge{font-size:.72rem;font-weight:600;padding:4px 12px;border-radius:20px;letter-spacing:.4px;}
+.b-purple{background:rgba(124,58,237,.25);color:#c4b5fd;border:1px solid rgba(124,58,237,.4);}
+.b-teal{background:rgba(0,130,160,.2);color:var(--cyan);border:1px solid rgba(0,194,224,.3);}
+.b-gold{background:rgba(245,158,11,.15);color:#fcd34d;border:1px solid rgba(245,158,11,.3);}
+
+/* TABS */
+.tab-nav-wrap{background:var(--navy2);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
+.tab-nav-wrap::-webkit-scrollbar{display:none;}
+.tab-nav{display:flex;padding:0 20px;min-width:max-content;}
+.tab-btn{background:none;border:none;color:var(--muted);font-family:'Inter',sans-serif;font-size:.82rem;font-weight:500;padding:15px 20px 13px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s;display:flex;align-items:center;gap:7px;}
+.tab-btn:hover{color:#c4b5fd;}
+.tab-btn.active{color:#e9d5ff;border-bottom-color:var(--purple);}
+
+/* PANELS */
+.tab-panel{display:none;padding:38px 32px 70px;max-width:960px;margin:0 auto;}
+.tab-panel.active{display:block;}
+
+/* TYPOGRAPHY */
+h2{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:#f1f5f9;margin-bottom:6px;}
+.page-sub{color:var(--muted);font-size:.88rem;margin-bottom:32px;border-bottom:1px solid var(--border);padding-bottom:18px;}
+h3{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;font-weight:600;color:#c4b5fd;margin:30px 0 10px;}
+h4{font-size:.88rem;font-weight:600;color:var(--cyan);margin:16px 0 6px;text-transform:uppercase;letter-spacing:.5px;}
+p{margin-bottom:12px;color:#cbd5e1;}
+strong{color:#f1f5f9;font-weight:600;}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px 22px;margin-bottom:16px;}
+.card-purple{border-left:3px solid var(--purple);}
+.card-teal{border-left:3px solid var(--teal);}
+.card-green{border-left:3px solid var(--green);}
+.card-gold{border-left:3px solid var(--gold);}
+.card-red{border-left:3px solid var(--red);}
+
+/* GRIDS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+@media(max-width:640px){.grid-2,.grid-3{grid-template-columns:1fr;}}
+
+/* CODE */
+pre,code{font-family:'JetBrains Mono',monospace;}
+code{background:rgba(124,58,237,.15);color:#c4b5fd;padding:2px 7px;border-radius:4px;font-size:.82em;}
+pre{background:#0a1628;border:1px solid var(--border);border-radius:8px;padding:18px 20px;overflow-x:auto;margin:14px 0;font-size:.82rem;line-height:1.7;color:#bfdbfe;}
+pre .c{color:#64748b;font-style:italic;}
+pre .k{color:#a78bfa;}
+pre .s{color:#86efac;}
+pre .n{color:var(--cyan);}
+
+/* TERMINAL BOX */
+.terminal-box{background:#050d18;border:1px solid rgba(16,185,129,.35);border-radius:10px;padding:16px 20px;margin:14px 0;position:relative;}
+.terminal-box::before{content:'TERMINAL — run this first';font-size:.64rem;font-weight:700;color:var(--green);letter-spacing:1px;display:block;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(16,185,129,.2);}
+.terminal-box pre{background:transparent;border:none;padding:0;margin:0;color:#a7f3d0;font-size:.84rem;}
+
+/* PROMPT BOX */
+.prompt-box{background:#070f1c;border:1px solid rgba(124,58,237,.45);border-radius:10px;padding:20px 22px;margin:16px 0;position:relative;}
+.prompt-box::before{content:'CLAUDE CODE PROMPT';font-size:.65rem;font-weight:700;color:#a78bfa;letter-spacing:1px;display:block;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(124,58,237,.2);}
+.prompt-box p{color:#d1fae5;font-family:'JetBrains Mono',monospace;font-size:.83rem;line-height:1.85;margin:0;white-space:pre-wrap;}
+
+/* CAPSTONE BOX */
+.capstone-box{background:linear-gradient(135deg,#140830,#061422);border:2px solid rgba(124,58,237,.55);border-radius:12px;padding:26px 28px;margin:20px 0;}
+.capstone-box::before{content:'🚀  CAPSTONE PROMPT — PASTE INTO CLAUDE CODE (NEW PROJECT FOLDER)';font-size:.67rem;font-weight:700;color:#a78bfa;letter-spacing:.9px;display:block;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(124,58,237,.25);}
+.capstone-box p{color:#e0f2fe;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.9;margin:0;white-space:pre-wrap;}
+
+/* VERIFY BOX */
+.verify-box{background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.25);border-radius:8px;padding:14px 18px;margin:12px 0;}
+.verify-box::before{content:'✅  VERIFY — You should see this';font-size:.67rem;font-weight:700;color:var(--green);letter-spacing:.8px;display:block;margin-bottom:8px;}
+.verify-box p,.verify-box ul{color:#a7f3d0;font-size:.86rem;margin:0;}
+.verify-box ul{padding-left:18px;}
+
+/* STEP CARD */
+.step-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px 24px;margin:24px 0;}
+.step-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.step-num{width:34px;height:34px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#ede9fe;flex-shrink:0;}
+.step-header-text h4{margin:0;color:#f1f5f9;font-size:.95rem;text-transform:none;letter-spacing:0;}
+.step-header-text p{margin:0;color:var(--muted);font-size:.78rem;}
+
+/* HIGHLIGHT */
+.hl{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:13px 17px;margin:12px 0;color:#fde68a;font-size:.87rem;}
+.hl-purple{background:rgba(124,58,237,.1);border-color:rgba(124,58,237,.3);color:#ddd6fe;}
+.hl-red{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.25);color:#fca5a5;}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;margin:14px 0;}
+th{background:rgba(124,58,237,.2);color:#c4b5fd;font-size:.8rem;text-align:left;padding:10px 14px;}
+td{border-bottom:1px solid var(--border);padding:10px 14px;color:#cbd5e1;font-size:.84rem;vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+
+/* FILE TREE */
+.file-tree{background:#060e1a;border:1px solid var(--border);border-radius:8px;padding:18px 22px;font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:2.1;color:#94a3b8;}
+.file-tree .dir{color:#c4b5fd;font-weight:500;}
+.file-tree .file{color:#7dd3fc;}
+.file-tree .note{color:#475569;font-size:.74rem;}
+
+/* SCREEN FLOW */
+.flow-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:14px 0;}
+.flow-screen{background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.35);border-radius:8px;padding:8px 14px;font-size:.82rem;font-weight:500;color:#c4b5fd;white-space:nowrap;}
+.flow-arrow{color:var(--muted);font-size:1rem;flex-shrink:0;}
+.flow-cond{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:6px;padding:4px 10px;font-size:.74rem;color:#fcd34d;}
+
+/* ROLE BADGE */
+.role-mgr{background:rgba(124,58,237,.2);color:#c4b5fd;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600;}
+.role-staff{background:rgba(0,130,160,.2);color:var(--cyan);padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600;}
+
+/* CHECKLIST */
+.checklist{list-style:none;padding:0;}
+.checklist li{padding:8px 0;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px;font-size:.87rem;color:#cbd5e1;}
+.checklist li:last-child{border-bottom:none;}
+.ci{flex-shrink:0;font-size:1rem;}
+
+/* TAGS */
+.tag{display:inline-block;font-size:.7rem;font-weight:600;padding:3px 10px;border-radius:20px;margin:3px 3px 3px 0;}
+.tag-p{background:rgba(124,58,237,.2);color:#c4b5fd;}
+.tag-t{background:rgba(0,130,160,.2);color:var(--cyan);}
+.tag-g{background:rgba(16,185,129,.2);color:#6ee7b7;}
+.tag-a{background:rgba(245,158,11,.2);color:#fcd34d;}
+
+/* FOOTER */
+.site-footer{background:var(--navy2);border-top:1px solid var(--border);text-align:center;padding:18px 20px;color:var(--muted);font-size:.78rem;}
+.site-footer a{color:var(--cyan);text-decoration:none;}
+
+/* DOC SECTION */
+.doc-file{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--teal);border-radius:8px;padding:16px 20px;margin:12px 0;}
+.doc-file .fname{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#7dd3fc;font-weight:500;}
+.doc-file .fdesc{color:#94a3b8;font-size:.83rem;margin-top:6px;}
+.doc-file ul{padding-left:18px;margin-top:8px;}
+.doc-file ul li{font-size:.83rem;color:#cbd5e1;margin-bottom:4px;}
+
+.anim-box{background:rgba(0,130,160,.08);border:1px solid rgba(0,194,224,.2);border-radius:8px;padding:14px 18px;margin:10px 0;}
+.anim-box .atrigger{font-size:.78rem;font-weight:600;color:var(--cyan);text-transform:uppercase;letter-spacing:.5px;}
+.anim-box .adetail{color:#a5f3fc;font-size:.85rem;margin-top:4px;}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div>
+    <h1>Khan Chacha MRMS — Full App Build</h1>
+    <p>Complete Guide: Context → Step-by-Step → Capstone → Documentation</p>
+  </div>
+  <div class="badge-row">
+    <a href="index.html" class="home-link">← All Sessions</a>
+    <span class="badge b-purple">Full Stack Build</span>
+    <span class="badge b-teal">Koenig Solutions</span>
+    <span class="badge b-gold">Beast AI Programme</span>
+  </div>
+</header>
+
+<!-- TABS -->
+<nav class="tab-nav-wrap">
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="showTab('context')">🎯 Context &amp; Overview</button>
+    <button class="tab-btn" onclick="showTab('steps')">🔨 Step-by-Step Build</button>
+    <button class="tab-btn" onclick="showTab('capstone')">🚀 Capstone Prompt</button>
+    <button class="tab-btn" onclick="showTab('docs')">📖 App Documentation</button>
+  </div>
+</nav>
+
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 1 · CONTEXT & OVERVIEW
+══════════════════════════════════════════════════════ -->
+<section id="tab-context" class="tab-panel active">
+  <h2>🎯 Context — What We Are Building &amp; Why</h2>
+  <p class="page-sub">Before writing a single prompt, understand the full picture. The clearer your mental model, the better your prompts will be.</p>
+
+  <h3>The Khan Chacha Problem</h3>
+  <div class="card card-gold">
+    <p style="margin:0;">Khan Chacha runs multiple restaurant outlets across Delhi/NCR. When a bulb fuses, an AC breaks, or a microwave fails — the outlet manager currently fills a <strong>Google Form</strong>. That form saves to a spreadsheet. Someone eventually reads it. There is no real-time tracking, no approval chain, no image evidence, no history. <strong>We are replacing that process with a proper mobile app.</strong></p>
+  </div>
+
+  <h3>The 5 Screens We Will Build</h3>
+  <div class="grid-2">
+    <div class="card card-purple">
+      <h4>Screen 1 — Login</h4>
+      <p style="margin:0;font-size:.86rem;">Split layout. Left: Khan Chacha brand panel (dark, kitchen motif). Right: Clean login form. Two dummy accounts — Manager and Staff. Animated transition into the app on successful login.</p>
+    </div>
+    <div class="card card-purple">
+      <h4>Screen 2 — Dashboard</h4>
+      <p style="margin:0;font-size:.86rem;">Role-aware landing page. Manager sees summary counters (Open/Pending/Closed) and approval queue. Staff sees a "Raise Request" CTA and their own submitted requests only.</p>
+    </div>
+    <div class="card card-teal">
+      <h4>Screen 3 — Request List</h4>
+      <p style="margin:0;font-size:.86rem;">Filterable, searchable list of all maintenance requests (Manager) or only own requests (Staff). Filter tabs + category chips + sort. Compact horizontal cards.</p>
+    </div>
+    <div class="card card-teal">
+      <h4>Screen 4 — Request Detail</h4>
+      <p style="margin:0;font-size:.86rem;">All 13 fields (12 + image). Action buttons: Update Status, Edit (with confirmation dialog), Delete (with confirmation dialog). Image displayed if uploaded.</p>
+    </div>
+    <div class="card card-green">
+      <h4>Screen 5 — New / Edit Form</h4>
+      <p style="margin:0;font-size:.86rem;">Full form for creating or editing a request. Pre-filled when editing. Image picker button. Category dropdown (Electrical/AC/Kitchen). All validation. Confirmation before updating existing records.</p>
+    </div>
+  </div>
+
+  <h3>The Two User Roles</h3>
+  <table>
+    <tr><th>Permission</th><th><span class="role-mgr">Manager</span></th><th><span class="role-staff">Maintenance Staff</span></th></tr>
+    <tr><td>Raise a new request</td><td>✅</td><td>✅</td></tr>
+    <tr><td>View own requests</td><td>✅</td><td>✅</td></tr>
+    <tr><td>View ALL requests</td><td>✅ (full visibility)</td><td>❌ (own outlet only)</td></tr>
+    <tr><td>Approve / Reject a request</td><td>✅ (change status)</td><td>❌</td></tr>
+    <tr><td>Edit any request</td><td>✅</td><td>Only own, only if Open</td></tr>
+    <tr><td>Delete a request</td><td>✅</td><td>❌</td></tr>
+    <tr><td>See Dashboard summary</td><td>✅ (all outlets)</td><td>✅ (own outlet only)</td></tr>
+  </table>
+
+  <h3>The 13 Fields of MaintenanceRequest</h3>
+  <table>
+    <tr><th>#</th><th>Field</th><th>Type</th><th>Notes</th></tr>
+    <tr><td>1</td><td><code>id</code></td><td>String</td><td>Auto-generated (REQ-001 etc.)</td></tr>
+    <tr><td>2</td><td><code>productName</code></td><td>String</td><td>e.g. "HVAC Unit"</td></tr>
+    <tr><td>3</td><td><code>productId</code></td><td>String</td><td>e.g. "HVAC-203"</td></tr>
+    <tr><td>4</td><td><code>category</code></td><td>String</td><td>Electrical / AC / Kitchen</td></tr>
+    <tr><td>5</td><td><code>status</code></td><td>String</td><td>Open / Pending / Closed</td></tr>
+    <tr><td>6</td><td><code>requestDate</code></td><td>String</td><td>YYYY-MM-DD</td></tr>
+    <tr><td>7</td><td><code>description</code></td><td>String</td><td>Issue description (min 10 chars)</td></tr>
+    <tr><td>8</td><td><code>managerName</code></td><td>String</td><td>Auto-filled from logged-in user</td></tr>
+    <tr><td>9</td><td><code>outletId</code></td><td>String</td><td>e.g. "OUT-01"</td></tr>
+    <tr><td>10</td><td><code>outletName</code></td><td>String</td><td>e.g. "Khan Chacha Connaught Place"</td></tr>
+    <tr><td>11</td><td><code>outletAddress</code></td><td>String</td><td>Full address</td></tr>
+    <tr><td>12</td><td><code>imagePath</code></td><td>String?</td><td>Nullable — local file path from image_picker</td></tr>
+    <tr><td>13</td><td><code>statusHistory</code></td><td>List&lt;String&gt;</td><td>Log of status changes with timestamp</td></tr>
+  </table>
+
+  <h3>Dummy Accounts (for Prototype)</h3>
+  <div class="grid-2">
+    <div class="card card-purple">
+      <h4>Manager Account</h4>
+      <p style="font-family:'JetBrains Mono',monospace;font-size:.85rem;margin:0;color:#c4b5fd;">
+        Username: <strong>manager</strong><br/>
+        Password: <strong>manager123</strong><br/>
+        Name: Arjun Sharma<br/>
+        Outlet: OUT-01 · Connaught Place<br/>
+        Role: manager
+      </p>
+    </div>
+    <div class="card card-teal">
+      <h4>Staff Account</h4>
+      <p style="font-family:'JetBrains Mono',monospace;font-size:.85rem;margin:0;color:#7dd3fc;">
+        Username: <strong>staff</strong><br/>
+        Password: <strong>staff123</strong><br/>
+        Name: Priya Nair<br/>
+        Outlet: OUT-02 · Lajpat Nagar<br/>
+        Role: staff
+      </p>
+    </div>
+  </div>
+
+  <h3>The Art of Prompting — Recap</h3>
+  <div class="card card-purple" style="margin-bottom:12px;">
+    <strong>Rule 1 — Describe outcomes, not widgets</strong>
+    <p style="margin:6px 0 0;font-size:.87rem;color:#94a3b8;">Don't say "add a Container with a Row". Say "each card shows the product name bold on the left and the status badge on the right." Claude picks the right widget.</p>
+  </div>
+  <div class="card card-teal" style="margin-bottom:12px;">
+    <strong>Rule 2 — Always name the file</strong>
+    <p style="margin:6px 0 0;font-size:.87rem;color:#94a3b8;">Claude works better when you say "in lib/screens/detail_screen.dart" than when you say "in the detail page". Be precise.</p>
+  </div>
+  <div class="card card-green" style="margin-bottom:12px;">
+    <strong>Rule 3 — Use CONSTRAINTS to protect what exists</strong>
+    <p style="margin:6px 0 0;font-size:.87rem;color:#94a3b8;">Add "Do not change any other file" or "Keep the existing card style unchanged" at the end. Prevents Claude from refactoring code you didn't ask it to touch.</p>
+  </div>
+  <div class="card card-gold">
+    <strong>Rule 4 — The capstone prompt wins because it has full context</strong>
+    <p style="margin:6px 0 0;font-size:.87rem;color:#94a3b8;">A big prompt isn't better because it's long. It's better because it gives Claude the complete picture — what the app is, who uses it, what every screen must do, and how they connect. Claude produces better code when it understands the product.</p>
+  </div>
+
+  <h3>Two Ways to Build the Same App</h3>
+  <div class="grid-2">
+    <div class="card card-teal">
+      <h4>🔨 Progressive (Step-by-Step)</h4>
+      <p style="font-size:.86rem;margin:0;color:#94a3b8;">10 prompts. You run one at a time, test the app, then move to the next. You see the app grow screen by screen. Best for <strong>learning how it all fits together.</strong></p>
+    </div>
+    <div class="card card-purple">
+      <h4>🚀 Capstone (One Big Prompt)</h4>
+      <p style="font-size:.86rem;margin:0;color:#94a3b8;">One prompt. Run it in a brand-new folder. Claude builds the entire app in one shot. Best for <strong>seeing what a production-quality prompt looks like.</strong></p>
+    </div>
+  </div>
+
+  <div class="hl" style="margin-top:20px;">
+    ⚠️ <strong>Important:</strong> Step-by-Step and Capstone are <strong>two different Flutter projects</strong> in two different folders. Do not mix them. The step-by-step continues your existing khan_chacha_mrms folder. The capstone creates a brand-new project.
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 2 · STEP-BY-STEP BUILD
+══════════════════════════════════════════════════════ -->
+<section id="tab-steps" class="tab-panel">
+  <h2>🔨 Step-by-Step Build — Progressive Prompts</h2>
+  <p class="page-sub">Follow each step in order. Read the terminal instructions carefully — some steps require running a command <em>before</em> giving Claude the prompt. Each step produces a working, runnable app state.</p>
+
+  <div class="hl-purple" style="margin-bottom:28px;">
+    📁 <strong>This is your existing project folder:</strong> <code>khan_chacha_mrms</code> — the one you've been building across Day 1 and Day 2. Open it in VS Code before you begin.
+  </div>
+
+  <!-- STEP 0 -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num">0</div>
+      <div class="step-header-text">
+        <h4>Add Dependencies &amp; Clean Up Folder Structure</h4>
+        <p>Terminal only — no Claude prompt needed here</p>
+      </div>
+    </div>
+    <p>Before building the new screens, add the packages we need and set up the folder structure properly.</p>
+    <div class="terminal-box"><pre>cd khan_chacha_mrms
+
+<span style="color:#64748b;"># Open VS Code</span>
+code .
+
+<span style="color:#64748b;"># In VS Code: open pubspec.yaml and add these under dependencies:</span>
+<span style="color:#64748b;">#   image_picker: ^1.1.2</span>
+<span style="color:#64748b;"># Then save the file, then run:</span>
+
+flutter pub get
+
+<span style="color:#64748b;"># Create the folder structure manually in VS Code (right-click → New Folder):</span>
+<span style="color:#64748b;"># lib/models/      (may already exist)</span>
+<span style="color:#64748b;"># lib/screens/     (may already exist)</span>
+<span style="color:#64748b;"># lib/widgets/     (may already exist)</span>
+<span style="color:#64748b;"># lib/data/        (for dummy data)</span>
+<span style="color:#64748b;"># lib/services/    (for auth logic)</span>
+
+<span style="color:#64748b;"># Run the app to confirm nothing is broken:</span>
+flutter run</pre></div>
+    <div class="verify-box"><p>The app should still run and show your existing maintenance list from Day 1 & 2. No errors in the terminal.</p></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div class="step-header-text">
+        <h4>Models + Dummy Data + Auth Service</h4>
+        <p>Creates the data foundation: UserAccount model, updated MaintenanceRequest, dummy accounts, sample requests, auth logic</p>
+      </div>
+    </div>
+    <div class="prompt-box"><p>In our Khan Chacha MRMS Flutter app, create or update these files:
+
+1. Create lib/models/user_account.dart with a UserAccount class:
+   Fields: id (String), name (String), username (String), password (String),
+   role (String — either 'manager' or 'staff'), outletId (String), outletName (String)
+   Add a const constructor with all required fields.
+
+2. Update lib/models/maintenance_request.dart to ensure it has these 13 fields:
+   id, productName, productId, category, status, requestDate, description,
+   managerName, outletId, outletName, outletAddress,
+   imagePath (String? — nullable), statusHistory (List&lt;String&gt; — default empty list)
+   Add a copyWith() method covering all fields.
+   Add fromJson(Map&lt;String, dynamic&gt;) and toJson() methods.
+
+3. Create lib/data/dummy_data.dart with:
+   - A List&lt;UserAccount&gt; called dummyUsers containing 2 accounts:
+     {id:'U001', name:'Arjun Sharma', username:'manager', password:'manager123', role:'manager', outletId:'OUT-01', outletName:'Khan Chacha Connaught Place'}
+     {id:'U002', name:'Priya Nair', username:'staff', password:'staff123', role:'staff', outletId:'OUT-02', outletName:'Khan Chacha Lajpat Nagar'}
+   - A mutable List&lt;MaintenanceRequest&gt; called sampleRequests with 6 varied records
+     covering all 3 categories (Electrical, AC, Kitchen), all 3 statuses, both outlets.
+     Leave imagePath as null for all sample records.
+
+4. Create lib/services/auth_service.dart with an AuthService class:
+   - A nullable UserAccount? currentUser field (starts null)
+   - A method: UserAccount? login(String username, String password)
+     → searches dummyUsers, returns matching user or null
+     → sets currentUser if found
+   - A method: void logout() → sets currentUser to null
+   - Make AuthService a singleton using a factory constructor.
+
+Do not touch main.dart or any screen files yet.</p></div>
+    <div class="verify-box"><p>No need to run flutter run yet — these are just model files. Check that VS Code shows no red underlines in the new files.</p></div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div class="step-header-text">
+        <h4>Login Screen — Split Layout with Branding</h4>
+        <p>The first thing users see. Left: Khan Chacha brand panel. Right: Login form.</p>
+      </div>
+    </div>
+    <div class="prompt-box"><p>Create lib/screens/login_screen.dart for our Khan Chacha MRMS Flutter app.
+
+LAYOUT — Split screen using a Row with two Expanded children:
+
+LEFT PANEL (flex: 2) — Brand panel, dark background (#0d1b2a):
+- Large "Khan Chacha" text in gold/amber (#f59e0b), bold, serif feel
+- Subtitle: "Maintenance Request System" in light grey
+- Three decorative emoji icons arranged vertically with small labels:
+  🔧 "Electrical Repairs"  ❄️ "AC &amp; Cooling"  🍳 "Kitchen Equipment"
+- Bottom text: "Powering 20+ outlets across Delhi NCR" in muted colour
+- A subtle vertical gradient overlay (dark navy to slightly lighter)
+
+RIGHT PANEL (flex: 3) — White/light card (#f8fafc background):
+- Centred column, max width 320px, with padding
+- "Welcome Back" heading in dark colour (#1e293b), bold
+- "Sign in to your account" subtitle in grey
+- Username TextFormField with person icon prefix
+- Password TextFormField with lock icon prefix, obscureText toggle (eye icon)
+- "Login" ElevatedButton — full width, amber/gold colour (#f59e0b), dark text
+- On login: call AuthService().login(username, password)
+  - If null returned: show a red SnackBar "Invalid credentials. Try again."
+  - If valid: navigate to DashboardScreen using a FadeTransition page route
+    (0.4 second fade animation). Pass the logged-in UserAccount.
+- Below the button: small text "Manager: manager / manager123  |  Staff: staff / staff123"
+  in muted grey (hint for demo use)
+
+ON MOBILE (screen width &lt; 600): Stack the panels vertically.
+Left panel becomes a top banner (shorter height), right panel fills the rest.
+
+Also update main.dart so LoginScreen is the home screen (replace whatever was there).
+Use ThemeData with colorSchemeSeed: Colors.amber for the overall app theme.
+
+Create lib/screens/dashboard_screen.dart as a placeholder (Scaffold with AppBar
+"Dashboard" and Text "Coming in Step 3") — needed so the navigation compiles.
+
+Files to create/modify: login_screen.dart, dashboard_screen.dart (placeholder), main.dart</p></div>
+    <div class="terminal-box"><pre><span style="color:#64748b;"># After Claude generates the files, run:</span>
+flutter run
+
+<span style="color:#64748b;"># Hot reload shortcut: press 'r' in the terminal</span></pre></div>
+    <div class="verify-box"><ul>
+      <li>App opens to a split login screen — dark brand panel on left, light form on right</li>
+      <li>Typing wrong credentials shows red SnackBar</li>
+      <li>Typing "manager" / "manager123" fades into the Dashboard placeholder</li>
+    </ul></div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div class="step-header-text">
+        <h4>Dashboard Screen — Role-Aware Home Page</h4>
+        <p>Manager sees all-outlet summary + approval queue. Staff sees their outlet's stats + raise request CTA.</p>
+      </div>
+    </div>
+    <div class="prompt-box"><p>Replace the placeholder in lib/screens/dashboard_screen.dart with the full dashboard.
+
+The screen receives a UserAccount as a constructor parameter.
+
+COMMON ELEMENTS (both roles):
+- AppBar with "Khan Chacha" title and the user's name in the subtitle
+- A logout IconButton (Icons.logout) in the AppBar actions
+  → On tap: show confirmation dialog "Logout?" with Cancel / Logout buttons
+  → On confirm: call AuthService().logout() and navigate back to LoginScreen
+    (clear the navigation stack using Navigator.pushAndRemoveUntil)
+- A bottom navigation bar with two items:
+  "Home" (Icons.home) and "Requests" (Icons.list_alt)
+
+MANAGER DASHBOARD BODY:
+- Welcome text: "Good [Morning/Afternoon], [name]" (based on time of day)
+- Three summary stat cards in a Row:
+  Open count (green), Pending count (amber), Closed count (grey)
+  Count from sampleRequests filtered by status.
+- A section "Needs Your Attention" — list of all Open requests (max 3 shown)
+  Each shown as a compact tile with productName, outletName, date, and
+  an "Update" button that navigates to the detail screen for that request.
+- A FAB (+ icon) to navigate to the New Request form.
+
+STAFF DASHBOARD BODY:
+- Welcome text: "Good [Morning/Afternoon], [name]"
+- Their outlet name displayed prominently: "📍 [outletName]"
+- Two summary cards: their Open count, their Pending count
+  (filter sampleRequests by outletId matching the staff member's outletId)
+- A large prominent button "➕ Raise Maintenance Request" (full width, amber)
+  → navigates to the New Request form
+- A section "Your Recent Requests" — last 3 requests from their outlet
+
+NAVIGATION:
+- Bottom nav "Home" tab = shows the dashboard body above
+- Bottom nav "Requests" tab = navigates to RequestListScreen (create as placeholder now)
+  Use a SlideTransition (slide from right) for this navigation.
+
+Create lib/screens/request_list_screen.dart as a placeholder.
+Files to create/modify: dashboard_screen.dart, request_list_screen.dart (placeholder)</p></div>
+    <div class="verify-box"><ul>
+      <li>Manager login → sees summary cards with correct counts and attention queue</li>
+      <li>Staff login → sees their outlet name, their counts, big raise request button</li>
+      <li>Logout dialog appears, confirming logout returns to login screen</li>
+      <li>Bottom nav switches between Home and Requests</li>
+    </ul></div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <div class="step-header-text">
+        <h4>Request List Screen — Filter, Search, Sort</h4>
+        <p>The full list with all filtering. Manager sees all. Staff sees own outlet only.</p>
+      </div>
+    </div>
+    <div class="prompt-box"><p>Replace the placeholder in lib/screens/request_list_screen.dart.
+
+The screen receives a UserAccount as a constructor parameter.
+
+DATA: Import sampleRequests from dummy_data.dart.
+- If user.role == 'manager': show all requests
+- If user.role == 'staff': show only requests where outletId == user.outletId
+
+LAYOUT (top to bottom):
+1. AppBar: title "Maintenance Requests", back arrow hidden (reached via bottom nav)
+   Actions: sort icon (Icons.sort) — opens a ModalBottomSheet with sort options:
+   "Newest First", "Oldest First", "By Outlet ID"
+2. Search bar (TextField) with search icon — filters by productName or outletName
+3. Status filter tabs: All | Open | Pending | Closed
+   Each tab shows count badge: "Open (3)"
+4. Category chips (horizontal scroll): All | ⚡ Electrical | ❄️ AC | 🍳 Kitchen
+5. ListView.builder of RequestCard widgets
+   Empty state: centred 🔧 icon + "No requests found" + subtitle
+
+All four filters (search, status tab, category chip, sort) work simultaneously.
+Add a RefreshIndicator — on pull-down, wait 800ms then reload the same data.
+
+Create lib/widgets/request_card.dart as described:
+- Horizontal layout (Row): left side has productName (bold), below it category icon + category text + outletId
+- Right side: date on top, status badge below (Open=green, Pending=amber, Closed=red chip)
+- Tap → navigate to DetailScreen with a SlideTransition (slide from right)
+
+Files to create/modify: request_list_screen.dart, request_card.dart</p></div>
+    <div class="verify-box"><ul>
+      <li>Manager sees 6 requests. Staff sees only requests from OUT-02.</li>
+      <li>All filters work together — try "Open" tab + "AC" chip</li>
+      <li>Tapping a card slides to a placeholder detail screen</li>
+    </ul></div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num">5</div>
+      <div class="step-header-text">
+        <h4>Detail Screen — Full Record View + Actions</h4>
+        <p>Shows all 13 fields. Manager can update status, edit, delete. Staff can only edit own Open requests.</p>
+      </div>
+    </div>
+    <div class="prompt-box"><p>Create lib/screens/detail_screen.dart for our Khan Chacha MRMS Flutter app.
+
+CONSTRUCTOR parameters: MaintenanceRequest request, UserAccount currentUser
+
+BODY (scrollable SingleChildScrollView):
+- Hero widget wrapping a coloured category banner at the top:
+  Electrical = purple gradient, AC = blue gradient, Kitchen = orange gradient
+  Show category icon (⚡❄️🍳), product name large, and the status badge
+- Below the banner, show all 13 fields in labelled rows with icons:
+  🆔 Request ID · 🔧 Product Name · #️⃣ Product ID · 🏷️ Category
+  📅 Date · 📍 Outlet ID · 🏪 Outlet Name · 🗺️ Address
+  👤 Manager · 📝 Description
+- Image section: if imagePath is not null, show the image using Image.file()
+  with a "Tap to expand" label. If null, show a placeholder box "No image attached"
+- Status History section: if statusHistory is empty show "No changes yet",
+  else show each entry as a small timeline tile
+
+ACTIONS at the bottom (sticky, not scrolling away):
+Three buttons laid out in a Row:
+
+[Update Status] (amber, Icons.update) — visible to Manager only:
+  Opens ModalBottomSheet with Open/Pending/Closed tiles.
+  On selection → update the record in sampleRequests using copyWith()
+  → add to statusHistory: "2026-07-07 14:30 · Open → Pending"
+  → show SnackBar "Status updated to [new status]"
+  → pop and return updated request to list screen
+
+[Edit] (blue, Icons.edit) — Manager always, Staff only if status=='Open' and own outlet:
+  Show an AlertDialog first:
+  Title: "Edit Request?"
+  Content: "You are about to edit REQ-001. This will open the form with the current details pre-filled."
+  Buttons: Cancel | Continue Editing
+  On Continue: navigate to RequestFormScreen with the request pre-filled (edit mode)
+
+[Delete] (red, Icons.delete) — Manager only:
+  Show an AlertDialog:
+  Title: "Delete Request?"
+  Content: "Are you sure you want to permanently delete [productName] (REQ-001)? This cannot be undone."
+  Buttons: Cancel | Delete (red text)
+  On Delete: remove from sampleRequests, show SnackBar "Request deleted", pop back to list
+  The card should animate out (use an AnimatedList or just pop + setState on list)
+
+Navigation: Uses SlideTransition (from right). On pop, pass updated request back.
+
+Files to create/modify: detail_screen.dart</p></div>
+    <div class="verify-box"><ul>
+      <li>Detail shows coloured top banner per category — looks distinctive</li>
+      <li>Edit dialog appears before opening the form</li>
+      <li>Delete dialog has red Delete button — confirm deletes and pops back</li>
+      <li>Update Status changes the badge colour immediately</li>
+    </ul></div>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num">6</div>
+      <div class="step-header-text">
+        <h4>New / Edit Request Form — Full Form + Image Picker</h4>
+        <p>Creates new requests and pre-fills for editing. Image picker included. Full validation.</p>
+      </div>
+    </div>
+    <div class="prompt-box"><p>Create lib/screens/request_form_screen.dart for our Khan Chacha MRMS Flutter app.
+
+CONSTRUCTOR: UserAccount currentUser, MaintenanceRequest? existingRequest
+- If existingRequest is not null → Edit Mode (pre-fill all fields)
+- If existingRequest is null → Create Mode
+
+AppBar title: "New Request" or "Edit Request" based on mode.
+
+FORM FIELDS (in this order, inside a Form with GlobalKey):
+1. Product Name (TextFormField, required, min 3 chars)
+2. Product ID (TextFormField, required, e.g. "HVAC-203")
+3. Category (DropdownButtonFormField): Electrical | AC | Kitchen — required
+4. Outlet ID (TextFormField, pre-filled from currentUser.outletId, read-only grey background)
+5. Outlet Name (TextFormField, pre-filled from currentUser.outletName, read-only)
+6. Manager Name (TextFormField, pre-filled from currentUser.name, read-only)
+7. Outlet Address (TextFormField, required, free text)
+8. Description (TextFormField, multiline 4 lines, required, min 10 chars)
+9. Status (DropdownButtonFormField): Open | Pending | Closed
+   — In Create Mode: locked to 'Open', read-only
+   — In Edit Mode: editable only if currentUser.role == 'manager'
+
+IMAGE PICKER section (below the form fields):
+- A rectangular dashed-border container
+- If no image selected: show camera icon + "Tap to attach an image of the issue"
+- If image selected: show Image.file() preview with an X button to remove it
+- On tap: call ImagePicker().pickImage(source: ImageSource.gallery)
+  — Store the XFile path in state as selectedImagePath (String?)
+
+SUBMIT BUTTON: "Submit Request" or "Update Request" — full width, amber
+- Call form.currentState!.validate() first
+- In EDIT MODE: show a confirmation dialog before submitting:
+  Title: "Confirm Update"
+  Content: "Save changes to [productName]?"
+  Buttons: Cancel | Save Changes
+- On confirm (or in create mode, directly):
+  Create/update the MaintenanceRequest object
+  Add to sampleRequests (create) or replace in sampleRequests (edit using copyWith)
+  For create: generate id as "REQ-00X" (next number), use DateTime.now() for date
+  Show SnackBar "Request submitted!" or "Request updated!"
+  Pop back (return the new/updated object)
+
+VALIDATION rules:
+- productName: required, min 3 chars
+- productId: required
+- outletAddress: required
+- description: required, min 10 chars
+- category: must be selected
+
+Files to create: request_form_screen.dart</p></div>
+    <div class="verify-box"><ul>
+      <li>Create mode: form is blank, Outlet ID/Name/Manager pre-filled from logged-in user</li>
+      <li>Edit mode: all fields populated with existing values</li>
+      <li>Image picker opens the gallery, preview shows in the form</li>
+      <li>Submitting without required fields highlights errors in red</li>
+    </ul></div>
+  </div>
+
+  <!-- STEP 7 -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num">7</div>
+      <div class="step-header-text">
+        <h4>Wire All Navigation + Add Animated Page Transitions</h4>
+        <p>Connect every screen. Add slide, fade, and scale animations consistently throughout the app.</p>
+      </div>
+    </div>
+    <div class="prompt-box"><p>In our Khan Chacha MRMS Flutter app, create lib/services/navigation_service.dart
+with custom page route builders, then wire all navigation throughout the app.
+
+1. Create lib/services/navigation_service.dart with these static methods:
+
+   static Route slideFromRight(Widget page) — SlideTransition from right (x: 1→0)
+   static Route slideFromBottom(Widget page) — SlideTransition from bottom (y: 1→0)
+   static Route fade(Widget page) — FadeTransition (opacity 0→1, 400ms)
+   static Route scaleAndFade(Widget page) — Scale (0.85→1.0) + Fade, 350ms
+
+   All routes should use PageRouteBuilder with transitionDuration: 300ms
+   and use CurvedAnimation with Curves.easeInOut.
+
+2. Apply transitions throughout:
+   - Login → Dashboard: fade() transition
+   - Dashboard → RequestListScreen: slideFromRight()
+   - RequestListScreen → DetailScreen: slideFromRight()
+   - DetailScreen → RequestFormScreen: slideFromBottom()
+   - Any back navigation: automatically uses the reverse of the push animation
+   - Logout → LoginScreen: fade() with Navigator.pushAndRemoveUntil
+
+3. Ensure the FAB (+) on Dashboard and RequestListScreen both navigate to
+   RequestFormScreen in Create Mode, passing currentUser. Use slideFromBottom().
+
+4. Ensure DetailScreen's Edit button navigates to RequestFormScreen in Edit Mode.
+   Await the result — if a MaintenanceRequest is returned, update the displayed data.
+
+5. Ensure DetailScreen's back navigation (AppBar back button or Android back)
+   returns the updated MaintenanceRequest to RequestListScreen, which then
+   updates the item in the list using setState.
+
+Also confirm that RequestListScreen is reachable from:
+- DashboardScreen bottom nav "Requests" tab
+- DashboardScreen "View All" link (if present)
+Pass currentUser to every screen that needs it.
+
+Files to modify: navigation_service.dart (create), main.dart, login_screen.dart,
+dashboard_screen.dart, request_list_screen.dart, detail_screen.dart</p></div>
+    <div class="verify-box"><ul>
+      <li>Login → Dashboard feels like a smooth fade — not a hard cut</li>
+      <li>Tapping a request card slides the detail screen in from the right</li>
+      <li>Opening the form slides up from the bottom (like a modal)</li>
+      <li>Going back reverses the animation naturally</li>
+    </ul></div>
+  </div>
+
+  <!-- STEP 8 -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num">8</div>
+      <div class="step-header-text">
+        <h4>Polish — App Theme, Loading States &amp; Final Touches</h4>
+        <p>Make the app feel complete. Consistent colours, loading spinners, success feedback.</p>
+      </div>
+    </div>
+    <div class="prompt-box"><p>Final polish pass for our Khan Chacha MRMS Flutter app.
+
+1. APP THEME (update main.dart ThemeData):
+   - Primary colour: amber/gold (#f59e0b)
+   - Background: white (#ffffff) with card surface (#f8fafc)
+   - AppBar background: dark navy (#0d1b2a), white title text
+   - ElevatedButton style: amber background, dark text, rounded corners (12px)
+   - InputDecoration: outlined style, amber focus border
+   - BottomNavigationBar: dark navy background, amber selected icon
+
+2. LOGIN SCREEN — Add a loading state:
+   When the Login button is tapped, show a CircularProgressIndicator inside
+   the button for 800ms (simulating auth check), then navigate or show error.
+   Disable the button during loading.
+
+3. DASHBOARD SCREEN — Animate the stat cards on page load:
+   Use AnimatedOpacity + AnimatedSlide to fade and slide up each stat card
+   with a 150ms stagger between them (card 1 at 0ms, card 2 at 150ms, card 3 at 300ms).
+   Trigger the animations on initState using Future.delayed.
+
+4. REQUEST LIST — Add a Dismissible wrapper to each RequestCard:
+   Only for Manager role: swipe left on a card to reveal a red delete background.
+   On dismiss: show the same confirmation AlertDialog as in DetailScreen.
+   If user cancels: add the item back (setState). If confirmed: remove from list.
+
+5. FORM — Add a subtle pulse animation to the image picker area
+   when no image is selected (use AnimationController + Tween on opacity
+   between 0.5 and 1.0, repeating — draws attention to the upload area).
+
+6. GENERAL: Add a Hero animation on the status badge between RequestCard
+   and DetailScreen. Use heroTag: 'status-badge-[request.id]' on both widgets.
+
+Files to modify: main.dart, login_screen.dart, dashboard_screen.dart,
+request_list_screen.dart, request_form_screen.dart, request_card.dart, detail_screen.dart</p></div>
+    <div class="verify-box"><ul>
+      <li>Login button shows spinner then transitions smoothly</li>
+      <li>Dashboard stat cards animate in one by one on load</li>
+      <li>Swipe left on a list card (as Manager) reveals red delete action</li>
+      <li>Image picker area gently pulses when empty</li>
+      <li>Status badge animates between list card and detail screen (Hero)</li>
+    </ul></div>
+  </div>
+
+  <div class="hl" style="margin-top:24px;">
+    🎉 <strong>End of Step-by-Step Build.</strong> Your khan_chacha_mrms project is now a fully working prototype with 5 screens, role-based access, animated transitions, confirmation dialogs, image upload, and complete CRUD for maintenance requests — all on dummy data.
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 3 · CAPSTONE PROMPT
+══════════════════════════════════════════════════════ -->
+<section id="tab-capstone" class="tab-panel">
+  <h2>🚀 Capstone Prompt — Build the Full App in One Shot</h2>
+  <p class="page-sub">This is one prompt that creates the complete Khan Chacha MRMS app from scratch. Run it in a <strong>brand-new Flutter project folder</strong> — not the step-by-step project.</p>
+
+  <div class="hl-red" style="margin-bottom:24px;">
+    ⚠️ <strong>New Folder. New Project.</strong> This is NOT the same project as the step-by-step build. Create a brand new Flutter project first, then paste this entire prompt into Claude Code.
+  </div>
+
+  <div class="terminal-box" style="margin-bottom:24px;"><pre><span style="color:#64748b;"># Step 1: Create a brand new Flutter project</span>
+flutter create khan_chacha_capstone
+cd khan_chacha_capstone
+
+<span style="color:#64748b;"># Step 2: Open in VS Code</span>
+code .
+
+<span style="color:#64748b;"># Step 3: Open the terminal inside VS Code (Ctrl+`) and open Claude Code:</span>
+<span style="color:#64748b;"># Then paste the entire prompt below into Claude Code.</span>
+<span style="color:#64748b;"># Claude will create all files. After it finishes, run:</span>
+flutter pub get
+flutter run</pre></div>
+
+  <div class="capstone-box">
+<p>BUILD: Khan Chacha Maintenance Request Management System (MRMS) — Complete Flutter Prototype
+
+═══════════════════════════════════════════════════════
+CONTEXT
+═══════════════════════════════════════════════════════
+Khan Chacha is a multi-outlet restaurant chain in Delhi/NCR. Outlet managers and
+maintenance staff need a mobile app to submit, track, and manage equipment maintenance
+requests. This replaces a manual Google Form process. The app is internal-use only.
+
+This is a PROTOTYPE — all data is in-memory (no real database). After login, the app
+uses dummy hardcoded accounts and sample maintenance records. Flutter framework, Dart.
+Target: Android (primary), also runs on desktop for development/demo.
+
+Required package (add to pubspec.yaml): image_picker: ^1.1.2
+
+═══════════════════════════════════════════════════════
+FOLDER STRUCTURE — CREATE EXACTLY THIS
+═══════════════════════════════════════════════════════
+lib/
+├── main.dart
+├── models/
+│   ├── user_account.dart
+│   └── maintenance_request.dart
+├── data/
+│   └── dummy_data.dart
+├── services/
+│   ├── auth_service.dart
+│   └── navigation_service.dart
+├── screens/
+│   ├── login_screen.dart
+│   ├── dashboard_screen.dart
+│   ├── request_list_screen.dart
+│   ├── detail_screen.dart
+│   └── request_form_screen.dart
+└── widgets/
+    ├── request_card.dart
+    └── status_badge.dart
+
+═══════════════════════════════════════════════════════
+MODELS
+═══════════════════════════════════════════════════════
+UserAccount fields: id, name, username, password, role (String: 'manager'|'staff'),
+outletId, outletName. Const constructor. No fromJson needed.
+
+MaintenanceRequest fields (all String unless noted):
+id, productName, productId, category, status, requestDate, description,
+managerName, outletId, outletName, outletAddress,
+imagePath (String? — nullable),
+statusHistory (List&lt;String&gt; — default const [])
+Add: const constructor, copyWith() covering all fields,
+fromJson(Map&lt;String,dynamic&gt;) and toJson() methods.
+
+═══════════════════════════════════════════════════════
+DUMMY DATA (dummy_data.dart)
+═══════════════════════════════════════════════════════
+dummyUsers — List&lt;UserAccount&gt;:
+  {id:'U001', name:'Arjun Sharma', username:'manager', password:'manager123',
+   role:'manager', outletId:'OUT-01', outletName:'Khan Chacha Connaught Place'}
+  {id:'U002', name:'Priya Nair', username:'staff', password:'staff123',
+   role:'staff', outletId:'OUT-02', outletName:'Khan Chacha Lajpat Nagar'}
+
+sampleRequests — mutable List&lt;MaintenanceRequest&gt; (8 records):
+REQ-001: HVAC Unit, HVAC-203, AC, Pending, 2026-06-10,
+         "AC is not cooling below 28°C despite running for hours.", Priya Nair,
+         OUT-02, Khan Chacha Lajpat Nagar, "5 Central Market Lajpat Nagar II 110024"
+REQ-002: Industrial Generator, GEN-101, Electrical, Open, 2026-06-01,
+         "Generator trips after 2 hours of continuous use.", Arjun Sharma,
+         OUT-01, Khan Chacha Connaught Place, "12-A Connaught Place New Delhi 110001"
+REQ-003: Microwave Oven, MWO-55, Kitchen, Closed, 2026-05-20,
+         "Microwave turntable motor has stopped working.", Arjun Sharma,
+         OUT-01, Khan Chacha Connaught Place, "12-A Connaught Place New Delhi 110001"
+REQ-004: Freight Elevator, ELEV-007, Electrical, Closed, 2026-06-15,
+         "Elevator door sensor is faulty — door does not close properly.", Priya Nair,
+         OUT-02, Khan Chacha Lajpat Nagar, "5 Central Market Lajpat Nagar II 110024"
+REQ-005: Commercial Refrigerator, REF-22, Kitchen, Open, 2026-06-28,
+         "Fridge temperature rising above safe food storage levels.", Priya Nair,
+         OUT-02, Khan Chacha Lajpat Nagar, "5 Central Market Lajpat Nagar II 110024"
+REQ-006: Split AC Unit, AC-88, AC, Open, 2026-07-01,
+         "Water dripping from indoor unit onto counter area.", Arjun Sharma,
+         OUT-01, Khan Chacha Connaught Place, "12-A Connaught Place New Delhi 110001"
+REQ-007: Exhaust Fan, EXF-14, Kitchen, Pending, 2026-06-25,
+         "Kitchen exhaust fan making loud grinding noise.", Arjun Sharma,
+         OUT-01, Khan Chacha Connaught Place, "12-A Connaught Place New Delhi 110001"
+REQ-008: Water Pump Station, PUMP-045, Electrical, Open, 2026-07-02,
+         "Water pump pressure is inconsistent — outlets on floor 2 have low pressure.",
+         Priya Nair, OUT-02, Khan Chacha Lajpat Nagar, "5 Central Market Lajpat Nagar II 110024"
+
+All imagePath: null. All statusHistory: [].
+
+═══════════════════════════════════════════════════════
+SERVICES
+═══════════════════════════════════════════════════════
+auth_service.dart — singleton AuthService:
+  UserAccount? currentUser (initially null)
+  UserAccount? login(String username, String password):
+    → search dummyUsers, return match or null, set currentUser if found
+  void logout(): sets currentUser = null
+
+navigation_service.dart — static route builders:
+  Route slideFromRight(Widget page): SlideTransition x: 1→0, 300ms, Curves.easeInOut
+  Route slideFromBottom(Widget page): SlideTransition y: 1→0, 300ms, Curves.easeInOut
+  Route fade(Widget page): FadeTransition opacity 0→1, 400ms, Curves.easeIn
+  All use PageRouteBuilder.
+
+═══════════════════════════════════════════════════════
+SCREEN 1 — LOGIN SCREEN (login_screen.dart)
+═══════════════════════════════════════════════════════
+Split layout using a Row (desktop/tablet) or Column (mobile width &lt; 600):
+
+LEFT PANEL (dark #0d1b2a background, flex:2):
+  "Khan Chacha" in large bold amber/gold text (#f59e0b)
+  "Maintenance Request System" subtitle in grey
+  Three icons with labels: 🔧 Electrical | ❄️ AC &amp; Cooling | 🍳 Kitchen
+  "Serving 20+ outlets across Delhi NCR" in muted text at bottom
+
+RIGHT PANEL (white #f8fafc background, flex:3):
+  Centred column, max width 320px
+  "Welcome Back" heading, "Sign in to your account" subtitle
+  Username TextFormField (person icon prefix, required)
+  Password TextFormField (lock icon, required, obscureText with eye toggle)
+  Login ElevatedButton (amber, dark text, full width, rounded 12px):
+    On tap: set isLoading=true, wait 800ms, call AuthService().login()
+    Success: navigate using NavigationService.fade(DashboardScreen(user))
+    Failure: show red SnackBar "Invalid credentials. Try again."
+  Demo credentials hint below button: small grey text
+
+ANIMATION: The right panel fields slide up and fade in on page load (AnimatedOpacity).
+
+═══════════════════════════════════════════════════════
+SCREEN 2 — DASHBOARD SCREEN (dashboard_screen.dart)
+═══════════════════════════════════════════════════════
+Receives UserAccount as constructor parameter.
+
+AppBar: "Khan Chacha" title, user name in subtitle, logout icon button
+  Logout tap → AlertDialog "Logout?" → on confirm: AuthService().logout()
+  → Navigator.pushAndRemoveUntil to LoginScreen with fade transition
+
+Bottom navigation bar (dark navy #0d1b2a, amber selected):
+  Item 0: Home (Icons.home) — shows dashboard body
+  Item 1: Requests (Icons.list_alt) — navigates to RequestListScreen via slideFromRight
+
+MANAGER BODY:
+  "Good [Morning/Afternoon/Evening], Arjun" (time-based greeting)
+  Three stat cards in a Row (animated stagger on load, 150ms apart):
+    Open → green card with count from sampleRequests where status=='Open'
+    Pending → amber card
+    Closed → grey card
+  "Needs Your Attention" section:
+    Show top 3 Open requests as compact tiles (productName, outletName, date)
+    Each tile has an "Update →" button → slideFromRight to DetailScreen
+  FAB (+ amber) → slideFromBottom to RequestFormScreen (create mode)
+
+STAFF BODY:
+  "Good [time], Priya" greeting
+  "📍 [outletName]" displayed prominently
+  Two stat cards: Open count, Pending count (filtered by user.outletId)
+  Large amber button "➕ Raise Maintenance Request" → slideFromBottom to form
+  "Your Recent Requests" — last 3 requests from their outletId as compact tiles
+  FAB hidden (big button already exists)
+
+═══════════════════════════════════════════════════════
+SCREEN 3 — REQUEST LIST SCREEN (request_list_screen.dart)
+═══════════════════════════════════════════════════════
+Receives UserAccount as constructor parameter.
+AppBar: "Maintenance Requests", sort icon button (ModalBottomSheet: Newest/Oldest/By Outlet ID)
+
+DATA FILTER by role:
+  manager: all sampleRequests
+  staff: only requests where outletId == user.outletId
+
+UI (top to bottom):
+  Search TextField (search by productName or outletName, case-insensitive)
+  Status filter tabs: All | Open | Pending | Closed (with count badges)
+  Category filter chips (horizontal scroll): All | ⚡ Electrical | ❄️ AC | 🍳 Kitchen
+  ListView.builder of RequestCard widgets (all 4 filters combined)
+  Empty state: centered 🔧 + "No requests found"
+  RefreshIndicator: 800ms delay, reloads same data
+  FAB (+) → slideFromBottom to RequestFormScreen (create mode)
+
+MANAGER ONLY: Wrap each RequestCard in Dismissible (swipe left = red delete background)
+  On dismiss: AlertDialog "Delete [productName]?" Cancel | Delete(red)
+  Cancel: put item back. Delete: remove from sampleRequests, SnackBar "Deleted."
+
+═══════════════════════════════════════════════════════
+WIDGET — REQUEST CARD (widgets/request_card.dart)
+═══════════════════════════════════════════════════════
+StatelessWidget. Receives MaintenanceRequest and VoidCallback onTap.
+
+Layout: Card with 12px rounded corners, 8px margin.
+Row:
+  Left (Expanded): productName (bold, 16px), below it:
+    category icon + category text (small, muted) + "  •  " + outletId (small, muted)
+  Right: Column (cross-axis: end): date text (small, muted), StatusBadge widget
+
+Tap the whole card → onTap callback.
+Hero tag on StatusBadge: 'status-[request.id]'
+
+WIDGET — STATUS BADGE (widgets/status_badge.dart):
+Chip-style container: Open=green, Pending=amber, Closed=grey.
+Accept heroTag as parameter for Hero animation.
+
+═══════════════════════════════════════════════════════
+SCREEN 4 — DETAIL SCREEN (detail_screen.dart)
+═══════════════════════════════════════════════════════
+Receives MaintenanceRequest request, UserAccount currentUser.
+Reached via slideFromRight.
+
+TOP BANNER (Hero widget wrapping a gradient container):
+  Electrical: purple gradient. AC: blue gradient. Kitchen: orange gradient.
+  Show category emoji (large), productName (large bold white), StatusBadge
+
+SCROLLABLE BODY — 13 field rows each with icon + label + value:
+  🆔 Request ID | 🔧 Product Name | #️⃣ Product ID | 🏷️ Category
+  📊 Status | 📅 Date | 📍 Outlet ID | 🏪 Outlet Name | 🗺️ Address
+  👤 Manager | 📝 Description
+
+IMAGE SECTION:
+  imagePath != null → Image.file() with label "Photo attached"
+  imagePath == null → dashed border box "No image attached"
+
+STATUS HISTORY SECTION:
+  Empty → "No status changes recorded yet."
+  Non-empty → each entry as a timeline tile with dot and text
+
+STICKY BOTTOM ACTION BAR (always visible, does not scroll away):
+Row of 3 buttons:
+  [Update Status] amber — show only if role=='manager'
+    ModalBottomSheet: Open / Pending / Closed tiles with checkmark on current
+    On select: copyWith() status + append to statusHistory
+    Return updated request via Navigator.pop(context, updatedRequest)
+
+  [Edit] blue — Manager always | Staff only if status=='Open' and own outlet
+    AlertDialog: "Edit Request?" / "You'll open the form pre-filled." / Cancel|Continue
+    On Continue: await NavigationService.slideFromBottom(RequestFormScreen(edit mode))
+    If result returned: update local state with the new request
+
+  [Delete] red — Manager only
+    AlertDialog: "Delete Request?" / productName + id / Cancel | Delete(red text)
+    On Delete: remove from sampleRequests, SnackBar "Request deleted.", Navigator.pop
+
+═══════════════════════════════════════════════════════
+SCREEN 5 — REQUEST FORM SCREEN (request_form_screen.dart)
+═══════════════════════════════════════════════════════
+Receives UserAccount currentUser, MaintenanceRequest? existingRequest.
+Reached via slideFromBottom (feels like a bottom modal but is a full screen).
+AppBar: "New Request" or "Edit Request" + close icon (X) that pops.
+
+FORM FIELDS in order:
+1. Product Name — required, min 3 chars
+2. Product ID — required (e.g. HVAC-203)
+3. Category — DropdownButtonFormField: Electrical | AC | Kitchen — required
+4. Outlet ID — pre-filled from currentUser.outletId — read-only (grey background)
+5. Outlet Name — pre-filled from currentUser.outletName — read-only
+6. Manager Name — pre-filled from currentUser.name — read-only
+7. Outlet Address — required free text
+8. Description — multiline (4 lines), required, min 10 chars
+9. Status — Create Mode: fixed to 'Open' (read-only)
+            Edit Mode: DropdownButtonFormField if role=='manager', else read-only
+
+IMAGE PICKER SECTION:
+  A GestureDetector wrapping a dashed-border container (height 150px)
+  No image: AnimatedOpacity pulsing (0.5 to 1.0, repeat) camera icon + "Tap to attach photo"
+  Image selected: Image.file() preview + X IconButton to remove
+  On tap: ImagePicker().pickImage(source: ImageSource.gallery) → store XFile.path
+
+SUBMIT BUTTON ("Submit Request" or "Update Request", amber, full width):
+  Call form.currentState!.validate()
+  Edit mode only: AlertDialog "Confirm Update" / "Save changes to [productName]?" / Cancel | Save
+  On confirm (or in create mode directly):
+    Create new MaintenanceRequest:
+      Create: id = "REQ-00X" (count existing + 1, padded), date = today's date string
+      Edit: copyWith() all changed fields, keep id and statusHistory
+    Add to (create) or replace in (edit) sampleRequests
+    SnackBar success message
+    Navigator.pop(context, newOrUpdatedRequest)
+
+VALIDATION error messages:
+  productName: "Product name is required (min 3 characters)"
+  productId: "Product ID is required"
+  outletAddress: "Please enter the outlet address"
+  description: "Please describe the issue (min 10 characters)"
+  category: "Please select a category"
+
+═══════════════════════════════════════════════════════
+APP THEME (main.dart)
+═══════════════════════════════════════════════════════
+MaterialApp with ThemeData:
+  colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFFf59e0b))
+  useMaterial3: true
+  AppBar theme: dark navy (#0d1b2a) background, white foreground
+  ElevatedButton: amber background, dark text, roundedRectangle(12)
+  InputDecoration: outlined, amber focusedBorder
+  BottomNavigationBar: dark navy, amber selected
+
+Home: LoginScreen()
+
+═══════════════════════════════════════════════════════
+ANIMATIONS SUMMARY
+═══════════════════════════════════════════════════════
+Login → Dashboard: FadeTransition (400ms)
+All other forward nav: SlideTransition from right (300ms)
+Form opening: SlideTransition from bottom (300ms)
+Logout: FadeTransition + pushAndRemoveUntil
+Dashboard stats on load: staggered AnimatedOpacity + AnimatedSlide (150ms apart)
+Login form on load: AnimatedOpacity slide-up on mount
+Image picker area: AnimatedOpacity pulse (repeat, opacity 0.5↔1.0)
+Status badge: Hero animation between RequestCard and DetailScreen
+Detail screen top banner: Hero animation wrapping the gradient container
+
+═══════════════════════════════════════════════════════
+CONSTRAINTS
+═══════════════════════════════════════════════════════
+- No external database or API calls of any kind
+- No Firebase, no Supabase, no HTTP calls
+- Only package to add: image_picker: ^1.1.2
+- All data lives in sampleRequests (List in dummy_data.dart)
+- Auth logic is purely local (compare username/password strings)
+- Image paths are stored as local String paths from image_picker — no upload
+- Do not use GetX, Provider, Riverpod, or BLoC — use setState only
+- Each file should be complete and self-contained (no "// rest unchanged" gaps)
+
+═══════════════════════════════════════════════════════
+EXPECTED FIRST RUN EXPERIENCE
+═══════════════════════════════════════════════════════
+1. App opens to the split login screen (dark branding left, clean form right)
+2. User types "manager" / "manager123" — brief loading spinner — fades into Dashboard
+3. Dashboard shows 3 animated stat cards and the attention queue
+4. Tapping "Requests" bottom tab slides to the request list (8 cards visible)
+5. Tapping a card slides to the detail screen with coloured banner
+6. Tapping Update Status opens the status picker bottom sheet
+7. Tapping Delete shows confirmation dialog
+8. Tapping + FAB slides the form up from the bottom
+9. Image picker area pulses gently until a photo is selected
+10. Submitting the form pops back with the new request visible in the list
+
+Create all files completely. Do not leave any placeholders or TODOs.</p>
+  </div>
+
+  <h3>What to do after running the capstone</h3>
+  <div class="terminal-box"><pre><span style="color:#64748b;"># After Claude finishes creating all files:</span>
+flutter pub get
+
+<span style="color:#64748b;"># Then run:</span>
+flutter run
+
+<span style="color:#64748b;"># If you see errors about image_picker on desktop, add this to main.dart:</span>
+<span style="color:#64748b;"># WidgetsFlutterBinding.ensureInitialized(); before runApp()</span></pre></div>
+
+  <div class="hl" style="margin-top:20px;">
+    🎓 <strong>Teaching note:</strong> Show the students both the step-by-step result and the capstone result side by side. The end product is identical. The lesson: a well-crafted prompt with full context produces the same quality as building it piece by piece. The difference is speed — and the risk that something breaks you can't trace back.
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 4 · APP DOCUMENTATION
+══════════════════════════════════════════════════════ -->
+<section id="tab-docs" class="tab-panel">
+  <h2>📖 App Documentation — How Everything Works</h2>
+  <p class="page-sub">This page documents the app as if it were a production product. Read this to understand how any feature works without opening the code.</p>
+
+  <h3>Screen Navigation Map</h3>
+  <div class="card">
+    <div class="flow-row">
+      <div class="flow-screen">Login Screen</div>
+      <div class="flow-arrow">──fade──▶</div>
+      <div class="flow-screen">Dashboard</div>
+      <div class="flow-arrow">──slide──▶</div>
+      <div class="flow-screen">Request List</div>
+      <div class="flow-arrow">──slide──▶</div>
+      <div class="flow-screen">Detail Screen</div>
+    </div>
+    <div class="flow-row" style="margin-top:8px;">
+      <div class="flow-screen">Dashboard FAB</div>
+      <div class="flow-arrow">──slide up──▶</div>
+      <div class="flow-screen">Request Form</div>
+      <div class="flow-arrow">◀──pop+return──</div>
+      <div class="flow-screen">Dashboard refreshes</div>
+    </div>
+    <div class="flow-row" style="margin-top:8px;">
+      <div class="flow-screen">Detail Screen</div>
+      <div class="flow-arrow">──slide up──▶</div>
+      <div class="flow-screen">Request Form (edit)</div>
+      <div class="flow-arrow">◀──pop+return request──</div>
+      <div class="flow-screen">Detail updates</div>
+    </div>
+    <div class="flow-row" style="margin-top:8px;">
+      <div class="flow-screen">Any Screen</div>
+      <div class="flow-arrow">──logout──▶</div>
+      <div class="flow-screen">Login Screen</div>
+      <div class="flow-cond">Stack cleared</div>
+    </div>
+  </div>
+
+  <h3>Authentication — How Login Works</h3>
+  <div class="doc-file">
+    <div class="fname">lib/services/auth_service.dart</div>
+    <div class="fdesc">Singleton service. One instance exists for the entire app session.</div>
+    <ul>
+      <li><strong>How the singleton works:</strong> <code>factory AuthService() => _instance;</code> — every time you write <code>AuthService()</code> anywhere in the app, you get the same object.</li>
+      <li><strong>login(username, password):</strong> Searches <code>dummyUsers</code> list. Compares both username and password as plain strings. Returns the matching <code>UserAccount</code> or <code>null</code> if no match. Sets <code>currentUser</code> on success.</li>
+      <li><strong>currentUser:</strong> Holds the logged-in user object. Passed to every screen that needs to know who is using the app. Screens check <code>currentUser!.role</code> to decide what to show.</li>
+      <li><strong>logout():</strong> Sets <code>currentUser = null</code>. The screen then uses <code>Navigator.pushAndRemoveUntil</code> to clear the navigation stack and return to Login so Back button doesn't bypass logout.</li>
+      <li><strong>Where validation happens:</strong> Entirely in <code>auth_service.dart</code>, called from <code>login_screen.dart</code>. No validation logic lives in the UI file itself.</li>
+    </ul>
+  </div>
+
+  <h3>File Responsibility Map</h3>
+  <div class="doc-file">
+    <div class="fname">lib/main.dart</div>
+    <div class="fdesc">App entry point. Defines MaterialApp, global theme (amber/navy), and sets LoginScreen as the home screen. No business logic here.</div>
+  </div>
+  <div class="doc-file">
+    <div class="fname">lib/models/maintenance_request.dart</div>
+    <div class="fdesc">The data shape for a single request. Pure Dart — no UI, no imports of Flutter widgets.</div>
+    <ul>
+      <li><strong>copyWith():</strong> Returns a new MaintenanceRequest with some fields replaced. Used when updating status or editing — we never mutate the original object directly.</li>
+      <li><strong>fromJson() / toJson():</strong> Converts between the object and a Map. Used when reading from / writing to Google Sheets or a database (future sessions).</li>
+    </ul>
+  </div>
+  <div class="doc-file">
+    <div class="fname">lib/models/user_account.dart</div>
+    <div class="fdesc">Shape of a user (manager or staff). Holds credentials, name, role, and their assigned outlet. Used by AuthService and passed to every screen.</div>
+  </div>
+  <div class="doc-file">
+    <div class="fname">lib/data/dummy_data.dart</div>
+    <div class="fdesc">All in-memory data for the prototype.</div>
+    <ul>
+      <li><strong>dummyUsers:</strong> Fixed list. Do not modify during runtime — only used for auth lookup.</li>
+      <li><strong>sampleRequests:</strong> Mutable list. When a request is created, edited, or deleted, the app modifies this list directly. Since it's in memory, changes are lost when the app restarts — that's intentional for the prototype.</li>
+    </ul>
+  </div>
+  <div class="doc-file">
+    <div class="fname">lib/services/navigation_service.dart</div>
+    <div class="fdesc">All page route animations defined in one place. No animation code lives inside screen files.</div>
+    <ul>
+      <li><strong>slideFromRight:</strong> Standard forward navigation (list → detail, dashboard → list)</li>
+      <li><strong>slideFromBottom:</strong> Form opening (feels like a bottom sheet but is a full screen)</li>
+      <li><strong>fade:</strong> Login → Dashboard and Logout → Login</li>
+    </ul>
+  </div>
+  <div class="doc-file">
+    <div class="fname">lib/screens/login_screen.dart</div>
+    <div class="fdesc">Split-panel login UI. Left panel is purely decorative (StatelessWidget). Right panel is a StatefulWidget managing username, password, isLoading state.</div>
+    <ul>
+      <li>Validates inputs locally (not empty checks only)</li>
+      <li>Calls <code>AuthService().login()</code> for credential matching</li>
+      <li>Shows CircularProgressIndicator for 800ms to simulate auth latency</li>
+      <li>On success: fades to DashboardScreen passing the UserAccount object</li>
+    </ul>
+  </div>
+  <div class="doc-file">
+    <div class="fname">lib/screens/dashboard_screen.dart</div>
+    <div class="fdesc">Role-aware landing page after login. Decides what to show based on <code>currentUser.role</code>.</div>
+    <ul>
+      <li>Stat counts are computed by filtering <code>sampleRequests</code> by status (and outletId for staff)</li>
+      <li>Stat cards animate in with staggered AnimatedOpacity on initState</li>
+      <li>Bottom nav manages which body (home vs list) is shown using a selectedIndex integer in state</li>
+    </ul>
+  </div>
+  <div class="doc-file">
+    <div class="fname">lib/screens/request_list_screen.dart</div>
+    <div class="fdesc">The filterable/searchable request list. All four filters run in sequence inside a computed getter.</div>
+    <ul>
+      <li>Filter pipeline: role filter → status tab → category chip → search text → sort</li>
+      <li>Dismissible (Manager only): swipe to delete with confirmation dialog</li>
+      <li>RefreshIndicator: simulates a reload with 800ms delay</li>
+      <li>Each card uses <code>Navigator.push + await</code> so the list can update if a request changes in the detail screen</li>
+    </ul>
+  </div>
+  <div class="doc-file">
+    <div class="fname">lib/screens/detail_screen.dart</div>
+    <div class="fdesc">Full view of one request. Also manages status updates, edit, and delete actions for the Manager role.</div>
+    <ul>
+      <li>Status update: uses <code>copyWith(status: newStatus)</code> then replaces the record in <code>sampleRequests</code> and calls <code>setState()</code></li>
+      <li>Returns updated record via <code>Navigator.pop(context, updatedRequest)</code> — list screen awaits this</li>
+      <li>Delete: removes from <code>sampleRequests</code> by id, then pops</li>
+      <li>Hero tag on the top banner: animates the gradient container from the card's category colour</li>
+    </ul>
+  </div>
+  <div class="doc-file">
+    <div class="fname">lib/screens/request_form_screen.dart</div>
+    <div class="fdesc">Handles both Create and Edit mode. Receives <code>existingRequest</code> as an optional parameter. If null → Create Mode.</div>
+    <ul>
+      <li>In Edit Mode: <code>TextEditingController</code>s are pre-populated from <code>existingRequest</code> fields in <code>initState()</code></li>
+      <li>Outlet ID, Outlet Name, Manager Name are always pre-filled from <code>currentUser</code> and rendered as read-only (grey background)</li>
+      <li>Image picker: <code>ImagePicker().pickImage(source: ImageSource.gallery)</code> returns <code>XFile?</code>. The path (<code>xFile.path</code>) is stored as a String in state and passed into the request model.</li>
+      <li>On submit: Create mode generates the next REQ-00X id. Edit mode uses <code>copyWith()</code> preserving the original id and statusHistory.</li>
+    </ul>
+  </div>
+  <div class="doc-file">
+    <div class="fname">lib/widgets/request_card.dart</div>
+    <div class="fdesc">Compact horizontal card. StatelessWidget — receives the request and an onTap callback. No state of its own.</div>
+  </div>
+  <div class="doc-file">
+    <div class="fname">lib/widgets/status_badge.dart</div>
+    <div class="fdesc">Colour-coded pill showing Open/Pending/Closed. Wrapped in a Hero widget. Open=green, Pending=amber, Closed=grey.</div>
+  </div>
+
+  <h3>All Animations &amp; Where They Are Implemented</h3>
+  <div class="anim-box">
+    <div class="atrigger">Login → Dashboard</div>
+    <div class="adetail"><strong>Type:</strong> FadeTransition · <strong>Duration:</strong> 400ms · <strong>File:</strong> NavigationService.fade() called from login_screen.dart · <strong>Why:</strong> Soft fade marks the transition from "outside" (login) to "inside" (the app). Slide would feel too abrupt here.</div>
+  </div>
+  <div class="anim-box">
+    <div class="atrigger">Any Screen → Request List / Detail</div>
+    <div class="adetail"><strong>Type:</strong> SlideTransition (right) · <strong>Duration:</strong> 300ms · <strong>File:</strong> NavigationService.slideFromRight() · <strong>Why:</strong> Standard iOS/Android forward navigation convention. Feels natural to users.</div>
+  </div>
+  <div class="anim-box">
+    <div class="atrigger">FAB / Edit → Request Form</div>
+    <div class="adetail"><strong>Type:</strong> SlideTransition (bottom) · <strong>Duration:</strong> 300ms · <strong>File:</strong> NavigationService.slideFromBottom() · <strong>Why:</strong> Rising from the bottom signals "this is a form/creation action" — distinct from regular navigation.</div>
+  </div>
+  <div class="anim-box">
+    <div class="atrigger">Logout → Login</div>
+    <div class="adetail"><strong>Type:</strong> FadeTransition + pushAndRemoveUntil · <strong>File:</strong> Called from DashboardScreen logout action · <strong>Why:</strong> Stack is cleared so Back button doesn't return into the app. Fade is softer than a hard cut.</div>
+  </div>
+  <div class="anim-box">
+    <div class="atrigger">Dashboard Stat Cards on Load</div>
+    <div class="adetail"><strong>Type:</strong> AnimatedOpacity + AnimatedSlide (staggered) · <strong>Duration:</strong> 500ms per card, 150ms stagger · <strong>File:</strong> dashboard_screen.dart initState() using Future.delayed · <strong>Why:</strong> Makes the dashboard feel alive. Draws the user's eye to the key numbers.</div>
+  </div>
+  <div class="anim-box">
+    <div class="atrigger">Image Picker Area (empty)</div>
+    <div class="adetail"><strong>Type:</strong> AnimatedOpacity (repeat, opacity 0.5 ↔ 1.0) · <strong>File:</strong> request_form_screen.dart AnimationController · <strong>Why:</strong> Draws attention to an optional but important feature (photo upload). Stops pulsing once an image is selected.</div>
+  </div>
+  <div class="anim-box">
+    <div class="atrigger">Status Badge — Card to Detail Screen</div>
+    <div class="adetail"><strong>Type:</strong> Hero animation · <strong>Tag:</strong> 'status-[request.id]' · <strong>Files:</strong> request_card.dart + detail_screen.dart · <strong>Why:</strong> Creates visual continuity between the list and the detail view — the badge physically "flies" from the card to the top banner.</div>
+  </div>
+  <div class="anim-box">
+    <div class="atrigger">Login Form Fields on Page Load</div>
+    <div class="adetail"><strong>Type:</strong> AnimatedOpacity (mount fade-in) · <strong>File:</strong> login_screen.dart initState() · <strong>Why:</strong> The right panel appearing from opacity 0 → 1 gives the login screen a polished, premium feel on first open.</div>
+  </div>
+
+  <h3>Confirmation Dialogs — Where &amp; Why</h3>
+  <table>
+    <tr><th>Action</th><th>Trigger Location</th><th>Dialog Text</th><th>Reason</th></tr>
+    <tr><td>Delete a request</td><td>DetailScreen (Manager) + Dismissible on list</td><td>"Delete [productName]? This cannot be undone."</td><td>Irreversible action — must be intentional</td></tr>
+    <tr><td>Edit a request</td><td>DetailScreen Edit button</td><td>"You'll open the form pre-filled. Continue?"</td><td>Prevents accidental form opens</td></tr>
+    <tr><td>Submit edit form</td><td>RequestFormScreen submit (Edit Mode)</td><td>"Save changes to [productName]?"</td><td>Final confirmation before modifying data</td></tr>
+    <tr><td>Logout</td><td>DashboardScreen AppBar icon</td><td>"Logout? You'll need to sign in again."</td><td>Prevents accidental session end</td></tr>
+  </table>
+
+  <h3>Role Permissions — Enforced Where</h3>
+  <table>
+    <tr><th>Feature</th><th>Manager</th><th>Staff</th><th>Enforced in file</th></tr>
+    <tr><td>See all requests</td><td>✅</td><td>❌ (own outlet only)</td><td>request_list_screen.dart (data filter)</td></tr>
+    <tr><td>Delete a request</td><td>✅ (Delete button shown)</td><td>❌ (button hidden)</td><td>detail_screen.dart (conditional render)</td></tr>
+    <tr><td>Update Status</td><td>✅ (button shown)</td><td>❌ (button hidden)</td><td>detail_screen.dart</td></tr>
+    <tr><td>Swipe to delete on list</td><td>✅ (Dismissible active)</td><td>❌ (not wrapped)</td><td>request_list_screen.dart</td></tr>
+    <tr><td>Edit any request</td><td>✅</td><td>Only own + Open only</td><td>detail_screen.dart (button shown/disabled)</td></tr>
+    <tr><td>Edit Status in form</td><td>✅ (dropdown)</td><td>❌ (read-only)</td><td>request_form_screen.dart</td></tr>
+    <tr><td>Dashboard "Needs Attention"</td><td>✅ (all outlets)</td><td>❌ (not shown)</td><td>dashboard_screen.dart (role check)</td></tr>
+  </table>
+
+  <h3>Data Flow: Creating a New Request</h3>
+  <div class="card card-teal">
+    <p style="font-family:'JetBrains Mono',monospace;font-size:.82rem;color:#a5f3fc;margin:0;line-height:1.9;">
+1. User taps FAB (+) on Dashboard or RequestListScreen<br/>
+2. NavigationService.slideFromBottom() pushes RequestFormScreen (create mode)<br/>
+3. Form auto-fills outletId, outletName, managerName from AuthService().currentUser<br/>
+4. User fills in productName, productId, category, address, description<br/>
+5. User optionally picks an image → XFile.path stored in state<br/>
+6. User taps "Submit Request"<br/>
+7. Form validates all fields → any error highlights that field red<br/>
+8. New MaintenanceRequest created: id auto-generated (REQ-00X), date = today<br/>
+9. Added to sampleRequests list via sampleRequests.add(newRequest)<br/>
+10. SnackBar "Request submitted!"<br/>
+11. Navigator.pop(context, newRequest) returns to calling screen<br/>
+12. Calling screen receives the result, calls setState() to add card to list
+    </p>
+  </div>
+
+  <h3>Data Flow: Updating a Status</h3>
+  <div class="card card-purple">
+    <p style="font-family:'JetBrains Mono',monospace;font-size:.82rem;color:#ddd6fe;margin:0;line-height:1.9;">
+1. Manager taps [Update Status] button on DetailScreen<br/>
+2. ModalBottomSheet shows Open / Pending / Closed options<br/>
+3. Manager taps new status (e.g. Pending)<br/>
+4. copyWith(status:'Pending') creates a new request object<br/>
+5. statusHistory updated: "2026-07-06 14:30 · Open → Pending" appended<br/>
+6. sampleRequests: old record replaced with new object (found by id)<br/>
+7. setState() refreshes the detail screen UI<br/>
+8. SnackBar "Status updated to Pending"<br/>
+9. ModalBottomSheet closes<br/>
+10. When user presses Back, Navigator.pop(context, updatedRequest) is called<br/>
+11. RequestListScreen receives the updated object, updates the card in the list
+    </p>
+  </div>
+
+  <div style="height:1px;background:var(--border);margin:30px 0;"></div>
+  <div style="text-align:center;">
+    <span class="tag tag-p">Khan Chacha MRMS</span>
+    <span class="tag tag-t">Flutter Prototype</span>
+    <span class="tag tag-g">5 Screens</span>
+    <span class="tag tag-a">Role-Based Access</span>
+    <span class="tag tag-p">Dummy Data</span>
+    <span class="tag tag-t">image_picker</span>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  Powered by <a href="https://rrskillverse.in" target="_blank">RR Skillverse (Raushan Ranjan)</a> · Built for Koenig Solutions · Khan Chacha MRMS · Full App Build Guide
+</footer>
+
+<script>
+function showTab(name){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  event.currentTarget.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Khan Chacha App — Day 2 Training Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;700&display=swap');
+
+  :root {
+    --navy:    #0d1b2a;
+    --navy2:   #112236;
+    --navy3:   #1a2f47;
+    --purple:  #7c3aed;
+    --purple2: #6d28d9;
+    --teal:    #0082A0;
+    --cyan:    #00c2e0;
+    --green:   #10b981;
+    --amber:   #f59e0b;
+    --red:     #ef4444;
+    --text:    #e2e8f0;
+    --muted:   #8da2b5;
+    --border:  rgba(255,255,255,0.07);
+    --card:    rgba(255,255,255,0.04);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--navy);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: linear-gradient(135deg, #1e0a3c 0%, var(--navy2) 60%, #0a2a3a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 32px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .home-link{display:inline-flex;align-items:center;gap:6px;font-size:.76rem;font-weight:600;color:var(--muted);background:rgba(255,255,255,0.05);border:1px solid var(--border);padding:5px 13px;border-radius:20px;text-decoration:none;transition:color .15s,border-color .15s;white-space:nowrap;}
+  .home-link:hover{color:var(--cyan);border-color:rgba(0,194,224,.4);}
+  .site-header .left h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, #a78bfa, var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+  }
+  .site-header .left p {
+    color: var(--muted);
+    font-size: 0.82rem;
+    margin-top: 5px;
+    letter-spacing: 0.5px;
+  }
+  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.4px;
+  }
+  .badge-day2  { background: rgba(124,58,237,0.25); color: #c4b5fd; border: 1px solid rgba(124,58,237,0.4); }
+  .badge-koenig { background: rgba(0,130,160,0.2); color: var(--cyan); border: 1px solid rgba(0,194,224,0.3); }
+  .badge-level { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+
+  /* ── TABS ── */
+  .tab-nav-wrap {
+    background: var(--navy2);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tab-nav-wrap::-webkit-scrollbar { display: none; }
+  .tab-nav {
+    display: flex;
+    padding: 0 20px;
+    min-width: max-content;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 14px 18px 12px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tab-btn:hover { color: #c4b5fd; }
+  .tab-btn.active {
+    color: #e9d5ff;
+    border-bottom-color: var(--purple);
+  }
+
+  /* ── PANELS ── */
+  .tab-panel { display: none; padding: 36px 32px 60px; max-width: 920px; margin: 0 auto; }
+  .tab-panel.active { display: block; }
+
+  /* ── TYPOGRAPHY ── */
+  h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #f1f5f9;
+  }
+  h2 .emoji { margin-right: 10px; }
+  .page-sub {
+    color: var(--muted);
+    font-size: 0.88rem;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 18px;
+  }
+  h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #c4b5fd;
+    margin: 28px 0 10px;
+  }
+  h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--cyan);
+    margin: 18px 0 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  p { margin-bottom: 12px; color: #cbd5e1; }
+  strong { color: #f1f5f9; font-weight: 600; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+    margin-bottom: 18px;
+  }
+  .card-purple { border-left: 3px solid var(--purple); }
+  .card-teal   { border-left: 3px solid var(--teal); }
+  .card-green  { border-left: 3px solid var(--green); }
+  .card-amber  { border-left: 3px solid var(--amber); }
+  .card-red    { border-left: 3px solid var(--red); }
+
+  /* ── GRID ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media(max-width:640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+  /* ── CODE ── */
+  pre, code {
+    font-family: 'JetBrains Mono', monospace;
+  }
+  code {
+    background: rgba(124,58,237,0.15);
+    color: #c4b5fd;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 0.82em;
+  }
+  pre {
+    background: #0a1628;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    overflow-x: auto;
+    margin: 14px 0;
+    font-size: 0.83rem;
+    line-height: 1.6;
+    color: #bfdbfe;
+  }
+  pre .c { color: #64748b; font-style: italic; }  /* comment */
+  pre .k { color: #a78bfa; }  /* keyword */
+  pre .s { color: #86efac; }  /* string */
+  pre .n { color: var(--cyan); } /* name */
+  pre .p { color: #f59e0b; }  /* prompt */
+
+  /* ── PROMPT BOX ── */
+  .prompt-box {
+    background: #070f1c;
+    border: 1px solid rgba(124,58,237,0.4);
+    border-radius: 10px;
+    padding: 20px 22px;
+    margin: 16px 0;
+    position: relative;
+  }
+  .prompt-box::before {
+    content: 'CLAUDE CODE PROMPT';
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--purple);
+    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(124,58,237,0.2);
+  }
+  .prompt-box p {
+    color: #d1fae5;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.84rem;
+    line-height: 1.8;
+    margin: 0;
+    white-space: pre-wrap;
+  }
+
+  /* ── BIG PROMPT (CAPSTONE) ── */
+  .capstone-box {
+    background: linear-gradient(135deg, #1a0a3c, #0a1a2c);
+    border: 2px solid rgba(124,58,237,0.5);
+    border-radius: 12px;
+    padding: 24px 26px;
+    margin: 20px 0;
+    position: relative;
+  }
+  .capstone-box::before {
+    content: '🚀 CAPSTONE PROMPT — CLAUDE CODE';
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #a78bfa;
+    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(124,58,237,0.25);
+  }
+  .capstone-box p {
+    color: #e0f2fe;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.9;
+    margin: 0;
+    white-space: pre-wrap;
+  }
+
+  /* ── TAGS / PILLS ── */
+  .tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin: 3px 3px 3px 0;
+  }
+  .tag-purple { background: rgba(124,58,237,0.2); color: #c4b5fd; }
+  .tag-teal   { background: rgba(0,130,160,0.2);  color: var(--cyan); }
+  .tag-green  { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+  .tag-amber  { background: rgba(245,158,11,0.2); color: #fcd34d; }
+
+  /* ── STEP LIST ── */
+  .step-list { list-style: none; padding: 0; }
+  .step-list li {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .step-num {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    background: var(--purple2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #ede9fe;
+  }
+  .step-list li .body { flex: 1; }
+
+  /* ── FILE TREE ── */
+  .file-tree {
+    background: #060e1a;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 22px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 2;
+    color: #94a3b8;
+  }
+  .file-tree .dir  { color: #c4b5fd; font-weight: 500; }
+  .file-tree .file { color: #7dd3fc; }
+  .file-tree .note { color: #64748b; font-size: 0.75rem; }
+
+  /* ── HIGHLIGHT BOX ── */
+  .highlight {
+    background: rgba(16,185,129,0.08);
+    border: 1px solid rgba(16,185,129,0.25);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 12px 0;
+    color: #a7f3d0;
+    font-size: 0.88rem;
+  }
+  .highlight-amber {
+    background: rgba(245,158,11,0.08);
+    border-color: rgba(245,158,11,0.25);
+    color: #fde68a;
+  }
+  .highlight-purple {
+    background: rgba(124,58,237,0.1);
+    border-color: rgba(124,58,237,0.3);
+    color: #ddd6fe;
+  }
+  .highlight-red {
+    background: rgba(239,68,68,0.08);
+    border-color: rgba(239,68,68,0.25);
+    color: #fca5a5;
+  }
+
+  /* ── COMPARISON ── */
+  .compare-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+  .compare-row .col { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+  .compare-row .col h4 { margin-top: 0; font-size: 0.78rem; }
+  @media(max-width:600px) { .compare-row { grid-template-columns: 1fr; } }
+
+  /* ── SESSION TIMELINE ── */
+  .timeline { display: flex; flex-direction: column; gap: 0; margin: 16px 0; }
+  .tl-item { display: flex; gap: 16px; align-items: flex-start; }
+  .tl-left { display: flex; flex-direction: column; align-items: center; }
+  .tl-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .tl-line { width: 2px; background: var(--border); flex: 1; min-height: 24px; }
+  .tl-body { padding-bottom: 20px; flex: 1; }
+  .tl-time { font-size: 0.72rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+  .tl-title { font-weight: 600; color: #f1f5f9; font-size: 0.92rem; }
+  .tl-desc { color: var(--muted); font-size: 0.82rem; margin-top: 3px; }
+
+  /* ── WHAT YOU WILL BUILD CARD ── */
+  .build-showcase {
+    background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(0,130,160,0.1));
+    border: 1px solid rgba(124,58,237,0.3);
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin: 20px 0;
+  }
+
+  /* ── TABLE ── */
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; }
+  th { background: rgba(124,58,237,0.2); color: #c4b5fd; font-size: 0.8rem; text-align: left; padding: 10px 14px; }
+  td { border-bottom: 1px solid var(--border); padding: 10px 14px; color: #cbd5e1; font-size: 0.85rem; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* ── FOOTER ── */
+  .site-footer {
+    background: var(--navy2);
+    border-top: 1px solid var(--border);
+    text-align: center;
+    padding: 18px 20px;
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+  .site-footer a { color: var(--cyan); text-decoration: none; }
+  .site-footer a:hover { text-decoration: underline; }
+
+  /* ── CHECKLIST ── */
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.88rem;
+    color: #cbd5e1;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .check-icon { color: var(--green); font-size: 1rem; flex-shrink: 0; }
+  .cross-icon { color: var(--muted); font-size: 1rem; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="left">
+    <h1>Khan Chacha — MRMS Flutter App</h1>
+    <p>Day 2 · AI Pair-Programming Training · Prompting Patterns → Real Data</p>
+  </div>
+  <div class="badge-row">
+    <a href="index.html" class="home-link">← All Sessions</a>
+    <span class="badge badge-day2">Day 2 of 4</span>
+    <span class="badge badge-koenig">Koenig Solutions</span>
+    <span class="badge badge-level">Intermediate</span>
+  </div>
+</header>
+
+<!-- TABS -->
+<nav class="tab-nav-wrap">
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="showTab('recap')">📋 Day 1 Recap</button>
+    <button class="tab-btn" onclick="showTab('architecture')">🏗️ App Architecture</button>
+    <button class="tab-btn" onclick="showTab('widgets')">🎨 Widgets & State</button>
+    <button class="tab-btn" onclick="showTab('patterns')">💬 Prompting Patterns</button>
+    <button class="tab-btn" onclick="showTab('basic')">🔨 Basic Prompts</button>
+    <button class="tab-btn" onclick="showTab('intermediate')">⚡ Intermediate Prompts</button>
+    <button class="tab-btn" onclick="showTab('capstone')">🚀 Capstone Prompt</button>
+    <button class="tab-btn" onclick="showTab('tomorrow')">📡 Tomorrow: Sheets</button>
+    <button class="tab-btn" onclick="showTab('friday')">🗄️ Friday: PostgreSQL</button>
+    <button class="tab-btn" onclick="showTab('qna')">❓ Q&amp;A</button>
+    <button class="tab-btn" onclick="showTab('refs')">📚 References</button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════
+     TAB 1 · DAY 1 RECAP
+═══════════════════════════════════════════════════ -->
+<section id="tab-recap" class="tab-panel active">
+  <h2><span class="emoji">📋</span>Day 1 Recap — Where We Left Off</h2>
+  <p class="page-sub">Quick check before we move ahead. Everything we built on Day 1 is the foundation for today.</p>
+
+  <div class="build-showcase">
+    <h4>What We Built on Day 1</h4>
+    <p style="margin:0; color:#e0f2fe;">We created a working <strong>Flutter mobile app</strong> — the Khan Chacha Maintenance Request Management System — from scratch, using Claude as our AI pair-programmer. Non-technical students wrote real Dart code without memorising syntax. That's the whole point.</p>
+  </div>
+
+  <h3>✅ What We Covered</h3>
+  <ul class="checklist">
+    <li><span class="check-icon">✓</span><div><strong>Why Flutter?</strong> — Cross-platform, one codebase for Android + iOS + desktop. Khan Chacha outlets run Android. Perfect fit.</div></li>
+    <li><span class="check-icon">✓</span><div><strong>How Flutter Works</strong> — Widget tree, hot reload, Dart language basics. You don't need to memorise it, Claude knows it.</div></li>
+    <li><span class="check-icon">✓</span><div><strong>Environment Setup</strong> — Flutter SDK, VS Code + Flutter extension, Android emulator running.</div></li>
+    <li><span class="check-icon">✓</span><div><strong>Reading Code</strong> — How to look at Dart and understand intent without knowing every keyword.</div></li>
+    <li><span class="check-icon">✓</span><div><strong>Your First App</strong> — Ran the default counter app, understood what a <code>Scaffold</code>, <code>AppBar</code>, and <code>FloatingActionButton</code> are.</div></li>
+    <li><span class="check-icon">✓</span><div><strong>Building with Claude Code</strong> — First real prompts. Claude created the maintenance list screen, filter tabs (All / Open / Pending / Closed), and status badges.</div></li>
+    <li><span class="check-icon">✓</span><div><strong>The Data Model</strong> — <code>MaintenanceRequest</code> class with <strong>12 fields</strong>: id, productName, productId, requestDate, status, description, managerName, outletId, outletName, outletAddress, category (Electrical / AC / Kitchen).</div></li>
+    <li><span class="check-icon">✓</span><div><strong>The Form</strong> — FAB (+ button) opens a bottom sheet form to create a new request with all 12 fields and category dropdown.</div></li>
+    <li><span class="check-icon">✓</span><div><strong>Compact List Card UI</strong> — Horizontal layout showing productName, category, outletId, date. Status badge right-aligned. Tapping a card opens a detail view.</div></li>
+  </ul>
+
+  <h3>🧠 The Key Insight We Established</h3>
+  <div class="card card-purple">
+    <strong>You don't need to understand every line of code. You need to understand what you want to build.</strong>
+    <p style="margin-top:8px; margin-bottom:0;">Claude is your pair-programmer. Your job is to describe the outcome clearly. Claude's job is to write the Dart. Together, you ship a real product.</p>
+  </div>
+
+  <h3>📁 What Your Project Looks Like Right Now</h3>
+  <div class="file-tree">
+    <span class="dir">khan_chacha/</span><br/>
+    ├── <span class="dir">lib/</span><br/>
+    │&nbsp;&nbsp;&nbsp;├── <span class="file">main.dart</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// App entry point, MaterialApp setup</span><br/>
+    │&nbsp;&nbsp;&nbsp;├── <span class="dir">models/</span><br/>
+    │&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── <span class="file">maintenance_request.dart</span>&nbsp;&nbsp;<span class="note">// MaintenanceRequest class</span><br/>
+    │&nbsp;&nbsp;&nbsp;├── <span class="dir">screens/</span><br/>
+    │&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── <span class="file">home_screen.dart</span>&nbsp;&nbsp;&nbsp;<span class="note">// List + filter tabs</span><br/>
+    │&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── <span class="file">detail_screen.dart</span>&nbsp;<span class="note">// Full request detail view</span><br/>
+    │&nbsp;&nbsp;&nbsp;└── <span class="dir">widgets/</span><br/>
+    │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="file">request_card.dart</span>&nbsp;&nbsp;<span class="note">// Compact horizontal card</span><br/>
+    │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="file">new_request_form.dart</span>&nbsp;<span class="note">// Bottom sheet form</span><br/>
+    ├── <span class="file">pubspec.yaml</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// Dependencies</span><br/>
+    └── <span class="file">README.md</span>
+  </div>
+
+  <h3>📅 Today's Plan — 2 Hours</h3>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-line"></div></div>
+      <div class="tl-body"><div class="tl-time">0:00 – 0:15</div><div class="tl-title">Recap + Architecture Deep Dive</div><div class="tl-desc">Folder structure, files, flow — understanding what we built</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-line"></div></div>
+      <div class="tl-body"><div class="tl-time">0:15 – 0:35</div><div class="tl-title">Widgets & State — The Building Blocks</div><div class="tl-desc">Stateful vs Stateless, understanding when Flutter re-draws the screen</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-line"></div></div>
+      <div class="tl-body"><div class="tl-time">0:35 – 0:55</div><div class="tl-title">Prompting Patterns — The Art of Talking to Claude</div><div class="tl-desc">Why some prompts work, why some don't. Patterns that always win.</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-line"></div></div>
+      <div class="tl-body"><div class="tl-time">0:55 – 1:20</div><div class="tl-title">Build: Basic → Intermediate Prompts (Live)</div><div class="tl-desc">Step by step, prompting Claude to add real features to the app</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-line"></div></div>
+      <div class="tl-body"><div class="tl-time">1:20 – 1:45</div><div class="tl-title">🚀 Capstone Prompt — Full App Enhancement</div><div class="tl-desc">One big prompt that gives Claude full context and produces a production-ready feature</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-dot" style="background:var(--muted)"></div></div>
+      <div class="tl-body"><div class="tl-time">1:45 – 2:00</div><div class="tl-title">Preview: Tomorrow + Friday</div><div class="tl-desc">Google Sheets integration (tomorrow) · PostgreSQL + Dashboards (Friday)</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     TAB 2 · APP ARCHITECTURE
+═══════════════════════════════════════════════════ -->
+<section id="tab-architecture" class="tab-panel">
+  <h2><span class="emoji">🏗️</span>App Architecture — Folder Structure & Data Flow</h2>
+  <p class="page-sub">Before writing a single prompt, understand how the app is organized. This is how you tell Claude where to put things.</p>
+
+  <h3>The Three Layers Rule</h3>
+  <p>Every well-structured Flutter app has three layers. When you prompt Claude, always tell it which layer you're working in.</p>
+  <div class="grid-3">
+    <div class="card card-purple">
+      <h4>📦 Models</h4>
+      <p style="margin:0; font-size:0.85rem;">Pure data. No UI. Just the shape of your data — what fields a MaintenanceRequest has. <strong>Never touches the screen.</strong></p>
+    </div>
+    <div class="card card-teal">
+      <h4>🖥️ Screens</h4>
+      <p style="margin:0; font-size:0.85rem;">Full pages. HomeScreen is the list. DetailScreen shows one request. Each screen uses widgets to build its layout.</p>
+    </div>
+    <div class="card card-green">
+      <h4>🧩 Widgets</h4>
+      <p style="margin:0; font-size:0.85rem;">Reusable pieces. RequestCard is used inside HomeScreen. The form is a widget opened from the FAB. Build once, use anywhere.</p>
+    </div>
+  </div>
+
+  <h3>Complete Project Structure (Target End State)</h3>
+  <p>By end of Friday, your project will look like this. Today we're building the middle section.</p>
+  <div class="file-tree">
+    <span class="dir">lib/</span><br/>
+    ├── <span class="file">main.dart</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// Entry point — routes, theme, MaterialApp</span><br/>
+    │<br/>
+    ├── <span class="dir">models/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// 📦 DATA LAYER</span><br/>
+    │&nbsp;&nbsp;&nbsp;└── <span class="file">maintenance_request.dart</span><br/>
+    │<br/>
+    ├── <span class="dir">screens/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// 🖥️ SCREEN LAYER</span><br/>
+    │&nbsp;&nbsp;&nbsp;├── <span class="file">home_screen.dart</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// List + filter tabs (TODAY)</span><br/>
+    │&nbsp;&nbsp;&nbsp;├── <span class="file">detail_screen.dart</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// Full detail on tap (TODAY)</span><br/>
+    │&nbsp;&nbsp;&nbsp;└── <span class="file">dashboard_screen.dart</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// Summary charts (FRIDAY)</span><br/>
+    │<br/>
+    ├── <span class="dir">widgets/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// 🧩 WIDGET LAYER</span><br/>
+    │&nbsp;&nbsp;&nbsp;├── <span class="file">request_card.dart</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// Compact horizontal list card</span><br/>
+    │&nbsp;&nbsp;&nbsp;├── <span class="file">new_request_form.dart</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// Bottom sheet form</span><br/>
+    │&nbsp;&nbsp;&nbsp;└── <span class="file">status_badge.dart</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// Reusable Open/Pending/Closed pill</span><br/>
+    │<br/>
+    ├── <span class="dir">services/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// 🌐 DATA SERVICES (TOMORROW/FRIDAY)</span><br/>
+    │&nbsp;&nbsp;&nbsp;├── <span class="file">sheets_service.dart</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// Google Sheets API (TOMORROW)</span><br/>
+    │&nbsp;&nbsp;&nbsp;└── <span class="file">database_service.dart</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// PostgreSQL via Supabase (FRIDAY)</span><br/>
+    │<br/>
+    └── <span class="dir">data/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// 🗂️ MOCK DATA (TODAY — will be replaced)</span><br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;└── <span class="file">sample_requests.dart</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// Hardcoded list of requests for UI testing</span>
+  </div>
+
+  <h3>How Data Flows Through the App</h3>
+  <div class="card">
+    <p style="font-family:'JetBrains Mono',monospace; font-size:0.82rem; color:#a5f3fc; margin:0;">
+      [Sample Data / DB / Sheets]<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;↓ list of MaintenanceRequest objects<br/>
+      [HomeScreen]  ← receives the list<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;↓ filters by status tab<br/>
+      [RequestCard] ← one card per request<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;↓ user taps<br/>
+      [DetailScreen] ← full view of that request<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;↓ user presses + FAB<br/>
+      [NewRequestForm] ← user fills form<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;↓ submits<br/>
+      [Data Layer]  ← adds new record
+    </p>
+  </div>
+
+  <h3>The MaintenanceRequest Model — All 12 Fields</h3>
+  <table>
+    <tr><th>Field</th><th>Type</th><th>Where It Shows</th></tr>
+    <tr><td><code>id</code></td><td>String</td><td>Internal only (not shown)</td></tr>
+    <tr><td><code>productName</code></td><td>String</td><td>Card title, detail header</td></tr>
+    <tr><td><code>productId</code></td><td>String</td><td>Detail view only</td></tr>
+    <tr><td><code>category</code></td><td>String</td><td>Card tag, detail view, form dropdown</td></tr>
+    <tr><td><code>status</code></td><td>String</td><td>Card badge (Open/Pending/Closed)</td></tr>
+    <tr><td><code>requestDate</code></td><td>String</td><td>Card row, detail view</td></tr>
+    <tr><td><code>description</code></td><td>String</td><td>Detail view only</td></tr>
+    <tr><td><code>managerName</code></td><td>String</td><td>Detail view only</td></tr>
+    <tr><td><code>outletId</code></td><td>String</td><td>Card row, detail view</td></tr>
+    <tr><td><code>outletName</code></td><td>String</td><td>Detail view only</td></tr>
+    <tr><td><code>outletAddress</code></td><td>String</td><td>Detail view only</td></tr>
+  </table>
+
+  <div class="highlight highlight-amber">
+    💡 <strong>Golden Rule:</strong> The card shows just enough to scan the list quickly (productName, category, outletId, date). The detail screen shows everything. This keeps the list clean — just like the real app used by outlet managers.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     TAB 3 · WIDGETS & STATE
+═══════════════════════════════════════════════════ -->
+<section id="tab-widgets" class="tab-panel">
+  <h2><span class="emoji">🎨</span>Widgets & State — The Building Blocks</h2>
+  <p class="page-sub">Every piece of UI in Flutter is a Widget. Understanding two types — Stateless and Stateful — helps you prompt Claude correctly.</p>
+
+  <h3>Everything is a Widget</h3>
+  <p>In Flutter, <strong>everything visible on screen is a Widget</strong>. Text is a widget. A button is a widget. A row of items is a widget. The whole screen is a widget. Widgets nest inside each other to build complex UIs.</p>
+
+  <div class="compare-row">
+    <div class="col">
+      <h4>StatelessWidget</h4>
+      <p style="font-size:0.85rem; color:#94a3b8;">Never changes after it's built. What you pass in, stays in. Good for:</p>
+      <ul style="font-size:0.83rem; color:#cbd5e1; padding-left:18px;">
+        <li>Request cards (display only)</li>
+        <li>Status badges</li>
+        <li>Header text</li>
+        <li>Icons</li>
+      </ul>
+      <pre style="margin-top:10px;"><span class="k">class</span> <span class="n">StatusBadge</span> <span class="k">extends</span> <span class="n">StatelessWidget</span> {
+  <span class="k">final</span> String status;
+  <span class="k">const</span> <span class="n">StatusBadge</span>({<span class="k">required</span> <span class="k">this</span>.status});
+
+  <span class="n">@override</span>
+  Widget build(context) {
+    <span class="c">// Returns the coloured pill</span>
+  }
+}</pre>
+    </div>
+    <div class="col">
+      <h4>StatefulWidget</h4>
+      <p style="font-size:0.85rem; color:#94a3b8;">Can change while the app runs. Triggers a re-draw when data changes. Good for:</p>
+      <ul style="font-size:0.83rem; color:#cbd5e1; padding-left:18px;">
+        <li>HomeScreen (filter tab changes)</li>
+        <li>New request form (typing, validation)</li>
+        <li>Any list that updates</li>
+      </ul>
+      <pre style="margin-top:10px;"><span class="k">class</span> <span class="n">HomeScreen</span> <span class="k">extends</span> <span class="n">StatefulWidget</span> {
+  <span class="c">// selectedFilter changes when user</span>
+  <span class="c">// taps All / Open / Pending / Closed</span>
+  String selectedFilter = <span class="s">'All'</span>;
+
+  <span class="k">void</span> updateFilter(String f) {
+    setState(() => selectedFilter = f);
+  }
+}</pre>
+    </div>
+  </div>
+
+  <h3>setState() — How Flutter Knows to Redraw</h3>
+  <div class="highlight highlight-purple">
+    When the user taps a filter tab, <code>setState()</code> is called. Flutter re-runs the <code>build()</code> method of that widget, and only that widget updates on screen. This is called <strong>reactive UI</strong> — the screen reacts to state changes.
+  </div>
+
+  <h3>The 5 Widgets You'll Use Every Session</h3>
+  <table>
+    <tr><th>Widget</th><th>What it does</th><th>Used in our app for</th></tr>
+    <tr><td><code>Scaffold</code></td><td>Page frame with AppBar + FAB slots</td><td>HomeScreen, DetailScreen</td></tr>
+    <tr><td><code>ListView.builder</code></td><td>Efficient scrolling list</td><td>The maintenance requests list</td></tr>
+    <tr><td><code>Row / Column</code></td><td>Horizontal / vertical layout</td><td>Card layout, form fields</td></tr>
+    <tr><td><code>TextFormField</code></td><td>Text input with label + validation</td><td>All form fields</td></tr>
+    <tr><td><code>DropdownButtonFormField</code></td><td>Select from a list</td><td>Category (Electrical/AC/Kitchen) and Status selectors</td></tr>
+  </table>
+
+  <h3>Navigator — How Screens Connect</h3>
+  <p>When a user taps a request card, we "push" a new screen on top. When they press Back, we "pop" it.</p>
+  <pre><span class="c">// When user taps a RequestCard:</span>
+Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (_) => <span class="n">DetailScreen</span>(request: tappedRequest),
+  ),
+);
+
+<span class="c">// Back button automatically calls:</span>
+Navigator.pop(context);</pre>
+
+  <div class="highlight">
+    ✅ <strong>When prompting Claude about navigation:</strong> Say "push to a new screen" or "navigate to DetailScreen passing the full request object." Claude will write the Navigator code correctly.
+  </div>
+
+  <h3>Understanding pubspec.yaml — Adding Packages</h3>
+  <p>When you need something Flutter doesn't have built-in (charts, HTTP calls, Google Sheets SDK), you add a <strong>package</strong> to <code>pubspec.yaml</code>. Claude handles this automatically when you ask for features that need external libraries.</p>
+  <pre><span class="c"># pubspec.yaml — packages we'll need</span>
+dependencies:
+  flutter:
+    sdk: flutter
+  <span class="n">http</span>: ^1.2.0         <span class="c"># HTTP calls for Sheets/API (tomorrow)</span>
+  <span class="n">supabase_flutter</span>: ^2.0.0  <span class="c"># PostgreSQL via Supabase (Friday)</span>
+  <span class="n">fl_chart</span>: ^0.70.0   <span class="c"># Dashboard charts (Friday)</span>
+  <span class="n">intl</span>: ^0.19.0        <span class="c"># Date formatting</span></pre>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     TAB 4 · PROMPTING PATTERNS
+═══════════════════════════════════════════════════ -->
+<section id="tab-patterns" class="tab-panel">
+  <h2><span class="emoji">💬</span>Prompting Patterns — The Art of Talking to Claude</h2>
+  <p class="page-sub">Your code quality is only as good as your prompt quality. These patterns separate prompts that work from prompts that waste time.</p>
+
+  <h3>The Anatomy of a Good Prompt</h3>
+  <div class="card card-purple">
+    <p style="margin:0; font-size:0.9rem;">A good Claude Code prompt has four parts:</p>
+    <br/>
+    <p style="font-family:'JetBrains Mono',monospace; font-size:0.84rem; color:#c4b5fd; margin:0;">
+      <strong style="color:#a78bfa;">[CONTEXT]</strong>&nbsp; — What app is this? What already exists?<br/>
+      <strong style="color:#a78bfa;">[TASK]</strong>&nbsp;&nbsp;&nbsp;&nbsp;— Exactly what do you want to add/change?<br/>
+      <strong style="color:#a78bfa;">[RULES]</strong>&nbsp;&nbsp; — Constraints (files to touch, style to keep, fields to include)<br/>
+      <strong style="color:#a78bfa;">[OUTPUT]</strong>&nbsp; — What should the result look like / behave like?
+    </p>
+  </div>
+
+  <h3>Pattern 1 — The Reference Prompt</h3>
+  <p>Tell Claude which file to look at. Never assume it knows what exists.</p>
+  <div class="prompt-box">
+    <p>In our Khan Chacha Flutter app, look at lib/widgets/request_card.dart.
+The card currently shows productName, category, outletId, and requestDate in a horizontal row.
+I want to also show a small icon next to the category label (⚡ for Electrical, ❄️ for AC, 🍳 for Kitchen).
+Only modify request_card.dart. Do not change any other file.</p>
+  </div>
+
+  <h3>Pattern 2 — The Constraint Prompt</h3>
+  <p>Tell Claude what NOT to change. This prevents it from refactoring code you didn't ask it to touch.</p>
+  <div class="prompt-box">
+    <p>In lib/screens/home_screen.dart, add a search bar at the top of the list that filters by productName.
+IMPORTANT constraints:
+- Do not change the filter tab row (All / Open / Pending / Closed) — keep it exactly as is
+- Do not change the RequestCard widget
+- The search should work together with the tab filter (both active at the same time)
+- Keep the existing state management pattern (setState)</p>
+  </div>
+
+  <h3>Pattern 3 — The Context Dump Prompt</h3>
+  <p>For complex tasks, paste the existing code into the prompt. Claude works with exactly what you have, not what it imagines.</p>
+  <div class="prompt-box">
+    <p>Here is our current MaintenanceRequest model:
+
+[paste full maintenance_request.dart here]
+
+I need to add a fromJson() and toJson() method so this model can be serialized
+to and from JSON (needed to store and retrieve data from an API tomorrow).
+Map every field. Use String types throughout — no DateTime, no enums.
+Return the updated file.</p>
+  </div>
+
+  <h3>Pattern 4 — The Outcome Prompt</h3>
+  <p>Describe what the user experiences, not what widgets to use. Claude picks the right widget.</p>
+  <div class="compare-row">
+    <div class="col">
+      <h4 style="color:var(--red);">❌ Vague / Widget-Focused</h4>
+      <p style="font-size:0.84rem; color:#94a3b8;">"Add a Container with a Row inside with two Text widgets and a Chip widget for the category."</p>
+      <p style="font-size:0.8rem; color:#64748b;">You're telling Claude how, not what. You might be wrong about the best widget choice.</p>
+    </div>
+    <div class="col">
+      <h4 style="color:var(--green);">✅ Clear / Outcome-Focused</h4>
+      <p style="font-size:0.84rem; color:#a7f3d0;">"Each request card should show the product name in bold, and below it a small coloured tag showing the category. The tag colours are: purple for Electrical, blue for AC, orange for Kitchen."</p>
+      <p style="font-size:0.8rem; color:#6ee7b7;">Claude chooses the right widgets. You describe the result.</p>
+    </div>
+  </div>
+
+  <h3>Pattern 5 — The Step-by-Step Breakdown</h3>
+  <p>For features that touch multiple files, break them into steps. Ask Claude to do one step at a time and confirm before moving to the next.</p>
+  <div class="prompt-box">
+    <p>I want to add a Dashboard screen to the Khan Chacha app. Let's do this in 3 steps.
+For now, only do Step 1:
+
+STEP 1: Create lib/screens/dashboard_screen.dart with a basic Scaffold
+that shows the text "Dashboard — Coming Soon" in the center.
+Add a route for this screen in main.dart.
+Add a bottom navigation bar to HomeScreen with two tabs: "Requests" and "Dashboard".
+
+Stop after Step 1. I will test and then ask you for Step 2.</p>
+  </div>
+
+  <h3>Pattern 6 — The Fix Prompt</h3>
+  <p>When something breaks, give Claude the error message — never just say "it's not working."</p>
+  <div class="prompt-box">
+    <p>My Flutter app is showing this error in the terminal:
+
+"The named parameter 'category' is required, but there's no corresponding argument."
+
+This happened after I added the category field to MaintenanceRequest.
+The error is in lib/data/sample_requests.dart.
+Look at the constructor in maintenance_request.dart and fix sample_requests.dart
+so that all sample records include the category field with a valid value
+(Electrical, AC, or Kitchen).</p>
+  </div>
+
+  <h3>The Prompt Quality Scale</h3>
+  <table>
+    <tr><th>Level</th><th>Example</th><th>Result</th></tr>
+    <tr><td>❌ Level 1</td><td>"Make it look better"</td><td>Random changes, probably not what you wanted</td></tr>
+    <tr><td>⚠️ Level 2</td><td>"Add a search bar to the home screen"</td><td>Works, but may not match your existing style</td></tr>
+    <tr><td>✅ Level 3</td><td>"Add a search bar below the AppBar in home_screen.dart that filters the request list by productName. Keep the existing tab filter."</td><td>Exactly what you wanted, in the right place</td></tr>
+    <tr><td>🚀 Level 4</td><td>Full context + task + constraints + file references + expected behaviour</td><td>Production-ready code, no follow-up needed</td></tr>
+  </table>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     TAB 5 · BASIC PROMPTS
+═══════════════════════════════════════════════════ -->
+<section id="tab-basic" class="tab-panel">
+  <h2><span class="emoji">🔨</span>Build: Basic Prompts — Start Small, Win Fast</h2>
+  <p class="page-sub">These prompts produce visible, satisfying results quickly. Run each one in Claude Code and review before moving to the next.</p>
+
+  <div class="highlight highlight-amber">
+    ⚠️ <strong>Before starting:</strong> Make sure your app runs with <code>flutter run</code> and you can see the maintenance list on screen. If anything is broken from Day 1, fix it first.
+  </div>
+
+  <h3>Prompt B1 — Add Category Icons to Cards</h3>
+  <p>Quick visual improvement. Adds meaning to the category tag using emoji icons.</p>
+  <div class="prompt-box">
+    <p>In our Khan Chacha Flutter MRMS app, open lib/widgets/request_card.dart.
+The card shows category as plain text. Update it so that:
+- Electrical shows ⚡ before the text
+- AC shows ❄️ before the text
+- Kitchen shows 🍳 before the text
+
+Keep everything else in the card exactly the same.
+Only modify request_card.dart.</p>
+  </div>
+  <p><strong>Expected result:</strong> Cards show <code>⚡ Electrical</code>, <code>❄️ AC</code>, <code>🍳 Kitchen</code> tags.</p>
+
+  <h3>Prompt B2 — Empty State Message</h3>
+  <p>When a filter shows no results (e.g. no Closed requests), show a friendly message instead of a blank screen.</p>
+  <div class="prompt-box">
+    <p>In lib/screens/home_screen.dart, add an empty state to the request list.
+When the filtered list has zero items, instead of showing an empty ListView, show:
+- A centered column with a 🔧 emoji (large), a title "No Requests Found",
+  and a subtitle "No {selectedFilter} requests at the moment."
+  where {selectedFilter} is replaced with the active filter tab label.
+Keep the existing ListView.builder for when there are items.
+Only modify home_screen.dart.</p>
+  </div>
+  <p><strong>Expected result:</strong> Tap "Closed" — if no closed requests exist, a friendly 🔧 message appears.</p>
+
+  <h3>Prompt B3 — Request Count Badge on Filter Tabs</h3>
+  <p>Show how many requests match each filter tab. Super useful for the real Khan Chacha use case.</p>
+  <div class="prompt-box">
+    <p>In lib/screens/home_screen.dart, update the filter tab buttons.
+Each tab (All, Open, Pending, Closed) should show a count badge next to the label
+showing how many requests match that filter.
+For example: "Open (3)" or "Pending (1)".
+
+Count from the full, unfiltered list — not from the currently filtered list.
+Keep the active/inactive tab styling the same as it is now.
+Only modify home_screen.dart.</p>
+  </div>
+  <p><strong>Expected result:</strong> Tabs show "All (6)", "Open (3)", "Pending (2)", "Closed (1)".</p>
+
+  <h3>Prompt B4 — Detail Screen: Copy Request ID</h3>
+  <p>A practical utility feature. Managers need to reference the request ID in WhatsApp or email.</p>
+  <div class="prompt-box">
+    <p>In lib/screens/detail_screen.dart, next to where the request ID is displayed,
+add a small copy icon button (Icons.copy).
+When tapped, it should copy the request ID to the clipboard and show a
+SnackBar at the bottom of the screen that says "Request ID copied!".
+Use Flutter's built-in Clipboard.setData method.
+Do not add any new packages — this is available in flutter/services.dart.</p>
+  </div>
+
+  <h3>Prompt B5 — Pull to Refresh (UI only, no real API yet)</h3>
+  <p>Adds the "pull down to refresh" gesture. For now it just reloads the same mock data — but the UI pattern is ready for when we connect real data.</p>
+  <div class="prompt-box">
+    <p>In lib/screens/home_screen.dart, wrap the ListView.builder with a RefreshIndicator.
+When the user pulls down to refresh, wait 1 second (simulate a network call using Future.delayed)
+then reload the same sample data (no API yet).
+Show a SnackBar when the refresh completes: "Requests updated."
+The pull-to-refresh gesture should work alongside the existing filter tabs.
+Only modify home_screen.dart.</p>
+  </div>
+
+  <div class="highlight">
+    ✅ <strong>Good practice after each prompt:</strong> Hot reload with <code>r</code> in the terminal, or save the file and let Flutter auto-reload. Test the feature manually before moving to the next prompt.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     TAB 6 · INTERMEDIATE PROMPTS
+═══════════════════════════════════════════════════ -->
+<section id="tab-intermediate" class="tab-panel">
+  <h2><span class="emoji">⚡</span>Intermediate Prompts — Real Features, Real Screens</h2>
+  <p class="page-sub">These prompts add meaningful new screens and navigation. Each one adds a feature that would exist in the real Khan Chacha production app.</p>
+
+  <h3>Prompt I1 — Search Across the Request List</h3>
+  <p>Managers need to find a specific outlet's requests quickly. Search + filter working together.</p>
+  <div class="prompt-box">
+    <p>In lib/screens/home_screen.dart, add a search bar below the AppBar and above the filter tabs.
+Requirements:
+- Use a TextField with a search icon prefix and a clear (X) suffix button
+- Searching filters by productName OR outletName (case-insensitive, partial match)
+- The search filter works at the same time as the status tab filter
+  (so if "Open" tab is selected and user types "HVAC", only Open requests matching HVAC appear)
+- The clear button resets the search text and shows the full filtered list again
+- Add a searchQuery String to the widget's state, updated via setState
+
+Only modify home_screen.dart. Do not change any other file.</p>
+  </div>
+
+  <h3>Prompt I2 — Category Filter (Second Filter Row)</h3>
+  <p>Add a second row of filter chips below the status tabs for filtering by Electrical / AC / Kitchen.</p>
+  <div class="prompt-box">
+    <p>In lib/screens/home_screen.dart, below the existing status filter tabs (All/Open/Pending/Closed),
+add a second filter row using FilterChip widgets for category filtering.
+
+The chips should be: All Categories | Electrical | AC | Kitchen
+with the same scroll-horizontally behaviour as the status tabs.
+
+Both filters work together — e.g. "Open" status AND "Electrical" category.
+Active chip should use the app's purple/teal colour scheme.
+Add a selectedCategory String state variable (default 'All Categories').
+
+Only modify home_screen.dart.</p>
+  </div>
+
+  <h3>Prompt I3 — Add Navigation: Bottom Nav Bar</h3>
+  <p>Add a bottom navigation bar with two tabs: Requests (current) and Dashboard (coming Friday). This sets up the routing structure for the whole app.</p>
+  <div class="prompt-box">
+    <p>Add a bottom navigation bar to the Khan Chacha app with two tabs:
+1. "Requests" (icon: Icons.list_alt) — shows the current HomeScreen
+2. "Dashboard" (icon: Icons.bar_chart) — shows a placeholder screen
+
+Steps:
+1. Create lib/screens/dashboard_screen.dart — a simple Scaffold with AppBar title
+   "Dashboard" and a centered Text "Dashboard coming Friday 🚀"
+2. In main.dart, create a new MainWrapper StatefulWidget that holds the
+   BottomNavigationBar and switches between HomeScreen and DashboardScreen
+   based on the selected tab index
+3. Set MainWrapper as the home in MaterialApp (not HomeScreen directly)
+
+Keep the existing FAB (+) button visible only when on the Requests tab.</p>
+  </div>
+
+  <h3>Prompt I4 — Form Validation Improvements</h3>
+  <p>The new request form needs proper validation so managers can't submit an empty or incomplete request.</p>
+  <div class="prompt-box">
+    <p>In lib/widgets/new_request_form.dart, add proper validation to the form:
+
+Required field rules:
+- productName: cannot be empty, minimum 3 characters
+- productId: cannot be empty
+- outletId: must match format OUT-XX (two or more digits after the hyphen)
+  — show error "Must be in format OUT-01, OUT-02 etc." if invalid
+- outletName: cannot be empty
+- managerName: cannot be empty
+- category: must be selected (Electrical, AC, or Kitchen) — no default blank option
+- description: cannot be empty, minimum 10 characters
+
+On submit:
+- Call form.currentState!.validate() — if invalid, highlight all error fields
+  and show a SnackBar "Please fix the errors before submitting"
+- If valid, create the MaintenanceRequest object and close the form
+
+Keep the existing form structure and field order. Only modify new_request_form.dart.</p>
+  </div>
+
+  <h3>Prompt I5 — Sort Requests</h3>
+  <p>Add a sort menu so managers can sort by date (newest first), status, or outlet ID.</p>
+  <div class="prompt-box">
+    <p>In lib/screens/home_screen.dart, add a sort button in the AppBar (Icons.sort).
+When tapped, show a ModalBottomSheet with three sort options:
+1. Newest First (sort by requestDate descending)
+2. Oldest First (sort by requestDate ascending)
+3. By Outlet ID (sort by outletId alphabetically)
+
+The selected sort option should be remembered in state and shown with a
+checkmark next to the active option.
+
+Sorting applies after the status filter and category filter and search filter.
+Only modify home_screen.dart.</p>
+  </div>
+
+  <div class="card card-teal">
+    <h4>🎯 Teaching Moment — After Prompt I3</h4>
+    <p style="margin:0; font-size:0.87rem;">Pause after adding the bottom nav bar. Ask the class: <em>"We just changed where HomeScreen is loaded from. Why did we need to update main.dart as well?"</em> This teaches the concept of app routing and how screens connect at the root level. It's also a great example of why prompts need to reference all affected files.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     TAB 7 · CAPSTONE PROMPT
+═══════════════════════════════════════════════════ -->
+<section id="tab-capstone" class="tab-panel">
+  <h2><span class="emoji">🚀</span>Capstone Prompt — The Full Feature</h2>
+  <p class="page-sub">One comprehensive, well-structured prompt that gives Claude everything it needs to produce a complete, production-quality feature. This is what separates a junior prompter from a senior one.</p>
+
+  <h3>Why the Capstone Prompt Works</h3>
+  <p>The capstone prompt is not longer just for the sake of being long. It's longer because it gives Claude:</p>
+  <div class="grid-2">
+    <div class="card card-purple"><strong>Full context</strong><br/><span style="font-size:0.84rem; color:#94a3b8;">What the app is, what already exists, what the user's role is</span></div>
+    <div class="card card-purple"><strong>Precise task</strong><br/><span style="font-size:0.84rem; color:#94a3b8;">What to build, where to build it, what files to create or modify</span></div>
+    <div class="card card-purple"><strong>Constraints</strong><br/><span style="font-size:0.84rem; color:#94a3b8;">What NOT to break, what existing patterns to follow</span></div>
+    <div class="card card-purple"><strong>Expected behaviour</strong><br/><span style="font-size:0.84rem; color:#94a3b8;">What the user sees and experiences at the end</span></div>
+  </div>
+
+  <h3>🚀 Capstone Prompt — Status Update Workflow</h3>
+  <p>Build the ability for a manager to update the status of a request directly from the detail screen — a core real-world feature of the MRMS.</p>
+
+  <div class="capstone-box">
+    <p>CONTEXT:
+We are building the Khan Chacha Maintenance Request Management System (MRMS) in Flutter.
+This is an internal app used by outlet managers (non-technical staff) to submit and
+track maintenance requests for equipment at their restaurant outlets.
+
+The app currently has:
+- lib/models/maintenance_request.dart (MaintenanceRequest class with 12 fields including status)
+- lib/screens/home_screen.dart (list with filter tabs, search, sort, category filter, RefreshIndicator)
+- lib/screens/detail_screen.dart (full detail view of one request)
+- lib/widgets/request_card.dart (compact horizontal card in the list)
+- lib/widgets/new_request_form.dart (bottom sheet form to create new requests)
+- lib/data/sample_requests.dart (hardcoded list of sample MaintenanceRequest objects)
+
+Requests have a status field that is one of: 'Open', 'Pending', 'Closed'.
+Currently status is set when creating a request and cannot be changed.
+
+TASK:
+Build a "Update Status" feature so that when a manager views a request in DetailScreen,
+they can change its status. This involves changes across multiple files.
+
+DETAILED REQUIREMENTS:
+
+1. In lib/screens/detail_screen.dart:
+   - Add an "Update Status" button at the bottom of the screen (full-width, prominent styling)
+   - When tapped, show a ModalBottomSheet with three options:
+     Open | Pending | Closed — each shown as a full-width tile
+   - The currently active status should show a checkmark icon next to it
+   - When a new status is selected, close the bottom sheet and update the
+     request's status in the UI immediately
+   - Show a SnackBar: "Status updated to [new status]"
+
+2. In lib/screens/home_screen.dart:
+   - When the user navigates BACK from DetailScreen after updating a status,
+     the list on HomeScreen must reflect the new status (so if a request changed
+     to Closed, it disappears from the Open tab)
+   - Use Navigator.push and await its result to handle the status update callback
+
+3. In lib/data/sample_requests.dart:
+   - The list should be mutable (List, not const) so status can be updated in-memory
+   - The update should persist while the app session is running (not just in DetailScreen)
+
+4. In lib/models/maintenance_request.dart:
+   - Add a copyWith() method that returns a new MaintenanceRequest with one or more
+     fields replaced (needed to create the updated object without mutating the original)
+
+CONSTRAINTS:
+- Do not add any new packages to pubspec.yaml
+- Keep the existing widget styling — status badge colours (Open=green, Pending=amber, Closed=red)
+  must remain consistent everywhere the status appears
+- Do not refactor the state management beyond what's needed for this feature
+- The FAB (+) button and form remain unchanged
+- All 12 fields of MaintenanceRequest remain unchanged — only status changes
+
+EXPECTED USER EXPERIENCE:
+Manager opens the app → taps an "Open" request → sees full detail → taps
+"Update Status" → picks "Pending" → bottom sheet closes → status badge on DetailScreen
+changes to amber "Pending" → manager presses Back → the HomeScreen list shows that
+request as Pending (and it disappears from the Open tab if Open tab is active).
+
+Please create or modify all four affected files and show each one completely.</p>
+  </div>
+
+  <h3>Why This is the Right Level of Detail</h3>
+  <table>
+    <tr><th>Element in the prompt</th><th>Why it's there</th></tr>
+    <tr><td>The CONTEXT paragraph</td><td>Claude knows this is a business app for non-tech users, not a personal project. It affects styling and UX decisions.</td></tr>
+    <tr><td>"The app currently has:" with file list</td><td>Claude doesn't have to guess what exists. No hallucinated filenames.</td></tr>
+    <tr><td>Numbered requirements with file names</td><td>Claude touches exactly the right files. Nothing more.</td></tr>
+    <tr><td>CONSTRAINTS section</td><td>Prevents Claude from adding packages you don't want or breaking existing patterns.</td></tr>
+    <tr><td>EXPECTED USER EXPERIENCE</td><td>The narrative tells Claude exactly what the flow should feel like. It's the acceptance test.</td></tr>
+    <tr><td>"Show each one completely"</td><td>Claude returns full files, not snippets with "// rest of file unchanged" gaps.</td></tr>
+  </table>
+
+  <div class="highlight">
+    🎓 <strong>Class Exercise:</strong> After Claude responds to this prompt, read through the <code>copyWith()</code> method it adds to the model. Ask the class: "Why do we return a new object instead of just changing the status field directly?" This opens the discussion about immutability and why it matters in reactive UIs.
+  </div>
+
+  <h3>Optional Extension: Capstone Part 2</h3>
+  <p>If you have time after the main capstone, run this follow-up prompt:</p>
+  <div class="prompt-box">
+    <p>Using the status update feature we just built, add a status change history log.
+
+When a manager updates the status of a request, record:
+- The old status
+- The new status
+- A timestamp (use DateTime.now().toString())
+
+Add a statusHistory field to MaintenanceRequest as a List of Strings,
+where each entry is a formatted string like:
+"2026-07-06 14:30 · Open → Pending"
+
+In DetailScreen, below the current status badge, show this history in a
+small scrollable list with a "History" section label.
+If no history exists, show "No status changes yet."
+
+Update copyWith() to also copy the statusHistory list.
+Do not change the form — history is only created via the Update Status flow.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     TAB 8 · TOMORROW: GOOGLE SHEETS
+═══════════════════════════════════════════════════ -->
+<section id="tab-tomorrow" class="tab-panel">
+  <h2><span class="emoji">📡</span>Tomorrow: Connecting to Google Sheets (Real Data)</h2>
+  <p class="page-sub">Khan Chacha currently uses Google Forms → Google Sheets for maintenance requests. Tomorrow's session bridges the app to that real, live data.</p>
+
+  <h3>Why This Matters — The Real-World Context</h3>
+  <div class="card card-teal">
+    <p style="margin:0;">Khan Chacha's franchise outlets are <em>already</em> submitting maintenance requests via Google Forms. That data is being saved to a Google Sheet right now. Tomorrow, instead of showing hardcoded sample data in the app, we'll <strong>fetch the live data from that Sheet</strong>. Managers will see real requests. This is not a demo — it's the actual integration.</p>
+  </div>
+
+  <h3>How Google Forms → Sheets → Flutter Works</h3>
+  <div class="card">
+    <p style="font-family:'JetBrains Mono',monospace; font-size:0.84rem; color:#a5f3fc; margin:0;">
+      [Outlet Manager]<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;↓ fills Google Form<br/>
+      [Google Form] — auto-saves to →<br/>
+      [Google Sheet] (one row per request)<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;↓ Google Sheets API (read)<br/>
+      [Flutter App — sheets_service.dart]<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;↓ parses JSON rows → MaintenanceRequest objects<br/>
+      [HomeScreen] — displays the real list
+    </p>
+  </div>
+
+  <h3>What We Need to Prepare Tonight</h3>
+  <ul class="checklist">
+    <li><span class="check-icon">✓</span><div>A Google Sheet with columns matching our 12 MaintenanceRequest fields (or a mapping if Khan Chacha's existing columns are named differently)</div></li>
+    <li><span class="check-icon">✓</span><div>A Google Cloud project with the Sheets API enabled</div></li>
+    <li><span class="check-icon">✓</span><div>An API key (for read-only) or OAuth 2.0 credentials (for read + write)</div></li>
+    <li><span class="check-icon">✓</span><div>The Sheet ID (from the URL: <code>docs.google.com/spreadsheets/d/<strong>[SHEET_ID]</strong>/</code>)</div></li>
+    <li><span class="check-icon">✓</span><div>The Sheet must be made accessible: either public (read-only API key works) or shared with service account</div></li>
+  </ul>
+
+  <h3>The Google Sheets API URL</h3>
+  <pre><span class="c"># Read all rows from Sheet1</span>
+https://sheets.googleapis.com/v4/spreadsheets/<span class="n">{SHEET_ID}</span>/values/Sheet1?key=<span class="n">{API_KEY}</span>
+
+<span class="c"># Returns JSON like:</span>
+{
+  "values": [
+    ["id", "productName", "productId", ...],  <span class="c">// header row</span>
+    ["REQ-001", "HVAC Unit", "HVAC-203", ...], <span class="c">// data rows</span>
+    ["REQ-002", "Water Pump", "PUMP-045", ...]
+  ]
+}</pre>
+
+  <h3>Tomorrow's Key New File: sheets_service.dart</h3>
+  <pre><span class="c">// lib/services/sheets_service.dart</span>
+<span class="k">import</span> <span class="s">'package:http/http.dart'</span> <span class="k">as</span> http;
+<span class="k">import</span> <span class="s">'dart:convert'</span>;
+<span class="k">import</span> <span class="s">'../models/maintenance_request.dart'</span>;
+
+<span class="k">class</span> <span class="n">SheetsService</span> {
+  <span class="k">static const</span> String _sheetId = <span class="s">'YOUR_SHEET_ID'</span>;
+  <span class="k">static const</span> String _apiKey  = <span class="s">'YOUR_API_KEY'</span>;
+
+  <span class="k">Future</span>&lt;List&lt;MaintenanceRequest&gt;&gt; fetchRequests() <span class="k">async</span> {
+    <span class="k">final</span> url = <span class="s">'https://sheets.googleapis.com/v4/spreadsheets/'</span>
+        <span class="s">'$_sheetId/values/Sheet1?key=$_apiKey'</span>;
+    <span class="k">final</span> response = <span class="k">await</span> http.get(Uri.parse(url));
+    <span class="c">// parse rows → MaintenanceRequest.fromJson()</span>
+  }
+}</pre>
+
+  <h3>Tomorrow's Prompts (Preview)</h3>
+  <div class="prompt-box">
+    <p>PROMPT FOR TOMORROW — STARTER:
+
+In our Khan Chacha Flutter app, create lib/services/sheets_service.dart.
+This service fetches maintenance requests from a Google Sheet using the Sheets API v4.
+
+The sheet has these columns in this order (row 1 is header, data starts row 2):
+id | productName | productId | category | status | requestDate | description | managerName | outletId | outletName | outletAddress
+
+The service should have one method: Future&lt;List&lt;MaintenanceRequest&gt;&gt; fetchRequests()
+It should:
+1. Make an HTTP GET to the Sheets API URL using the http package
+2. Parse the JSON response (values array — first row is headers, skip it)
+3. Map each row array to a MaintenanceRequest object using positional index
+4. Return the list
+
+Also add fromJson(Map) and fromRow(List) constructors to MaintenanceRequest if needed.
+SHEET_ID and API_KEY should be constants at the top of the file (I'll replace the values).
+
+Add http: ^1.2.0 to pubspec.yaml dependencies.</p>
+  </div>
+
+  <h3>What Khan Chacha's Real Google Sheet Should Look Like</h3>
+  <table>
+    <tr><th>id</th><th>productName</th><th>productId</th><th>category</th><th>status</th><th>requestDate</th><th>managerName</th><th>outletId</th></tr>
+    <tr><td>REQ-001</td><td>HVAC Unit</td><td>HVAC-203</td><td>AC</td><td>Open</td><td>2026-07-01</td><td>Priya Nair</td><td>OUT-02</td></tr>
+    <tr><td>REQ-002</td><td>Water Pump</td><td>PUMP-045</td><td>Electrical</td><td>Pending</td><td>2026-07-03</td><td>Sunita Rao</td><td>OUT-05</td></tr>
+  </table>
+
+  <div class="highlight highlight-amber">
+    📋 <strong>Action before tomorrow:</strong> Either use Khan Chacha's existing Sheet (ask for a read-only copy of the structure), or create a demo Sheet now with 5–8 sample rows. Share the Sheet ID and API key with students 10 minutes before the session starts.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     TAB 9 · FRIDAY: POSTGRESQL
+═══════════════════════════════════════════════════ -->
+<section id="tab-friday" class="tab-panel">
+  <h2><span class="emoji">🗄️</span>Friday: PostgreSQL + Dashboards (Permanent Data)</h2>
+  <p class="page-sub">The step from Google Sheets to a real database. Everything your students learned in PostgreSQL training comes alive here.</p>
+
+  <h3>Why Move from Sheets to PostgreSQL?</h3>
+  <div class="grid-2">
+    <div class="card card-amber">
+      <h4>Google Sheets — Good for now</h4>
+      <ul style="font-size:0.84rem; color:#94a3b8; padding-left:16px; margin:0;">
+        <li>Easy to set up</li>
+        <li>Non-technical managers can edit it</li>
+        <li>But: no real-time updates</li>
+        <li>But: no access control per row</li>
+        <li>But: 10M cell limit</li>
+        <li>But: no joins, foreign keys, or queries</li>
+      </ul>
+    </div>
+    <div class="card card-green">
+      <h4>PostgreSQL — Production ready</h4>
+      <ul style="font-size:0.84rem; color:#94a3b8; padding-left:16px; margin:0;">
+        <li>Real transactions (no duplicate requests)</li>
+        <li>Row-level security (managers see only their outlet)</li>
+        <li>Real-time subscriptions (auto-update the list)</li>
+        <li>Proper relationships (outlets table, assets table)</li>
+        <li>SQL queries for dashboard analytics</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>The Tool: Supabase</h3>
+  <p><strong>Supabase</strong> is PostgreSQL + REST API + Real-time + Authentication — all in one hosted service. Students who know PostgreSQL from their training can write raw SQL queries in Supabase's dashboard. The Flutter SDK talks to Supabase exactly like it would talk to any REST API.</p>
+
+  <div class="card card-teal">
+    <p style="margin:0; font-size:0.9rem;">Think of Supabase as: <strong>PostgreSQL that has an API already built for it.</strong> No Express server. No manual REST endpoints. Write a table, get an API. Write a SQL query, get a REST endpoint.</p>
+  </div>
+
+  <h3>The Database Schema for Khan Chacha</h3>
+  <pre><span class="c">-- PostgreSQL table for maintenance requests</span>
+<span class="k">CREATE TABLE</span> maintenance_requests (
+  id              TEXT PRIMARY KEY DEFAULT gen_random_uuid()::TEXT,
+  product_name    TEXT NOT NULL,
+  product_id      TEXT NOT NULL,
+  category        TEXT CHECK (category IN (<span class="s">'Electrical'</span>, <span class="s">'AC'</span>, <span class="s">'Kitchen'</span>)),
+  status          TEXT CHECK (status IN (<span class="s">'Open'</span>, <span class="s">'Pending'</span>, <span class="s">'Closed'</span>)) DEFAULT <span class="s">'Open'</span>,
+  request_date    DATE NOT NULL DEFAULT CURRENT_DATE,
+  description     TEXT,
+  manager_name    TEXT NOT NULL,
+  outlet_id       TEXT NOT NULL,
+  outlet_name     TEXT NOT NULL,
+  outlet_address  TEXT,
+  created_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+<span class="c">-- Dashboard query: requests by status</span>
+<span class="k">SELECT</span> status, COUNT(*) <span class="k">AS</span> total
+<span class="k">FROM</span> maintenance_requests
+<span class="k">GROUP BY</span> status;
+
+<span class="c">-- Dashboard query: busiest outlets</span>
+<span class="k">SELECT</span> outlet_name, COUNT(*) <span class="k">AS</span> request_count
+<span class="k">FROM</span> maintenance_requests
+<span class="k">GROUP BY</span> outlet_name
+<span class="k">ORDER BY</span> request_count DESC;</pre>
+
+  <h3>The Dashboard We'll Build on Friday</h3>
+  <div class="grid-3">
+    <div class="card card-green">
+      <h4>📊 Status Summary</h4>
+      <p style="font-size:0.84rem; margin:0; color:#94a3b8;">Pie or donut chart — how many requests are Open / Pending / Closed right now. Powered by a GROUP BY query.</p>
+    </div>
+    <div class="card card-amber">
+      <h4>🏪 Outlet Leaderboard</h4>
+      <p style="font-size:0.84rem; margin:0; color:#94a3b8;">Which outlet has the most open maintenance issues? Bar chart sorted descending.</p>
+    </div>
+    <div class="card card-red">
+      <h4>🔥 Category Breakdown</h4>
+      <p style="font-size:0.84rem; margin:0; color:#94a3b8;">Electrical vs AC vs Kitchen — which category has the most repeat issues? Helps Khan Chacha plan maintenance budgets.</p>
+    </div>
+  </div>
+
+  <h3>Friday's database_service.dart (Preview)</h3>
+  <pre><span class="c">// lib/services/database_service.dart</span>
+<span class="k">import</span> <span class="s">'package:supabase_flutter/supabase_flutter.dart'</span>;
+<span class="k">import</span> <span class="s">'../models/maintenance_request.dart'</span>;
+
+<span class="k">class</span> <span class="n">DatabaseService</span> {
+  <span class="k">final</span> _client = Supabase.instance.client;
+
+  <span class="k">Future</span>&lt;List&lt;MaintenanceRequest&gt;&gt; fetchAll() <span class="k">async</span> {
+    <span class="k">final</span> data = <span class="k">await</span> _client
+        .from(<span class="s">'maintenance_requests'</span>)
+        .select()
+        .order(<span class="s">'request_date'</span>, ascending: <span class="k">false</span>);
+    <span class="k">return</span> (data <span class="k">as</span> List).map((row) =>
+        MaintenanceRequest.fromJson(row)).toList();
+  }
+
+  <span class="k">Future</span>&lt;<span class="k">void</span>&gt; updateStatus(String id, String newStatus) <span class="k">async</span> {
+    <span class="k">await</span> _client
+        .from(<span class="s">'maintenance_requests'</span>)
+        .update({<span class="s">'status'</span>: newStatus})
+        .eq(<span class="s">'id'</span>, id);
+  }
+}</pre>
+
+  <h3>The Connection to What Students Already Know</h3>
+  <div class="highlight highlight-purple">
+    🎓 <strong>The "Why" moment for Friday:</strong> Students have written <code>SELECT status, COUNT(*) FROM maintenance_requests GROUP BY status</code> in PostgreSQL training. On Friday, that exact query powers the dashboard chart in the mobile app. The bridge from abstract SQL to real product is the whole point.
+  </div>
+
+  <h3>Friday Setup Checklist</h3>
+  <ul class="checklist">
+    <li><span class="check-icon">✓</span><div>Create a free Supabase project at supabase.com (10 minutes)</div></li>
+    <li><span class="check-icon">✓</span><div>Create the maintenance_requests table using the SQL above in Supabase's SQL editor</div></li>
+    <li><span class="check-icon">✓</span><div>Insert 10–15 sample rows across different outlets, categories, and statuses</div></li>
+    <li><span class="check-icon">✓</span><div>Copy the Supabase URL and anon key (Project Settings → API)</div></li>
+    <li><span class="check-icon">✓</span><div>Add supabase_flutter and fl_chart to pubspec.yaml before the session</div></li>
+  </ul>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     TAB 10 · Q&A
+═══════════════════════════════════════════════════ -->
+<section id="tab-qna" class="tab-panel">
+  <h2><span class="emoji">❓</span>Q&amp;A — Questions, Discussion &amp; Common Issues</h2>
+  <p class="page-sub">Common questions from Day 2 sessions, and how to think about them.</p>
+
+  <h3>FAQ — Day 2</h3>
+
+  <div class="card card-purple">
+    <strong>Q: Claude changed something I didn't ask it to change. What do I do?</strong>
+    <p style="margin-top:8px; margin-bottom:0; font-size:0.88rem;">This is the most common issue. You have two options:<br/>
+    1. Use <code>Ctrl+Z</code> to undo and re-prompt with an added constraint: <em>"Only modify [filename]. Do not change any other file."</em><br/>
+    2. Ask Claude to revert the unwanted change: <em>"In your last response, you also changed [widget]. Revert that file to its previous state."</em></p>
+  </div>
+
+  <div class="card card-teal">
+    <strong>Q: My app compiles but the screen is blank / shows an error widget. How do I debug?</strong>
+    <p style="margin-top:8px; margin-bottom:0; font-size:0.88rem;">Look at the Flutter terminal. There will be a red error with a file name and line number. Copy the full error and give it to Claude: <em>"After adding [feature], my app shows this error: [paste error]. Fix it without changing anything else."</em></p>
+  </div>
+
+  <div class="card card-amber">
+    <strong>Q: I don't understand what the code does. Should I ask Claude to explain it?</strong>
+    <p style="margin-top:8px; margin-bottom:0; font-size:0.88rem;">Yes — and you should do this regularly. After Claude generates code, ask: <em>"Explain what the setState() call on line 34 does in plain English, without using coding jargon."</em> Understanding why the code works (even loosely) makes you a better prompter.</p>
+  </div>
+
+  <div class="card card-green">
+    <strong>Q: Can I build a real app this way without knowing Dart deeply?</strong>
+    <p style="margin-top:8px; margin-bottom:0; font-size:0.88rem;">Yes — and this training is proof. You need to understand the outcome (what the user experiences), the structure (which file to change), and how to write a good prompt. Claude handles the Dart. The skill you're building is: describing software precisely. That's a skill that transfers to every tech role you'll ever have.</p>
+  </div>
+
+  <div class="card card-red">
+    <strong>Q: Claude gave me code that works, but I ran it again and got different code. Why?</strong>
+    <p style="margin-top:8px; margin-bottom:0; font-size:0.88rem;">Claude is a language model — it doesn't remember your previous prompts in a new session. Always save your working code (commit to GitHub) before running a new prompt. If Claude produces a worse solution second time, you can revert to your saved version.</p>
+  </div>
+
+  <h3>🔥 The Most Powerful Habit to Build</h3>
+  <div class="build-showcase">
+    <h4>Read Before You Run</h4>
+    <p style="margin:0;">Before you accept Claude's code and press hot reload, spend 60 seconds reading through what it produced. You don't need to understand every line. You're checking:</p>
+    <ul style="margin-top:10px; padding-left:20px; font-size:0.88rem; color:#cbd5e1;">
+      <li>Did it touch the right files?</li>
+      <li>Does the structure look similar to existing code (same naming style, same widget pattern)?</li>
+      <li>Does the logic match what I asked for at a high level?</li>
+    </ul>
+    <p style="margin-top:10px; margin-bottom:0; font-size:0.88rem; color:#a5f3fc;">If something looks wildly different from what you expected — ask Claude to explain it before running it. This prevents bugs that are hard to trace back.</p>
+  </div>
+
+  <h3>What Students Should Have by End of Day 2</h3>
+  <ul class="checklist">
+    <li><span class="check-icon">✓</span><div>Category icons on request cards (⚡ ❄️ 🍳)</div></li>
+    <li><span class="check-icon">✓</span><div>Empty state message when filter shows no results</div></li>
+    <li><span class="check-icon">✓</span><div>Request count badges on filter tabs</div></li>
+    <li><span class="check-icon">✓</span><div>Search bar that works with status + category filters together</div></li>
+    <li><span class="check-icon">✓</span><div>Bottom navigation with Requests + Dashboard placeholder</div></li>
+    <li><span class="check-icon">✓</span><div>Form validation (required fields, format checks)</div></li>
+    <li><span class="check-icon">✓</span><div>Status update workflow from detail screen</div></li>
+    <li><span class="check-icon">✓</span><div>copyWith() on the model</div></li>
+    <li><span class="check-icon">✓</span><div>Understanding of prompting patterns (context, constraints, outcome)</div></li>
+  </ul>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     TAB 11 · REFERENCES
+═══════════════════════════════════════════════════ -->
+<section id="tab-refs" class="tab-panel">
+  <h2><span class="emoji">📚</span>References</h2>
+  <p class="page-sub">Everything you need outside of the classroom.</p>
+
+  <h3>Flutter & Dart</h3>
+  <div class="grid-2">
+    <div class="card card-teal">
+      <h4>📖 Flutter Docs</h4>
+      <p style="margin:0; font-size:0.85rem;"><a href="https://docs.flutter.dev" style="color:var(--cyan);">docs.flutter.dev</a><br/>Widget catalog, cookbook, API reference. Use when Claude mentions a widget you don't know.</p>
+    </div>
+    <div class="card card-teal">
+      <h4>🎯 Dart Language Tour</h4>
+      <p style="margin:0; font-size:0.85rem;"><a href="https://dart.dev/language" style="color:var(--cyan);">dart.dev/language</a><br/>Dart syntax guide. Read the classes and null safety sections.</p>
+    </div>
+    <div class="card card-teal">
+      <h4>📦 pub.dev</h4>
+      <p style="margin:0; font-size:0.85rem;"><a href="https://pub.dev" style="color:var(--cyan);">pub.dev</a><br/>Flutter package registry. Search any package Claude tells you to add here.</p>
+    </div>
+    <div class="card card-teal">
+      <h4>🍳 Flutter Cookbook</h4>
+      <p style="margin:0; font-size:0.85rem;"><a href="https://docs.flutter.dev/cookbook" style="color:var(--cyan);">docs.flutter.dev/cookbook</a><br/>Step-by-step recipes. Navigation, networking, forms, animation.</p>
+    </div>
+  </div>
+
+  <h3>Google Sheets API (for Tomorrow)</h3>
+  <div class="grid-2">
+    <div class="card card-green">
+      <h4>🔑 Sheets API v4</h4>
+      <p style="margin:0; font-size:0.85rem;"><a href="https://developers.google.com/sheets/api/reference/rest" style="color:var(--cyan);">developers.google.com/sheets/api</a><br/>Official reference. The /values endpoint is all we need.</p>
+    </div>
+    <div class="card card-green">
+      <h4>🛠️ Google Cloud Console</h4>
+      <p style="margin:0; font-size:0.85rem;"><a href="https://console.cloud.google.com" style="color:var(--cyan);">console.cloud.google.com</a><br/>Enable the Sheets API and create your API key here.</p>
+    </div>
+  </div>
+
+  <h3>Supabase (for Friday)</h3>
+  <div class="grid-2">
+    <div class="card card-amber">
+      <h4>🗄️ Supabase Flutter SDK</h4>
+      <p style="margin:0; font-size:0.85rem;"><a href="https://supabase.com/docs/reference/dart/introduction" style="color:var(--cyan);">supabase.com/docs/reference/dart</a><br/>Complete Dart SDK reference for reading and writing data.</p>
+    </div>
+    <div class="card card-amber">
+      <h4>📊 fl_chart Package</h4>
+      <p style="margin:0; font-size:0.85rem;"><a href="https://pub.dev/packages/fl_chart" style="color:var(--cyan);">pub.dev/packages/fl_chart</a><br/>Bar charts, pie charts, line charts for Flutter. Used for the Friday dashboard.</p>
+    </div>
+  </div>
+
+  <h3>Claude Code</h3>
+  <div class="card card-purple">
+    <h4>🤖 Claude Code Docs</h4>
+    <p style="margin:0; font-size:0.85rem;"><a href="https://docs.anthropic.com/en/docs/claude-code" style="color:var(--cyan);">docs.anthropic.com/en/docs/claude-code</a><br/>Official Claude Code documentation — how to run it, configure it, and use it as a coding agent.</p>
+  </div>
+
+  <h3>Packages Used in this Project</h3>
+  <table>
+    <tr><th>Package</th><th>Version</th><th>Used for</th><th>When added</th></tr>
+    <tr><td><code>http</code></td><td>^1.2.0</td><td>HTTP calls to Sheets API</td><td>Tomorrow</td></tr>
+    <tr><td><code>supabase_flutter</code></td><td>^2.0.0</td><td>PostgreSQL via Supabase</td><td>Friday</td></tr>
+    <tr><td><code>fl_chart</code></td><td>^0.70.0</td><td>Dashboard charts</td><td>Friday</td></tr>
+    <tr><td><code>intl</code></td><td>^0.19.0</td><td>Date formatting</td><td>Today (optional)</td></tr>
+  </table>
+
+  <h3>Raushan's Tip of the Day</h3>
+  <div class="build-showcase">
+    <p style="margin:0; font-size:0.95rem; color:#e0f2fe; font-style:italic;">
+      "The difference between a beginner and a confident builder is not how much code they know. It's how clearly they can describe what they want. Master that — and every tool, every AI, every framework becomes easier. That's why we're spending today on prompting patterns, not on memorising Flutter widgets."
+    </p>
+    <p style="margin-top:10px; margin-bottom:0; font-size:0.78rem; color:var(--muted);">— Raushan Ranjan, MCT · Beast AI · Khan Chacha Training Programme</p>
+  </div>
+
+  <div style="height:1px; background:var(--border); margin:30px 0;"></div>
+  <div style="text-align:center; color:var(--muted); font-size:0.8rem;">
+    <span class="tag tag-purple">Day 2</span>
+    <span class="tag tag-teal">Khan Chacha MRMS</span>
+    <span class="tag tag-green">Flutter + Claude Code</span>
+    <span class="tag tag-amber">Beast AI</span>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  Powered by <a href="https://rrskillverse.in" target="_blank">RR Skillverse (Raushan Ranjan)</a> · Built for Koenig Solutions training programs · Khan Chacha MRMS · Day 2 of 4
+</footer>
+
+<script>
+  function showTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.currentTarget.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Khan Chacha MRMS — Training Programme | RR Skillverse × Koenig Solutions</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg:     #0d1117;
+  --bg2:    #11161d;
+  --card:   #161b22;
+  --card2:  #1a2130;
+  --border: #26303d;
+  --bsoft:  #1d2530;
+  --text:   #e6edf3;
+  --dim:    #9da7b3;
+  --faint:  #6b7480;
+  --teal:   #00c2e0;
+  --teal2:  #0082A0;
+  --tglow:  rgba(0,194,224,0.10);
+  --purple: #a371f7;
+  --purp2:  #7c3aed;
+  --green:  #3fb950;
+  --amber:  #f59e0b;
+  --red:    #f85149;
+  --radius: 10px;
+  --maxw:   1080px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.65;min-height:100vh;}
+a{color:var(--teal);text-decoration:none;}
+a:hover{text-decoration:underline;}
+code{font-family:'JetBrains Mono',monospace;background:#0a0e14;color:#7ee787;padding:2px 6px;border-radius:4px;font-size:.88em;}
+
+/* ── TOP BAR ── */
+.topbar{
+  background:linear-gradient(180deg,#0f141b 0%,var(--bg) 100%);
+  border-bottom:1px solid var(--bsoft);
+  padding:18px 32px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  position:sticky;top:0;z-index:100;
+}
+.topbar-brand{display:flex;align-items:center;gap:12px;}
+.logo{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--teal),var(--teal2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#001318;flex-shrink:0;font-family:'Space Grotesk',sans-serif;}
+.brand-name{font-size:14.5px;font-weight:600;color:var(--text);}
+.brand-tagline{font-size:12px;color:var(--faint);}
+.topbar-badges{display:flex;gap:8px;flex-wrap:wrap;}
+.tbadge{font-size:11.5px;color:var(--dim);border:1px solid var(--border);padding:4px 12px;border-radius:20px;white-space:nowrap;}
+
+/* ── HERO ── */
+.hero{
+  max-width:var(--maxw);margin:0 auto;padding:70px 32px 56px;
+  display:grid;grid-template-columns:1fr 420px;gap:60px;align-items:center;
+}
+@media(max-width:780px){.hero{grid-template-columns:1fr;padding:44px 20px 36px;gap:36px;}}
+.hero-eyebrow{font-size:12px;font-weight:600;color:var(--teal);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:14px;}
+.hero-title{font-family:'Space Grotesk',sans-serif;font-size:2.6rem;font-weight:700;line-height:1.15;letter-spacing:-.5px;margin-bottom:18px;}
+.hero-title .accent{background:linear-gradient(90deg,var(--teal),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-desc{font-size:15.5px;color:var(--dim);line-height:1.75;margin-bottom:28px;max-width:560px;}
+.hero-cta-row{display:flex;gap:12px;flex-wrap:wrap;}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--teal2);color:#e0faff;font-size:14px;font-weight:600;padding:11px 22px;border-radius:8px;transition:background .2s;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
+.btn-primary:hover{background:var(--teal);text-decoration:none;color:#001318;}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--dim);font-size:14px;font-weight:500;padding:11px 20px;border-radius:8px;border:1px solid var(--border);transition:color .2s,border-color .2s;}
+.btn-ghost:hover{color:var(--text);border-color:var(--dim);text-decoration:none;}
+
+/* HERO VISUAL PANEL */
+.hero-visual{background:var(--card);border:1px solid var(--bsoft);border-radius:14px;padding:22px;position:relative;overflow:hidden;}
+.hero-visual::before{content:'';position:absolute;top:-60px;right:-60px;width:180px;height:180px;background:radial-gradient(circle,rgba(0,194,224,.12),transparent 70%);pointer-events:none;}
+.phase-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;margin-bottom:8px;background:var(--bg2);border:1px solid var(--bsoft);}
+.phase-row:last-child{margin-bottom:0;}
+.phase-icon{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.phase-name{font-size:13px;font-weight:600;color:var(--text);}
+.phase-weeks{font-size:11.5px;color:var(--faint);margin-top:1px;}
+.phase-status{margin-left:auto;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap;}
+.ps-live{background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.3);}
+.ps-active{background:rgba(245,158,11,.12);color:var(--amber);border:1px solid rgba(245,158,11,.3);}
+.ps-soon{background:rgba(107,116,128,.1);color:var(--faint);border:1px solid var(--bsoft);}
+
+/* ── STATS STRIP ── */
+.stats-strip{background:var(--bg2);border-top:1px solid var(--bsoft);border-bottom:1px solid var(--bsoft);}
+.stats-inner{max-width:var(--maxw);margin:0 auto;padding:20px 32px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+@media(max-width:640px){.stats-inner{grid-template-columns:repeat(2,1fr);padding:16px 20px;}}
+.stat{text-align:center;padding:10px 0;}
+.stat-num{font-family:'Space Grotesk',sans-serif;font-size:1.7rem;font-weight:700;color:var(--teal);line-height:1;}
+.stat-label{font-size:12px;color:var(--faint);margin-top:4px;}
+
+/* ── SECTION ── */
+.section{max-width:var(--maxw);margin:0 auto;padding:56px 32px;}
+@media(max-width:640px){.section{padding:40px 20px;}}
+.section-header{margin-bottom:36px;}
+.section-eyebrow{font-size:11.5px;font-weight:600;color:var(--teal);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;}
+.section-title{font-family:'Space Grotesk',sans-serif;font-size:1.7rem;font-weight:700;letter-spacing:-.3px;margin-bottom:10px;}
+.section-desc{font-size:14.5px;color:var(--dim);max-width:600px;line-height:1.7;}
+
+/* ── SESSION CARDS ── */
+.sessions-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+@media(max-width:900px){.sessions-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:580px){.sessions-grid{grid-template-columns:1fr;}}
+
+.session-card{
+  background:var(--card);border:1px solid var(--bsoft);border-radius:14px;
+  display:flex;flex-direction:column;overflow:hidden;
+  transition:border-color .2s,transform .2s,box-shadow .2s;
+  position:relative;
+}
+.session-card:hover{border-color:var(--teal2);transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,194,224,.08);}
+.session-card.locked{opacity:.55;pointer-events:none;}
+.session-card.locked:hover{transform:none;box-shadow:none;}
+
+.card-top{height:7px;width:100%;}
+.ct-teal{background:linear-gradient(90deg,var(--teal2),var(--teal));}
+.ct-purple{background:linear-gradient(90deg,var(--purp2),var(--purple));}
+.ct-green{background:linear-gradient(90deg,#1a7f37,var(--green));}
+.ct-amber{background:linear-gradient(90deg,#9a6700,var(--amber));}
+.ct-gray{background:linear-gradient(90deg,#30363d,#484f58);}
+
+.card-body{padding:22px 22px 16px;flex:1;display:flex;flex-direction:column;}
+.card-tag-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;}
+.card-tag{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;}
+.ct-tl{background:rgba(0,194,224,.12);color:var(--teal);}
+.ct-pp{background:rgba(163,113,247,.12);color:var(--purple);}
+.ct-gr{background:rgba(63,185,80,.12);color:var(--green);}
+.ct-am{background:rgba(245,158,11,.12);color:var(--amber);}
+.ct-gy{background:rgba(107,116,128,.1);color:var(--faint);}
+
+.card-day{font-size:12px;font-weight:600;color:var(--faint);margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px;}
+.card-title{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:10px;line-height:1.3;}
+.card-desc{font-size:13.5px;color:var(--dim);line-height:1.65;flex:1;}
+.card-meta{display:flex;gap:14px;margin-top:16px;padding-top:14px;border-top:1px solid var(--bsoft);}
+.card-meta-item{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--faint);}
+.card-footer{padding:14px 22px 20px;}
+.card-btn{
+  display:block;width:100%;text-align:center;padding:10px 0;
+  border-radius:8px;font-size:13.5px;font-weight:600;
+  border:1px solid var(--teal2);color:var(--teal);
+  background:rgba(0,130,160,.08);
+  transition:background .2s,color .2s;
+  text-decoration:none;
+}
+.card-btn:hover{background:rgba(0,194,224,.15);color:#fff;text-decoration:none;}
+.card-btn-locked{
+  display:block;width:100%;text-align:center;padding:10px 0;
+  border-radius:8px;font-size:13.5px;font-weight:500;
+  border:1px solid var(--bsoft);color:var(--faint);
+  background:transparent;
+}
+.lock-icon{position:absolute;top:16px;right:16px;font-size:13px;color:var(--faint);}
+
+/* ── CURRICULUM TIMELINE ── */
+.timeline{display:flex;flex-direction:column;gap:0;}
+.tl-phase{display:grid;grid-template-columns:180px 1fr;gap:0;position:relative;}
+@media(max-width:640px){.tl-phase{grid-template-columns:1fr;}}
+.tl-phase::before{content:'';position:absolute;left:89px;top:24px;bottom:0;width:2px;background:var(--bsoft);}
+@media(max-width:640px){.tl-phase::before{display:none;}}
+.tl-left{padding:20px 24px 20px 0;text-align:right;position:relative;}
+@media(max-width:640px){.tl-left{text-align:left;padding:20px 0 6px;}}
+.tl-dot{width:16px;height:16px;border-radius:50%;border:2px solid;position:absolute;right:-9px;top:26px;background:var(--bg);}
+@media(max-width:640px){.tl-dot{display:none;}}
+.tl-phase-label{font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;}
+.tl-weeks{font-size:11px;color:var(--faint);margin-top:3px;}
+.tl-right{padding:20px 0 20px 36px;border-left:none;}
+@media(max-width:640px){.tl-right{padding:0 0 20px;}}
+.tl-items{display:flex;flex-direction:column;gap:8px;}
+.tl-item{background:var(--card2);border:1px solid var(--bsoft);border-radius:8px;padding:11px 15px;display:flex;align-items:center;gap:10px;}
+.tl-item-icon{font-size:14px;flex-shrink:0;}
+.tl-item-name{font-size:13.5px;font-weight:500;color:var(--text);}
+.tl-item-tag{margin-left:auto;font-size:11px;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.tl-done{background:rgba(63,185,80,.12);color:var(--green);}
+.tl-now{background:rgba(0,194,224,.12);color:var(--teal);}
+.tl-future{background:rgba(107,116,128,.1);color:var(--faint);}
+
+/* ── TECH STACK ── */
+.tech-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:24px;}
+@media(max-width:700px){.tech-grid{grid-template-columns:repeat(2,1fr);}}
+.tech-card{background:var(--card);border:1px solid var(--bsoft);border-radius:10px;padding:16px;text-align:center;}
+.tech-icon{font-size:1.6rem;margin-bottom:8px;}
+.tech-name{font-size:13px;font-weight:600;color:var(--text);}
+.tech-role{font-size:12px;color:var(--faint);margin-top:3px;}
+
+/* ── ABOUT STRIP ── */
+.about-strip{background:var(--bg2);border-top:1px solid var(--bsoft);border-bottom:1px solid var(--bsoft);}
+.about-inner{max-width:var(--maxw);margin:0 auto;padding:40px 32px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;}
+@media(max-width:680px){.about-inner{grid-template-columns:1fr;gap:28px;padding:32px 20px;}}
+.about-title{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:10px;}
+.about-desc{font-size:13.5px;color:var(--dim);line-height:1.7;}
+.about-link{color:var(--teal);font-size:13.5px;margin-top:8px;display:inline-block;}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--bsoft);padding:32px 32px;background:var(--bg2);}
+.footer-inner{max-width:var(--maxw);margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+.footer-brand{font-size:13px;color:var(--dim);}
+.footer-brand strong{color:var(--text);}
+.footer-right{font-size:12.5px;color:var(--faint);}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="logo">RR</div>
+    <div>
+      <div class="brand-name">Khan Chacha MRMS — Training Programme</div>
+      <div class="brand-tagline">Building a real product for a real client, from scratch</div>
+    </div>
+  </div>
+  <div class="topbar-badges">
+    <span class="tbadge">RR Skillverse</span>
+    <span class="tbadge">Koenig Solutions</span>
+    <span class="tbadge">Beast AI Initiative</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div>
+    <div class="hero-eyebrow">Flutter · Claude Code · Real Client · Real Product</div>
+    <h1 class="hero-title">Build an App.<br/><span class="accent">Not a Tutorial.</span></h1>
+    <p class="hero-desc">Khan Chacha is a multi-outlet restaurant chain that needs a Maintenance Request Management System. This programme teaches you to build it — from a blank Flutter project to a deployed, database-connected mobile app — using Claude as your AI pair-programmer throughout.</p>
+    <div class="hero-cta-row">
+      <a href="day1.html" class="btn-primary">Start from Day 1 →</a>
+      <a href="#sessions" class="btn-ghost">Browse all sessions</a>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div style="font-size:12px;font-weight:600;color:var(--faint);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--bsoft);">Programme Overview</div>
+    <div class="phase-row">
+      <div class="phase-icon" style="background:rgba(0,194,224,.12);">🏗️</div>
+      <div>
+        <div class="phase-name">Phase 1 — Flutter Foundations</div>
+        <div class="phase-weeks">Days 1–2 · Vibe Coding Mindset</div>
+      </div>
+      <span class="phase-status ps-live">Live ✓</span>
+    </div>
+    <div class="phase-row">
+      <div class="phase-icon" style="background:rgba(163,113,247,.12);">📱</div>
+      <div>
+        <div class="phase-name">Phase 2 — Full App Build</div>
+        <div class="phase-weeks">Days 3–4 · 5 Screens, Role-Based</div>
+      </div>
+      <span class="phase-status ps-live">Live ✓</span>
+    </div>
+    <div class="phase-row">
+      <div class="phase-icon" style="background:rgba(245,158,11,.1);">🌐</div>
+      <div>
+        <div class="phase-name">Phase 3 — Real Data</div>
+        <div class="phase-weeks">Days 5–6 · Google Sheets + PostgreSQL</div>
+      </div>
+      <span class="phase-status ps-active">In Progress</span>
+    </div>
+    <div class="phase-row">
+      <div class="phase-icon" style="background:rgba(107,116,128,.1);">🔌</div>
+      <div>
+        <div class="phase-name">Phase 4 — API Layer</div>
+        <div class="phase-weeks">Days 7–9 · Backend + Auth</div>
+      </div>
+      <span class="phase-status ps-soon">Coming Soon</span>
+    </div>
+    <div class="phase-row">
+      <div class="phase-icon" style="background:rgba(107,116,128,.1);">☁️</div>
+      <div>
+        <div class="phase-name">Phase 5 — Deployment</div>
+        <div class="phase-weeks">Days 10–12 · Azure + App Store</div>
+      </div>
+      <span class="phase-status ps-soon">Coming Soon</span>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div class="stat"><div class="stat-num">5</div><div class="stat-label">Screens Built</div></div>
+    <div class="stat"><div class="stat-num">13</div><div class="stat-label">Model Fields</div></div>
+    <div class="stat"><div class="stat-num">2</div><div class="stat-label">User Roles</div></div>
+    <div class="stat"><div class="stat-num">12</div><div class="stat-label">Weeks · Full Programme</div></div>
+  </div>
+</div>
+
+<!-- SESSIONS -->
+<div class="section" id="sessions">
+  <div class="section-header">
+    <div class="section-eyebrow">Session Library</div>
+    <div class="section-title">Pick up where you left off</div>
+    <div class="section-desc">Each session is a self-contained guide with explained concepts, step-by-step Claude Code prompts, and reference documentation. Unlock in order — each session builds on the previous.</div>
+  </div>
+
+  <div class="sessions-grid">
+
+    <!-- DAY 1 -->
+    <div class="session-card">
+      <div class="card-top ct-teal"></div>
+      <div class="card-body">
+        <div class="card-tag-row">
+          <span class="card-tag ct-tl">Flutter</span>
+          <span class="card-tag ct-tl">Dart</span>
+          <span class="card-tag ct-gr">Beginner</span>
+        </div>
+        <div class="card-day">Day 1</div>
+        <div class="card-title">Flutter Foundations — Getting Started Without Getting Lost</div>
+        <div class="card-desc">Why Flutter? How it works. Setting up your dev environment. Reading Dart code for the first time. Running your first app. Building the Khan Chacha maintenance request list with Claude Code — 8 structured prompts, step by step.</div>
+        <div class="card-meta">
+          <div class="card-meta-item">🕐 <span>2 hrs</span></div>
+          <div class="card-meta-item">📄 <span>11 tabs</span></div>
+          <div class="card-meta-item">🔨 <span>8 prompts</span></div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a href="day1.html" class="card-btn">Open Session →</a>
+      </div>
+    </div>
+
+    <!-- DAY 2 -->
+    <div class="session-card">
+      <div class="card-top ct-purple"></div>
+      <div class="card-body">
+        <div class="card-tag-row">
+          <span class="card-tag ct-pp">Prompting</span>
+          <span class="card-tag ct-pp">State</span>
+          <span class="card-tag ct-am">Intermediate</span>
+        </div>
+        <div class="card-day">Day 2</div>
+        <div class="card-title">Prompting Patterns &amp; App Architecture</div>
+        <div class="card-desc">Day 1 recap. App folder structure deep dive. Stateful vs Stateless widgets. Six prompting patterns that always work. 10 live build prompts — from adding category icons to a full status-update workflow. Capstone prompt included. Preview of Google Sheets &amp; PostgreSQL integration.</div>
+        <div class="card-meta">
+          <div class="card-meta-item">🕐 <span>2 hrs</span></div>
+          <div class="card-meta-item">📄 <span>11 tabs</span></div>
+          <div class="card-meta-item">🔨 <span>12 prompts</span></div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a href="day2.html" class="card-btn" style="border-color:var(--purp2);color:var(--purple);background:rgba(124,58,237,.08);">Open Session →</a>
+      </div>
+    </div>
+
+    <!-- FULL APP GUIDE -->
+    <div class="session-card">
+      <div class="card-top ct-green"></div>
+      <div class="card-body">
+        <div class="card-tag-row">
+          <span class="card-tag ct-gr">Full App</span>
+          <span class="card-tag ct-gr">5 Screens</span>
+          <span class="card-tag ct-am">Advanced</span>
+        </div>
+        <div class="card-day">Full App Build Guide</div>
+        <div class="card-title">Complete MRMS — Step-by-Step &amp; Capstone</div>
+        <div class="card-desc">The complete Khan Chacha MRMS prototype. Login screen with role-based auth, dashboard, request list with search + filters, detail screen, new/edit form with image picker. Two ways to build: 8 progressive prompts or one mega capstone prompt. Includes full app documentation — screen flow, file map, animation guide.</div>
+        <div class="card-meta">
+          <div class="card-meta-item">🕐 <span>3–4 hrs</span></div>
+          <div class="card-meta-item">📄 <span>4 tabs</span></div>
+          <div class="card-meta-item">🔨 <span>8+1 prompts</span></div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a href="full-app-guide.html" class="card-btn" style="border-color:#1a7f37;color:var(--green);background:rgba(63,185,80,.07);">Open Guide →</a>
+      </div>
+    </div>
+
+    <!-- DAY 3 - LOCKED -->
+    <div class="session-card locked">
+      <div class="card-top ct-amber"></div>
+      <span class="lock-icon">🔒</span>
+      <div class="card-body">
+        <div class="card-tag-row">
+          <span class="card-tag ct-am">Google Sheets</span>
+          <span class="card-tag ct-am">REST API</span>
+          <span class="card-tag ct-gy">Coming Soon</span>
+        </div>
+        <div class="card-day">Day 3</div>
+        <div class="card-title">Real Data — Google Sheets Integration</div>
+        <div class="card-desc">Replace dummy data with live Google Sheets. Connect the Flutter app to real maintenance requests submitted by outlet managers via Google Forms. HTTP calls, JSON parsing, SheetsService, fromRow() mapping.</div>
+        <div class="card-meta">
+          <div class="card-meta-item">🕐 <span>2 hrs</span></div>
+          <div class="card-meta-item">📄 <span>TBA</span></div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-btn-locked">🔒 Unlocks after Day 2</span>
+      </div>
+    </div>
+
+    <!-- DAY 4 - LOCKED -->
+    <div class="session-card locked">
+      <div class="card-top ct-gray"></div>
+      <span class="lock-icon">🔒</span>
+      <div class="card-body">
+        <div class="card-tag-row">
+          <span class="card-tag ct-gy">PostgreSQL</span>
+          <span class="card-tag ct-gy">Supabase</span>
+          <span class="card-tag ct-gy">Coming Soon</span>
+        </div>
+        <div class="card-day">Day 4</div>
+        <div class="card-title">Permanent Data — PostgreSQL + Dashboards</div>
+        <div class="card-desc">Move from Sheets to a real database. Supabase + PostgreSQL integration. Your SQL GROUP BY queries power live dashboard charts in Flutter. fl_chart, real-time updates, row-level security by outlet.</div>
+        <div class="card-meta">
+          <div class="card-meta-item">🕐 <span>2 hrs</span></div>
+          <div class="card-meta-item">📄 <span>TBA</span></div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-btn-locked">🔒 Unlocks after Day 3</span>
+      </div>
+    </div>
+
+    <!-- DEPLOYMENT - LOCKED -->
+    <div class="session-card locked">
+      <div class="card-top ct-gray"></div>
+      <span class="lock-icon">🔒</span>
+      <div class="card-body">
+        <div class="card-tag-row">
+          <span class="card-tag ct-gy">Azure</span>
+          <span class="card-tag ct-gy">App Store</span>
+          <span class="card-tag ct-gy">Coming Soon</span>
+        </div>
+        <div class="card-day">Phase 5</div>
+        <div class="card-title">Deployment — Azure + Play Store</div>
+        <div class="card-desc">Backend on Azure App Service. CI/CD pipelines. Android APK build and Play Store submission. Real URLs, real users. Ship the Khan Chacha app to actual outlet managers.</div>
+        <div class="card-meta">
+          <div class="card-meta-item">🕐 <span>Multi-day</span></div>
+          <div class="card-meta-item">📄 <span>TBA</span></div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-btn-locked">🔒 Phase 5</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CURRICULUM TIMELINE -->
+<div class="about-strip">
+  <div style="max-width:var(--maxw);margin:0 auto;padding:48px 32px;">
+    <div class="section-eyebrow" style="margin-bottom:8px;">12-Week Curriculum</div>
+    <div class="section-title" style="margin-bottom:10px;">The Big Picture</div>
+    <div class="section-desc" style="margin-bottom:36px;">Everything builds toward one goal: a deployed, production-grade app serving real Khan Chacha outlets. Each phase is a prerequisite for the next.</div>
+
+    <div class="timeline">
+      <div class="tl-phase">
+        <div class="tl-left">
+          <div class="tl-phase-label" style="color:var(--teal);">Phase 1</div>
+          <div class="tl-weeks">Weeks 1–2</div>
+          <div class="tl-dot" style="border-color:var(--teal);"></div>
+        </div>
+        <div class="tl-right">
+          <div class="tl-items">
+            <div class="tl-item"><span class="tl-item-icon">🏗️</span><span class="tl-item-name">Why Flutter · Dart Basics · Dev Environment</span><span class="tl-item-tag tl-done">Done ✓</span></div>
+            <div class="tl-item"><span class="tl-item-icon">💬</span><span class="tl-item-name">Vibe Coding Mindset · Prompting Patterns · First App</span><span class="tl-item-tag tl-done">Done ✓</span></div>
+            <div class="tl-item"><span class="tl-item-icon">📱</span><span class="tl-item-name">Khan Chacha MRMS — 5 Screens Full Prototype</span><span class="tl-item-tag tl-done">Done ✓</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="tl-phase">
+        <div class="tl-left">
+          <div class="tl-phase-label" style="color:var(--amber);">Phase 2</div>
+          <div class="tl-weeks">Weeks 3–4</div>
+          <div class="tl-dot" style="border-color:var(--amber);"></div>
+        </div>
+        <div class="tl-right">
+          <div class="tl-items">
+            <div class="tl-item"><span class="tl-item-icon">📊</span><span class="tl-item-name">Google Forms → Sheets → Flutter (live data fetch)</span><span class="tl-item-tag tl-now">Now ⟶</span></div>
+            <div class="tl-item"><span class="tl-item-icon">🗄️</span><span class="tl-item-name">PostgreSQL / Supabase · SQL queries → Dashboard charts</span><span class="tl-item-tag tl-now">Now ⟶</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="tl-phase">
+        <div class="tl-left">
+          <div class="tl-phase-label" style="color:var(--purple);">Phase 3</div>
+          <div class="tl-weeks">Weeks 5–8</div>
+          <div class="tl-dot" style="border-color:var(--purp2);"></div>
+        </div>
+        <div class="tl-right">
+          <div class="tl-items">
+            <div class="tl-item"><span class="tl-item-icon">🔌</span><span class="tl-item-name">REST API Layer · Node.js / Azure Functions backend</span><span class="tl-item-tag tl-future">Upcoming</span></div>
+            <div class="tl-item"><span class="tl-item-icon">🔐</span><span class="tl-item-name">Real Authentication · Role-based JWT · Outlet-level security</span><span class="tl-item-tag tl-future">Upcoming</span></div>
+            <div class="tl-item"><span class="tl-item-icon">🖼️</span><span class="tl-item-name">Image Upload → Azure Blob Storage · PDF Work Orders</span><span class="tl-item-tag tl-future">Upcoming</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="tl-phase">
+        <div class="tl-left">
+          <div class="tl-phase-label" style="color:var(--green);">Phase 4</div>
+          <div class="tl-weeks">Weeks 9–12</div>
+          <div class="tl-dot" style="border-color:var(--green);"></div>
+        </div>
+        <div class="tl-right">
+          <div class="tl-items">
+            <div class="tl-item"><span class="tl-item-icon">☁️</span><span class="tl-item-name">Azure App Service deployment · CI/CD pipeline</span><span class="tl-item-tag tl-future">Upcoming</span></div>
+            <div class="tl-item"><span class="tl-item-icon">📲</span><span class="tl-item-name">Android APK → Google Play Store submission</span><span class="tl-item-tag tl-future">Upcoming</span></div>
+            <div class="tl-item"><span class="tl-item-icon">🚀</span><span class="tl-item-name">Live app · Real outlet managers · Real maintenance requests</span><span class="tl-item-tag tl-future">Upcoming</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TECH STACK -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Technology Stack</div>
+    <div class="section-title">What we build with</div>
+    <div class="section-desc">Every tool in this stack is production-grade, industry-standard, and free to start. No toy frameworks.</div>
+  </div>
+  <div class="tech-grid">
+    <div class="tech-card">
+      <div class="tech-icon">📱</div>
+      <div class="tech-name">Flutter</div>
+      <div class="tech-role">Mobile App Framework</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon">🤖</div>
+      <div class="tech-name">Claude Code</div>
+      <div class="tech-role">AI Pair-Programmer</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon">🗄️</div>
+      <div class="tech-name">PostgreSQL</div>
+      <div class="tech-role">Database via Supabase</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon">☁️</div>
+      <div class="tech-name">Azure</div>
+      <div class="tech-role">Cloud + Deployment</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon">📊</div>
+      <div class="tech-name">Google Sheets API</div>
+      <div class="tech-role">Live Data Bridge</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon">🎯</div>
+      <div class="tech-name">Dart</div>
+      <div class="tech-role">Programming Language</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon">🔐</div>
+      <div class="tech-name">JWT Auth</div>
+      <div class="tech-role">Role-Based Access</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon">🔗</div>
+      <div class="tech-name">REST API</div>
+      <div class="tech-role">Backend Communication</div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="about-strip">
+  <div class="about-inner">
+    <div>
+      <div class="about-title">About This Programme</div>
+      <p class="about-desc">This is not a tutorial app. Khan Chacha is a real client with a real problem — their maintenance request process is broken. We are building the system that fixes it.<br/><br/>Students learn vibe coding: describing outcomes to an AI pair-programmer (Claude Code), reviewing the generated code, and shipping features they could not have written alone. This is how professionals build today.</p>
+    </div>
+    <div>
+      <div class="about-title">Built by</div>
+      <p class="about-desc"><strong style="color:var(--text);">Raushan Ranjan</strong> — Microsoft Certified Trainer, 40+ certifications, enterprise training across 25+ countries. Founder of RR Skillverse, AI agent developer at Koenig Solutions (Beast AI initiative).<br/><br/>This training guide is a live document — updated every session as the programme progresses.</p>
+      <a href="https://rrskillverse.in" class="about-link" target="_blank">rrskillverse.in →</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      Powered by <strong>RR Skillverse (Raushan Ranjan)</strong> · Built for <strong>Koenig Solutions</strong> · Khan Chacha MRMS Training Programme
+    </div>
+    <div class="footer-right">Beast AI Initiative · 2026</div>
+  </div>
+</footer>
+
+</body>
+</html>
