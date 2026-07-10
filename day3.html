@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 3 — PostgreSQL for Khan Chacha | RR Skillverse × Koenig Solutions</title>
+<style>
+:root{
+  --bg:#0d1117; --bg2:#11161d; --card:#161b22; --border:#26303d; --border-soft:#1d2530;
+  --text:#e6edf3; --text-dim:#9da7b3; --text-faint:#6b7480;
+  --teal:#00c2e0; --teal-deep:#0082A0; --teal-glow:rgba(0,194,224,0.12);
+  --green:#3fb950; --amber:#d29922; --red:#f85149; --purple:#a371f7;
+  --radius:10px; --maxw:1000px; --code-bg:#0a0e14;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.65; font-size:16px;}
+a{color:var(--teal); text-decoration:none;}
+a:hover{text-decoration:underline;}
+code{font-family:"SF Mono",Consolas,"Courier New",monospace; background:var(--code-bg); color:#7ee787; padding:2px 6px; border-radius:4px; font-size:0.88em;}
+pre{background:var(--code-bg); border:1px solid var(--border-soft); border-radius:var(--radius); padding:14px 16px; overflow-x:auto; font-family:"SF Mono",Consolas,"Courier New",monospace; font-size:13.5px; line-height:1.6; margin:14px 0; position:relative;}
+pre code{background:none; padding:0; color:#c9d1d9;}
+.kw{color:#ff7b72;} .cls{color:#79c0ff;} .str{color:#a5d6ff;} .cmt{color:#6e7681;} .fn{color:#d2a8ff;} .num{color:#f2cc60;}
+
+header{background:linear-gradient(180deg,#0f141b 0%,var(--bg) 100%); border-bottom:1px solid var(--border-soft); padding:28px 24px 0; position:sticky; top:0; z-index:100;}
+.header-inner{max-width:var(--maxw); margin:0 auto;}
+.brand-row{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:18px;}
+.brand-left{display:flex; align-items:center; gap:12px;}
+.logo-mark{width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg,var(--teal) 0%,var(--teal-deep) 100%); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:18px; color:#001318; flex-shrink:0;}
+.brand-title{font-size:15px; font-weight:600; color:var(--text); letter-spacing:0.2px;}
+.brand-sub{font-size:12.5px; color:var(--text-faint);}
+.brand-right{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+.koenig-badge{font-size:11.5px; color:var(--text-dim); border:1px solid var(--border); padding:5px 12px; border-radius:20px; white-space:nowrap;}
+.home-btn{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; color:var(--text-dim); background:rgba(255,255,255,0.05); border:1px solid var(--border); padding:5px 14px; border-radius:20px; text-decoration:none; transition:color .15s,border-color .15s,background .15s; white-space:nowrap;}
+.home-btn:hover{color:var(--teal); border-color:var(--teal-deep); background:var(--teal-glow); text-decoration:none;}
+
+h1.page-title{font-size:28px; font-weight:700; margin-bottom:6px; letter-spacing:-0.3px;}
+.page-subtitle{font-size:15px; color:var(--text-dim); margin-bottom:22px; max-width:680px;}
+.tabnav{display:flex; gap:4px; overflow-x:auto; padding-bottom:0; scrollbar-width:none; -ms-overflow-style:none;}
+.tabnav::-webkit-scrollbar{display:none;}
+.tabnav button{background:none; border:none; color:var(--text-dim); font-size:13.5px; font-weight:500; padding:12px 16px; cursor:pointer; white-space:nowrap; border-bottom:2px solid transparent; transition:color .15s,border-color .15s; font-family:inherit;}
+.tabnav button:hover{color:var(--text);}
+.tabnav button.active{color:var(--teal); border-bottom-color:var(--teal);}
+
+main{max-width:var(--maxw); margin:0 auto; padding:36px 24px 60px;}
+.tabpanel{display:none;}
+.tabpanel.active{display:block; animation:fadein .25s ease;}
+@keyframes fadein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+h2{font-size:22px; font-weight:700; margin:38px 0 14px; letter-spacing:-0.2px;}
+h2:first-child{margin-top:0;}
+h3{font-size:17px; font-weight:600; margin:24px 0 10px; color:var(--text);}
+p{margin-bottom:14px; color:#c5ccd4;}
+p.lead{font-size:17px; color:var(--text); margin-bottom:20px;}
+ul,ol{margin:10px 0 16px 22px; color:#c5ccd4;}
+li{margin-bottom:8px;}
+strong{color:var(--text); font-weight:600;}
+em.analogy-tag{color:var(--purple); font-style:normal; font-weight:600; font-size:12.5px; text-transform:uppercase; letter-spacing:0.4px;}
+
+.card{background:var(--card); border:1px solid var(--border-soft); border-radius:var(--radius); padding:18px 20px; margin:16px 0;}
+.card.accent{border-left:3px solid var(--teal);}
+.card.warn{border-left:3px solid var(--amber);}
+.card.danger{border-left:3px solid var(--red);}
+.card.success{border-left:3px solid var(--green);}
+.card.purple{border-left:3px solid var(--purple);}
+.card h4{font-size:13px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-faint); margin-bottom:8px; font-weight:600;}
+
+.analogy-box{background:var(--teal-glow); border:1px solid rgba(0,194,224,0.25); border-radius:var(--radius); padding:16px 18px; margin:18px 0;}
+.analogy-box p{color:var(--text); margin-bottom:0;}
+.analogy-box p:not(:last-child){margin-bottom:10px;}
+
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:16px 0;}
+.grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin:16px 0;}
+@media(max-width:720px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+table{width:100%; border-collapse:collapse; margin:16px 0; font-size:14px;}
+th{text-align:left; color:var(--text-faint); font-size:12px; text-transform:uppercase; letter-spacing:0.4px; padding:9px 12px; border-bottom:1px solid var(--border);}
+td{padding:10px 12px; border-bottom:1px solid var(--border-soft); color:#c5ccd4; vertical-align:top;}
+td:first-child{color:var(--text); font-weight:600;}
+
+.pill{display:inline-block; font-size:11.5px; padding:3px 10px; border-radius:20px; font-weight:600; margin:2px 4px 2px 0;}
+.pill-teal{background:rgba(0,194,224,0.15); color:var(--teal);}
+.pill-green{background:rgba(63,185,80,0.15); color:var(--green);}
+.pill-amber{background:rgba(210,153,34,0.15); color:var(--amber);}
+.pill-red{background:rgba(248,81,73,0.15); color:var(--red);}
+.pill-purple{background:rgba(163,113,247,0.15); color:var(--purple);}
+
+.prompt-box{background:#15101f; border:1px solid rgba(163,113,247,0.3); border-radius:var(--radius); padding:16px 18px; margin:14px 0; position:relative;}
+.prompt-label{font-size:11.5px; color:var(--purple); text-transform:uppercase; letter-spacing:0.5px; font-weight:700; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;}
+.prompt-text{font-size:14px; color:#e8e0f7; line-height:1.65; font-style:italic; white-space:pre-wrap;}
+.copy-btn{background:rgba(163,113,247,0.15); border:1px solid rgba(163,113,247,0.4); color:var(--purple); font-size:12px; padding:5px 12px; border-radius:6px; cursor:pointer; font-weight:600; font-family:inherit; transition:background .15s;}
+.copy-btn:hover{background:rgba(163,113,247,0.28);}
+.copy-btn.copied{background:rgba(63,185,80,0.2); color:var(--green); border-color:rgba(63,185,80,0.4);}
+
+.sql-box{background:#0a100a; border:1px solid rgba(63,185,80,0.25); border-radius:var(--radius); padding:16px 18px; margin:14px 0; position:relative;}
+.sql-label{font-size:11.5px; color:var(--green); text-transform:uppercase; letter-spacing:0.5px; font-weight:700; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;}
+.sql-text{font-family:"SF Mono",Consolas,"Courier New",monospace; font-size:13.5px; color:#7ee787; line-height:1.6; white-space:pre; overflow-x:auto;}
+
+.expect-box{background:rgba(63,185,80,0.07); border:1px solid rgba(63,185,80,0.25); border-radius:var(--radius); padding:14px 18px; margin:10px 0 22px;}
+.expect-box .expect-label{font-size:11.5px; color:var(--green); text-transform:uppercase; letter-spacing:0.5px; font-weight:700; margin-bottom:6px;}
+.expect-box p{margin-bottom:0; color:#bcd9c0;}
+
+.verify-box{background:rgba(0,194,224,0.06); border:1px solid rgba(0,194,224,0.25); border-radius:var(--radius); padding:14px 18px; margin:10px 0 22px;}
+.verify-box .verify-label{font-size:11.5px; color:var(--teal); text-transform:uppercase; letter-spacing:0.5px; font-weight:700; margin-bottom:6px;}
+.verify-box p{margin-bottom:0; color:#a8dde8;}
+
+.step-flow{margin:20px 0;}
+.step{display:flex; gap:16px; margin-bottom:4px;}
+.step-rail{display:flex; flex-direction:column; align-items:center; flex-shrink:0;}
+.step-dot{width:30px; height:30px; border-radius:50%; background:var(--card); border:2px solid var(--teal); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:var(--teal); flex-shrink:0;}
+.step-dot.done{background:var(--teal); color:#001318;}
+.step-line{width:2px; flex:1; background:var(--border); margin:4px 0; min-height:20px;}
+.step-body{padding-bottom:28px; flex:1;}
+.step-title{font-size:15.5px; font-weight:600; color:var(--text); margin-bottom:4px;}
+.step-desc{font-size:14px; color:var(--text-dim);}
+
+.faq-item{border-bottom:1px solid var(--border-soft);}
+.faq-q{padding:16px 0; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-size:15px; font-weight:600; color:var(--text); user-select:none;}
+.faq-q:hover{color:var(--teal);}
+.faq-arrow{transition:transform .2s; color:var(--text-faint); font-size:14px;}
+.faq-item.open .faq-arrow{transform:rotate(180deg); color:var(--teal);}
+.faq-a{display:none; padding:0 0 18px; color:#c5ccd4; font-size:14.5px; line-height:1.7;}
+.faq-item.open .faq-a{display:block;}
+
+.toc-strip{display:flex; gap:8px; flex-wrap:wrap; margin:18px 0 28px; padding:14px; background:var(--card); border:1px solid var(--border-soft); border-radius:var(--radius);}
+.toc-strip a{font-size:12.5px; color:var(--text-dim); padding:5px 11px; border:1px solid var(--border); border-radius:16px;}
+.toc-strip a:hover{color:var(--teal); border-color:var(--teal); text-decoration:none;}
+
+.badge-os{display:inline-flex; gap:6px; margin-bottom:16px;}
+.badge-os span{font-size:12px; padding:5px 13px; border-radius:16px; border:1px solid var(--border); color:var(--text-dim); cursor:pointer;}
+.badge-os span.active{background:var(--teal-glow); border-color:var(--teal); color:var(--teal);}
+.os-block{display:none;}
+.os-block.active{display:block;}
+
+.prompt-meta{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;}
+.meta-pill{font-size:10.5px; padding:3px 9px; border-radius:14px; font-weight:600; letter-spacing:0.3px;}
+.meta-context{background:rgba(0,194,224,0.12); color:var(--teal);}
+.meta-task{background:rgba(163,113,247,0.15); color:var(--purple);}
+.meta-constraint{background:rgba(210,153,34,0.15); color:var(--amber);}
+.meta-output{background:rgba(63,185,80,0.15); color:var(--green);}
+
+.ref-card{display:flex; align-items:flex-start; gap:14px; background:var(--card); border:1px solid var(--border-soft); border-radius:var(--radius); padding:16px 18px; margin:12px 0;}
+.ref-icon{width:36px; height:36px; border-radius:8px; background:var(--teal-glow); color:var(--teal); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; flex-shrink:0;}
+.ref-body h4{font-size:14.5px; font-weight:600; color:var(--text); margin-bottom:3px;}
+.ref-body p{font-size:13.5px; color:var(--text-dim); margin-bottom:4px;}
+.ref-body a{font-size:13px;}
+
+.note-box{background:rgba(210,153,34,0.07); border:1px solid rgba(210,153,34,0.25); border-radius:var(--radius); padding:14px 18px; margin:16px 0;}
+.note-box .note-label{font-size:11.5px; color:var(--amber); text-transform:uppercase; letter-spacing:0.5px; font-weight:700; margin-bottom:6px;}
+.note-box p{margin-bottom:0; color:#d4c08a;}
+
+.db-compare{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:16px 0;}
+@media(max-width:640px){.db-compare{grid-template-columns:1fr;}}
+
+.timeline-h{display:flex; flex-direction:column; gap:0;}
+.tl-item-h{display:grid; grid-template-columns:130px 1fr; gap:0;}
+.tl-item-h:not(:last-child) .tl-right-h{border-left:2px solid var(--border); padding-left:24px; padding-bottom:24px;}
+.tl-right-h{padding-left:24px; padding-bottom:24px; position:relative;}
+.tl-right-h::before{content:''; width:12px; height:12px; border-radius:50%; background:var(--teal); border:2px solid var(--bg); position:absolute; left:-7px; top:4px;}
+.tl-left-h{padding:2px 16px 24px 0; text-align:right;}
+.tl-label{font-size:12px; font-weight:600; color:var(--teal); text-transform:uppercase; letter-spacing:.5px;}
+.tl-sub{font-size:11px; color:var(--text-faint); margin-top:3px;}
+
+footer{border-top:1px solid var(--border-soft); margin-top:40px; padding:36px 24px; background:var(--bg2);}
+.footer-inner{max-width:var(--maxw); margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;}
+.footer-brand{font-size:13.5px; color:var(--text-dim);}
+.footer-brand strong{color:var(--text);}
+.footer-links{display:flex; gap:18px; font-size:13px;}
+.footer-links a{color:var(--text-faint);}
+.footer-links a:hover{color:var(--teal);}
+.footer-bottom{text-align:center; font-size:12px; color:var(--text-faint); margin-top:20px; padding-top:20px; border-top:1px solid var(--border-soft); max-width:var(--maxw); margin-left:auto; margin-right:auto;}
+@media(max-width:600px){h1.page-title{font-size:22px;} .brand-title{font-size:13.5px;} main{padding:24px 16px 50px;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand-row">
+      <div class="brand-left">
+        <div class="logo-mark">RR</div>
+        <div>
+          <div class="brand-title">Khan Chacha MRMS — Day 3 · PostgreSQL</div>
+          <div class="brand-sub">Koenig Solutions Trainer Series · Beast AI Initiative</div>
+        </div>
+      </div>
+      <div class="brand-right">
+        <div class="koenig-badge">Koenig Solutions × RR Skillverse</div>
+        <a href="index.html" class="home-btn">← All Sessions</a>
+      </div>
+    </div>
+    <h1 class="page-title">From Dummy Data to a Real Database</h1>
+    <p class="page-subtitle">Why PostgreSQL, how to install it, how to design the Khan Chacha schema, and how to connect your Flutter app to a database running right on your machine.</p>
+    <nav class="tabnav" id="tabnav">
+      <button data-tab="recap" class="active">Recap</button>
+      <button data-tab="whatispg">What is PostgreSQL</button>
+      <button data-tab="whypg">Why PostgreSQL</button>
+      <button data-tab="install">Installation</button>
+      <button data-tab="tools">Tools</button>
+      <button data-tab="schema">Schema Design</button>
+      <button data-tab="querying">Querying</button>
+      <button data-tab="connect">Flutter Connection</button>
+      <button data-tab="localcloud">Local vs Cloud</button>
+      <button data-tab="discuss">Questions &amp; Discussion</button>
+      <button data-tab="references">References</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ═══════════════════ TAB 1 · RECAP ═══════════════════ -->
+<div class="tabpanel active" id="tab-recap">
+  <div class="toc-strip">
+    <a href="#what-we-have">What we have</a>
+    <a href="#the-problem">The problem</a>
+    <a href="#today-goal">Today's goal</a>
+    <a href="#session-plan">Session plan</a>
+  </div>
+
+  <h2 id="what-we-have">Where we are — the story so far</h2>
+  <p class="lead">In Days 1 and 2, we built a full Flutter prototype for Khan Chacha's Maintenance Request Management System. It works beautifully on screen. But it has one fundamental problem.</p>
+
+  <div class="grid3">
+    <div class="card success">
+      <h4>✅ What works</h4>
+      <ul style="margin-bottom:0">
+        <li>5 screens, fully navigable</li>
+        <li>Role-based login (Manager / Staff)</li>
+        <li>Create, edit, delete requests</li>
+        <li>Filter, search, sort</li>
+        <li>Image picker, status history</li>
+        <li>Animated transitions, dialogs</li>
+      </ul>
+    </div>
+    <div class="card warn">
+      <h4>⚠️ The limitation</h4>
+      <ul style="margin-bottom:0">
+        <li>All data lives in <code>dummy_data.dart</code></li>
+        <li>Restart the app → everything resets</li>
+        <li>One device cannot see another's data</li>
+        <li>Outlet A and Outlet B are isolated</li>
+        <li>No history, no audit trail</li>
+        <li>Not production-ready</li>
+      </ul>
+    </div>
+    <div class="card accent">
+      <h4>🎯 What we need</h4>
+      <ul style="margin-bottom:0">
+        <li>Persistent storage — data survives restarts</li>
+        <li>Shared data — all outlets see the same DB</li>
+        <li>Queries — GROUP BY for dashboard charts</li>
+        <li>Relationships — outlets, users, requests linked</li>
+        <li>Transactions — no duplicate requests</li>
+        <li>Scalability — ready for the cloud later</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="analogy-box">
+    <p><em class="analogy-tag">The Real Problem</em></p>
+    <p>Right now, the Khan Chacha app is like a whiteboard in each outlet — managers write requests on it, the day ends, someone erases the board. Tomorrow, there's no record of what was written yesterday. The outlet manager in Connaught Place has no idea what's happening at Lajpat Nagar. That's exactly what we had with <code>dummy_data.dart</code>. Today we replace the whiteboard with a proper filing system that everyone can access, nothing gets erased, and you can search 2 years of history in seconds.</p>
+  </div>
+
+  <h2 id="the-problem">A note on Google Sheets</h2>
+  <div class="note-box">
+    <div class="note-label">📊 Google Sheets — Already Covered as a Bridge</div>
+    <p>Khan Chacha's outlets currently use Google Forms → Google Sheets for maintenance requests. We covered connecting Flutter to that flow in the Day 2 preview. It's a perfectly valid bridge: if your existing data is in a Google Sheet, you can read it from Flutter using the Sheets API and manually import it into your new PostgreSQL database using a one-time migration script. Today we jump straight to the permanent solution — a real database — because that's where the long-term value is.</p>
+  </div>
+
+  <h2 id="today-goal">Today's goal</h2>
+  <p>By end of this session, you will have:</p>
+  <div class="step-flow">
+    <div class="step">
+      <div class="step-rail"><div class="step-dot">1</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-title">PostgreSQL installed and running on your machine</div><div class="step-desc">Local on-premises setup. No cloud required yet — your laptop is the server for now.</div></div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot">2</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-title">The Khan Chacha database schema created</div><div class="step-desc">Three tables — maintenance_requests, users, outlets — with proper types, constraints, and relationships.</div></div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot">3</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-title">Real data queryable from pgAdmin</div><div class="step-desc">Sample rows inserted. You can run SELECT, filter by status, GROUP BY for the dashboard — all from a GUI.</div></div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot">4</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-title">Flutter connected to the local database</div><div class="step-desc">The app reads real requests from PostgreSQL. dummy_data.dart is retired. Changes persist across restarts.</div></div>
+    </div>
+  </div>
+
+  <h2 id="session-plan">Session plan — 2 hours</h2>
+  <table>
+    <tr><th>Time</th><th>Topic</th><th>Format</th></tr>
+    <tr><td>0:00 – 0:15</td><td>Recap + Why a real database</td><td>Discussion</td></tr>
+    <tr><td>0:15 – 0:35</td><td>What is PostgreSQL + Why for Khan Chacha</td><td>Concepts + comparison</td></tr>
+    <tr><td>0:35 – 0:55</td><td>Installation + Tools walkthrough</td><td>Live setup</td></tr>
+    <tr><td>0:55 – 1:20</td><td>Schema design + SQL querying</td><td>Live coding in pgAdmin</td></tr>
+    <tr><td>1:20 – 1:45</td><td>Connecting Flutter (Claude Code prompts)</td><td>Live build</td></tr>
+    <tr><td>1:45 – 2:00</td><td>Local vs Cloud discussion + Q&amp;A</td><td>Open discussion</td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════ TAB 2 · WHAT IS POSTGRESQL ═══════════════════ -->
+<div class="tabpanel" id="tab-whatispg">
+  <div class="toc-strip">
+    <a href="#pg-definition">What it is</a>
+    <a href="#pg-history">Brief history</a>
+    <a href="#pg-relational">What "relational" means</a>
+    <a href="#pg-acid">ACID — in plain English</a>
+    <a href="#pg-analogy">The spreadsheet analogy</a>
+    <a href="#pg-who-uses">Who uses it</a>
+  </div>
+
+  <h2 id="pg-definition">What exactly is PostgreSQL?</h2>
+  <p class="lead">PostgreSQL is a free, open-source database management system. It stores your data in structured tables — like a highly reliable, queryable filing cabinet — and lets multiple users read and write to it simultaneously from anywhere on the network.</p>
+
+  <p>It is often called "Postgres" for short. The full name is PostgreSQL (pronounced "post-gress-Q-L"). It is the <strong>most feature-complete open-source relational database</strong> available today and has been in active development for over 35 years.</p>
+
+  <div class="card accent">
+    <h4>In one sentence</h4>
+    <p style="margin:0; font-size:15px;">PostgreSQL is a program that runs on a computer, listens for incoming data requests, stores data safely on disk, and answers questions about that data using the SQL language.</p>
+  </div>
+
+  <h2 id="pg-history">A brief history — why this matters</h2>
+  <p>PostgreSQL started in 1986 at the University of California, Berkeley. The original project was called POSTGRES (Post-INGRES — a successor to the Ingres database). It became open-source in 1994 and has been developed by a global community of volunteers and companies ever since.</p>
+  <div class="grid2">
+    <div class="card">
+      <h4>Why the age matters</h4>
+      <p style="margin:0; font-size:14px; color:var(--text-dim);">35+ years of production use means every edge case, every hardware failure, every weird bug has already been found and fixed by someone else. When you store Khan Chacha's maintenance data in PostgreSQL, it is guarded by three decades of battle-testing.</p>
+    </div>
+    <div class="card">
+      <h4>Why open-source matters</h4>
+      <p style="margin:0; font-size:14px; color:var(--text-dim);">No licence fees. No vendor lock-in. You can run it on your laptop today, on a company server tomorrow, on AWS or Azure next month — using the exact same SQL. Nobody can charge you to keep using it.</p>
+    </div>
+  </div>
+
+  <h2 id="pg-relational">What does "relational" mean?</h2>
+  <p>Relational means your data is stored in <strong>tables</strong> (like spreadsheet sheets), and those tables can be <strong>linked to each other</strong> using shared identifiers.</p>
+
+  <div class="analogy-box">
+    <p><em class="analogy-tag">Analogy</em></p>
+    <p>Think of a franchise operation like Khan Chacha. You have three filing cabinets: one for outlets, one for employees, one for maintenance requests. Every maintenance request has a slip inside it that says "this was raised by Employee 14 from Outlet 3." You don't copy the employee's full name and outlet address onto every single request — you just write the reference numbers, and you go check the other cabinet when you need the full details. That's exactly what a relational database does. The reference numbers are called <strong>foreign keys</strong>.</p>
+  </div>
+
+  <p>The alternative is a "flat file" — storing everything in one big table with columns repeated everywhere. That leads to inconsistency (the same outlet name spelled differently in different rows) and makes updates a nightmare (change an outlet's address and you have to update 500 rows).</p>
+
+  <h2 id="pg-acid">ACID — in plain English</h2>
+  <p>PostgreSQL guarantees <strong>ACID</strong> properties. This is why banks, hospitals, and governments trust it with critical data.</p>
+  <table>
+    <tr><th>Letter</th><th>What it means</th><th>Why Khan Chacha needs it</th></tr>
+    <tr><td>A — Atomicity</td><td>A transaction either fully succeeds or fully fails — no partial saves</td><td>When creating a request, either all 13 fields save or none do. Never half a row.</td></tr>
+    <tr><td>C — Consistency</td><td>Data always follows your rules (types, constraints, foreign keys)</td><td>Status can never be "Opeen" — only Open, Pending, or Closed. Enforced at database level.</td></tr>
+    <tr><td>I — Isolation</td><td>Two users writing at the same time don't corrupt each other's data</td><td>Manager at Connaught Place and staff at Lajpat Nagar can both submit at the exact same second safely.</td></tr>
+    <tr><td>D — Durability</td><td>Once saved, data survives power cuts, crashes, and restarts</td><td>A submitted maintenance request is never lost, even if the server restarts mid-write.</td></tr>
+  </table>
+
+  <h2 id="pg-analogy">The Google Sheets comparison</h2>
+  <table>
+    <tr><th>Feature</th><th>Google Sheets</th><th>PostgreSQL</th></tr>
+    <tr><td>Storage type</td><td>Flat rows, no structure enforcement</td><td>Structured tables with strict types</td></tr>
+    <tr><td>Multi-user</td><td>Yes, but conflicts happen</td><td>Yes, with transaction isolation</td></tr>
+    <tr><td>Data integrity</td><td>Anyone can type anything anywhere</td><td>Rules enforced: wrong type = rejected</td></tr>
+    <tr><td>Querying</td><td>Formulas get complex fast</td><td>SQL: clean, readable, powerful</td></tr>
+    <tr><td>Scale</td><td>~10 million cells max</td><td>Petabytes — no practical limit</td></tr>
+    <tr><td>Relationships</td><td>Manual VLOOKUPs</td><td>JOINs: instant, enforced</td></tr>
+    <tr><td>Cost</td><td>Free (Google-owned)</td><td>Free (open-source, self-hosted)</td></tr>
+    <tr><td>Best for</td><td>Sharing simple data with non-tech teams</td><td>Applications with real business logic</td></tr>
+  </table>
+
+  <h2 id="pg-who-uses">Who uses PostgreSQL in production?</h2>
+  <div class="grid3">
+    <div class="card"><h4>Instagram</h4><p style="margin:0;font-size:13.5px;color:var(--text-dim);">Stores user accounts, posts, and relationships — billions of rows per table.</p></div>
+    <div class="card"><h4>Spotify</h4><p style="margin:0;font-size:13.5px;color:var(--text-dim);">Playlist data, user preferences, and listening history.</p></div>
+    <div class="card"><h4>Airbnb</h4><p style="margin:0;font-size:13.5px;color:var(--text-dim);">Listings, bookings, payments — all ACID-critical transactions.</p></div>
+    <div class="card"><h4>Reddit</h4><p style="margin:0;font-size:13.5px;color:var(--text-dim);">Posts, comments, votes. Migrated from MySQL specifically for PostgreSQL's features.</p></div>
+    <div class="card"><h4>Supabase</h4><p style="margin:0;font-size:13.5px;color:var(--text-dim);">Built entirely on PostgreSQL — it's the database we'll use when moving to cloud.</p></div>
+    <div class="card"><h4>Indian Gov Systems</h4><p style="margin:0;font-size:13.5px;color:var(--text-dim);">Multiple central bank and government data systems run on PostgreSQL.</p></div>
+  </div>
+</div>
+
+<!-- ═══════════════════ TAB 3 · WHY POSTGRESQL ═══════════════════ -->
+<div class="tabpanel" id="tab-whypg">
+  <div class="toc-strip">
+    <a href="#why-not-sqlite">Why not SQLite</a>
+    <a href="#why-not-mysql">Why not MySQL</a>
+    <a href="#why-not-mongo">Why not MongoDB</a>
+    <a href="#why-not-firebase">Why not Firebase</a>
+    <a href="#why-pg-wins">Why PostgreSQL wins for MRMS</a>
+    <a href="#future-path">The future path</a>
+  </div>
+
+  <h2>Why not other databases?</h2>
+  <p class="lead">Every database exists for a reason. The right choice depends on your data's shape, your team's size, and your scale. Here's why each alternative falls short for Khan Chacha — and why PostgreSQL wins.</p>
+
+  <h2 id="why-not-sqlite">SQLite — too basic for multi-user apps</h2>
+  <div class="db-compare">
+    <div class="card success">
+      <h4>Where SQLite is great</h4>
+      <ul style="margin:0;padding-left:18px;">
+        <li>Mobile apps storing user preferences (it's built into every Android and iOS device)</li>
+        <li>Desktop apps with a single user</li>
+        <li>Prototypes and tests that run fast</li>
+        <li>Embedded systems (your browser's storage is SQLite)</li>
+      </ul>
+    </div>
+    <div class="card danger">
+      <h4>Why not for Khan Chacha</h4>
+      <ul style="margin:0;padding-left:18px;">
+        <li>No server — it's a file, not a service. Only one device can write at a time.</li>
+        <li>No concurrent users — Outlet A and Outlet B cannot share the same SQLite file</li>
+        <li>No network access — can't be reached from another phone</li>
+        <li>No user management — no roles, no permissions</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 id="why-not-mysql">MySQL — a valid competitor, but PostgreSQL goes further</h2>
+  <div class="db-compare">
+    <div class="card success">
+      <h4>Where MySQL is used</h4>
+      <ul style="margin:0;padding-left:18px;">
+        <li>WordPress, Joomla, Drupal (the LAMP stack)</li>
+        <li>Read-heavy web applications</li>
+        <li>Legacy systems from the early 2000s</li>
+      </ul>
+    </div>
+    <div class="card warn">
+      <h4>Why PostgreSQL wins</h4>
+      <ul style="margin:0;padding-left:18px;">
+        <li>Better standards compliance (ANSI SQL)</li>
+        <li>Richer data types (JSONB, arrays, UUID, custom types)</li>
+        <li>Stronger transaction guarantees</li>
+        <li>More advanced query planner — GROUP BY + window functions for dashboard analytics</li>
+        <li>Supabase (our cloud path) is built on PostgreSQL, not MySQL</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 id="why-not-mongo">MongoDB — wrong shape for maintenance data</h2>
+  <div class="db-compare">
+    <div class="card success">
+      <h4>Where MongoDB excels</h4>
+      <ul style="margin:0;padding-left:18px;">
+        <li>Data with unpredictable or varying structure (social media posts, event logs)</li>
+        <li>Rapid prototyping when schema isn't clear yet</li>
+        <li>Content management where each document is different</li>
+      </ul>
+    </div>
+    <div class="card danger">
+      <h4>Why not for Khan Chacha</h4>
+      <ul style="margin:0;padding-left:18px;">
+        <li>Our data is highly structured — every request has exactly 13 known fields</li>
+        <li>We have clear relationships: requests → outlets → users. MongoDB doesn't enforce these.</li>
+        <li>Dashboard queries (GROUP BY status, COUNT per outlet) are awkward in MongoDB's aggregation pipeline. They're 2-line SQL.</li>
+        <li>ACID transactions across collections are complex and slow</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 id="why-not-firebase">Firebase Firestore — too expensive, too locked-in</h2>
+  <div class="db-compare">
+    <div class="card success">
+      <h4>Where Firebase works</h4>
+      <ul style="margin:0;padding-left:18px;">
+        <li>Real-time chat apps and collaborative tools</li>
+        <li>Fast prototyping with Google auth built-in</li>
+        <li>Small-to-medium apps that want zero backend setup</li>
+      </ul>
+    </div>
+    <div class="card danger">
+      <h4>Why not for Khan Chacha</h4>
+      <ul style="margin:0;padding-left:18px;">
+        <li>Google-owned and priced per read/write — costs scale sharply with usage</li>
+        <li>No SQL — you cannot write <code>SELECT status, COUNT(*) GROUP BY status</code></li>
+        <li>Schema migrations are a pain — no ALTER TABLE equivalent</li>
+        <li>Vendor lock-in: if Google discontinues or reprices, you're stuck</li>
+        <li>On-premises is impossible — Firebase is cloud-only</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 id="why-pg-wins">Why PostgreSQL is the right choice for MRMS</h2>
+  <div class="card success">
+    <h4>The winning combination</h4>
+    <ul style="margin:0;padding-left:18px;">
+      <li><strong>Structured, fixed schema:</strong> 13 fields per request, always. PostgreSQL enforces this — no missing fields, no wrong types.</li>
+      <li><strong>Multi-outlet, multi-user:</strong> 20+ outlets, all hitting the same database concurrently. PostgreSQL handles thousands of simultaneous connections.</li>
+      <li><strong>Dashboard analytics:</strong> <code>SELECT status, COUNT(*) FROM maintenance_requests GROUP BY status</code> — two lines of SQL, instant result. That's the "requests by status" pie chart done.</li>
+      <li><strong>On-premises today:</strong> Runs on a laptop right now. No cloud account needed, no internet dependency, no per-request billing.</li>
+      <li><strong>Cloud-ready tomorrow:</strong> When ready to scale, the same database moves to Supabase (PostgreSQL in the cloud) by changing three config values. The SQL stays identical.</li>
+      <li><strong>Open source forever:</strong> Khan Chacha will never be billed for using it, and the code is auditable.</li>
+    </ul>
+  </div>
+
+  <h2 id="future-path">The full data path — from laptop to production</h2>
+  <div class="timeline-h">
+    <div class="tl-item-h">
+      <div class="tl-left-h"><div class="tl-label">Now</div><div class="tl-sub">Days 3–4</div></div>
+      <div class="tl-right-h"><strong>On-premises (your laptop)</strong> — PostgreSQL installed locally. Flutter app connects to <code>localhost:5432</code>. Works perfectly for learning and demos. Only works on the same machine or local network.</div>
+    </div>
+    <div class="tl-item-h">
+      <div class="tl-left-h"><div class="tl-label">Soon</div><div class="tl-sub">Days 5–6</div></div>
+      <div class="tl-right-h"><strong>Supabase (PostgreSQL in the cloud)</strong> — same SQL, same schema, same Flutter queries. Just a different host address. Gives you real-time subscriptions, auth, and storage on top. Free tier handles Khan Chacha's scale easily.</div>
+    </div>
+    <div class="tl-item-h">
+      <div class="tl-left-h"><div class="tl-label">Later</div><div class="tl-sub">Phase 5</div></div>
+      <div class="tl-right-h"><strong>Azure Database for PostgreSQL / AWS RDS</strong> — fully managed cloud PostgreSQL for enterprise deployments. Automated backups, scaling, monitoring. Khan Chacha's IT team doesn't maintain any server hardware.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ TAB 4 · INSTALLATION ═══════════════════ -->
+<div class="tabpanel" id="tab-install">
+  <div class="toc-strip">
+    <a href="#install-windows">Windows</a>
+    <a href="#install-mac">macOS</a>
+    <a href="#install-linux">Linux</a>
+    <a href="#first-login">First login</a>
+    <a href="#create-db">Create the database</a>
+  </div>
+
+  <h2>Installing PostgreSQL on your machine</h2>
+  <p class="lead">Choose your operating system. After installation, all three platforms have the same PostgreSQL — the commands and SQL are identical regardless of OS.</p>
+
+  <div class="badge-os">
+    <span class="active" onclick="switchOS('install','windows',this)">🪟 Windows</span>
+    <span onclick="switchOS('install','mac',this)">🍎 macOS</span>
+    <span onclick="switchOS('install','linux',this)">🐧 Linux</span>
+  </div>
+
+  <!-- WINDOWS -->
+  <div class="os-block active" data-group="install" data-os="windows">
+    <h3 id="install-windows">Windows — Graphical Installer (recommended for beginners)</h3>
+    <div class="step-flow">
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">1</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Download the installer</div>
+          <div class="step-desc">Go to <a href="https://www.postgresql.org/download/windows/" target="_blank">postgresql.org/download/windows</a> and click the "Download the installer" link for the latest version (16.x). This is a ~300 MB installer from EDB (EnterpriseDB — the company that maintains the Windows build).</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">2</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Run the installer</div>
+          <div class="step-desc">Accept defaults for installation directory and components. <strong>Make sure pgAdmin 4 and Command Line Tools are checked.</strong> When it asks for a password — this is the password for the <code>postgres</code> superuser account. Write it down. You will need it today.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">3</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Set the port and locale</div>
+          <div class="step-desc">Default port is <strong>5432</strong> — leave it as is. Locale: accept the default. Click through the rest of the wizard and let it install. Takes 2–3 minutes.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">4</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Skip the "Stack Builder" at the end</div>
+          <div class="step-desc">The installer will offer to open Stack Builder (to install extensions). Uncheck it and click Finish. You don't need it for now.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-rail"><div class="step-dot">5</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-title">Add PostgreSQL to your PATH</div>
+          <div class="step-desc">Open Start → search "Environment Variables" → Edit the system environment variables → Environment Variables → find "Path" in System variables → Edit → Add: <code>C:\Program Files\PostgreSQL\16\bin</code> (adjust version number if different). This lets you type <code>psql</code> in any terminal.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAC -->
+  <div class="os-block" data-group="install" data-os="mac">
+    <h3 id="install-mac">macOS — Two options</h3>
+    <div class="card accent" style="margin-bottom:18px;">
+      <h4>Option A — Postgres.app (simplest, recommended)</h4>
+      <p>Go to <a href="https://postgresapp.com" target="_blank">postgresapp.com</a>, download the app, drag it to Applications, and open it. Click "Initialize" to start a fresh PostgreSQL server. It runs in your menu bar. Double-click a database name to open a terminal connected to it. Done.</p>
+      <p style="margin:0">Then add the CLI tools to your path — the app's website has a one-line command to copy-paste.</p>
+    </div>
+    <div class="card">
+      <h4>Option B — Homebrew</h4>
+      <pre><code>brew install postgresql@16
+brew services start postgresql@16
+echo 'export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc</code></pre>
+    </div>
+  </div>
+
+  <!-- LINUX -->
+  <div class="os-block" data-group="install" data-os="linux">
+    <h3 id="install-linux">Linux — Ubuntu / Debian</h3>
+    <pre><code><span class="cmt"># Add the official PostgreSQL repository (gets you the latest version)</span>
+sudo apt install -y curl ca-certificates
+sudo install -d /usr/share/postgresql-common/pgdg
+sudo curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc --fail \
+  https://www.postgresql.org/media/keys/ACCC4CF8.asc
+sudo sh -c 'echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] \
+  https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" \
+  > /etc/apt/sources.list.d/pgdg.list'
+
+<span class="cmt"># Install</span>
+sudo apt update
+sudo apt install -y postgresql-16
+
+<span class="cmt"># Start the service</span>
+sudo systemctl start postgresql
+sudo systemctl enable postgresql    <span class="cmt"># starts automatically on boot</span></code></pre>
+    <p>For other distributions (Fedora, RHEL, CentOS), see <a href="https://www.postgresql.org/download/linux/" target="_blank">postgresql.org/download/linux</a>.</p>
+  </div>
+
+  <h2 id="first-login">Verify the installation + first login</h2>
+  <p>Open a terminal (Windows: PowerShell or Command Prompt, Mac/Linux: Terminal) and run:</p>
+  <pre><code>psql --version
+<span class="cmt"># Expected: psql (PostgreSQL) 16.x</span>
+
+<span class="cmt"># Connect to PostgreSQL as the superuser:</span>
+psql -U postgres
+<span class="cmt"># Enter the password you set during installation</span>
+
+<span class="cmt"># You should see the psql prompt:</span>
+<span class="cmt"># postgres=#</span>
+
+<span class="cmt"># List all databases:</span>
+\l
+
+<span class="cmt"># Exit psql:</span>
+\q</code></pre>
+
+  <div class="card success">
+    <h4>You're in if you see this</h4>
+    <pre style="margin:8px 0 0;"><code>psql (16.3)
+Type "help" for help.
+
+postgres=# </code></pre>
+  </div>
+
+  <div class="card warn">
+    <h4>Common issue on Windows: "psql is not recognized"</h4>
+    <p style="margin:0">You haven't added PostgreSQL to PATH yet. Go back to Step 5 of the Windows installation, then close and reopen your terminal (PATH changes only take effect in new terminal windows).</p>
+  </div>
+
+  <h2 id="create-db">Create the Khan Chacha database</h2>
+  <p>In the psql prompt, run these commands to create a dedicated database and a user for the app:</p>
+  <pre><code><span class="cmt">-- Create the database</span>
+<span class="kw">CREATE DATABASE</span> khan_chacha;
+
+<span class="cmt">-- Create an application user (better practice than using the superuser)</span>
+<span class="kw">CREATE USER</span> kc_app <span class="kw">WITH PASSWORD</span> <span class="str">'kc_secure_2026'</span>;
+
+<span class="cmt">-- Grant this user full access to our database</span>
+<span class="kw">GRANT ALL PRIVILEGES ON DATABASE</span> khan_chacha <span class="kw">TO</span> kc_app;
+
+<span class="cmt">-- Connect to the new database</span>
+\c khan_chacha
+
+<span class="cmt">-- Grant schema permissions</span>
+<span class="kw">GRANT ALL ON SCHEMA</span> public <span class="kw">TO</span> kc_app;</code></pre>
+  <div class="verify-box">
+    <div class="verify-label">Verify it worked</div>
+    <p>Type <code>\l</code> — you should see <code>khan_chacha</code> in the list of databases with <code>kc_app</code> as the owner.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ TAB 5 · TOOLS ═══════════════════ -->
+<div class="tabpanel" id="tab-tools">
+  <div class="toc-strip">
+    <a href="#tool-psql">psql CLI</a>
+    <a href="#tool-pgadmin">pgAdmin 4</a>
+    <a href="#tool-dbeaver">DBeaver</a>
+    <a href="#tool-vscode">VS Code SQLTools</a>
+    <a href="#which-to-use">Which to use when</a>
+  </div>
+
+  <h2>The tools ecosystem</h2>
+  <p class="lead">PostgreSQL comes with a command-line client. The community has built excellent graphical tools on top. You will use all of these at different points — each has a job it does best.</p>
+
+  <h2 id="tool-psql">psql — the command-line client</h2>
+  <p><code>psql</code> ships with every PostgreSQL installation. It's the most direct way to talk to the database — no middleware, no GUI, just you and SQL.</p>
+  <div class="grid2">
+    <div>
+      <h3>Essential psql commands</h3>
+      <div class="cmd-table-row" style="display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--border-soft);">
+        <code style="min-width:180px;">\l</code><div style="font-size:13.5px;color:var(--text-dim);">List all databases</div>
+      </div>
+      <div class="cmd-table-row" style="display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--border-soft);">
+        <code style="min-width:180px;">\c khan_chacha</code><div style="font-size:13.5px;color:var(--text-dim);">Connect to a database</div>
+      </div>
+      <div class="cmd-table-row" style="display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--border-soft);">
+        <code style="min-width:180px;">\dt</code><div style="font-size:13.5px;color:var(--text-dim);">List all tables</div>
+      </div>
+      <div class="cmd-table-row" style="display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--border-soft);">
+        <code style="min-width:180px;">\d maintenance_requests</code><div style="font-size:13.5px;color:var(--text-dim);">Describe a table's columns</div>
+      </div>
+      <div class="cmd-table-row" style="display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--border-soft);">
+        <code style="min-width:180px;">\du</code><div style="font-size:13.5px;color:var(--text-dim);">List all users and roles</div>
+      </div>
+      <div class="cmd-table-row" style="display:flex;gap:14px;padding:10px 0;">
+        <code style="min-width:180px;">\q</code><div style="font-size:13.5px;color:var(--text-dim);">Quit psql</div>
+      </div>
+    </div>
+    <div>
+      <h3>Connect to khan_chacha as kc_app</h3>
+      <pre><code>psql -h localhost -U kc_app -d khan_chacha</code></pre>
+      <div class="card warn">
+        <h4>When to use psql</h4>
+        <p style="margin:0;font-size:13.5px;">Quick checks, running a SQL file, scripting. Faster than any GUI once you know the commands. Use it for the initial setup steps.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2 id="tool-pgadmin">pgAdmin 4 — the official GUI</h2>
+  <p>pgAdmin is installed automatically with PostgreSQL on Windows. On Mac/Linux, install it separately from <a href="https://www.pgadmin.org/download/" target="_blank">pgadmin.org</a>. It's a browser-based app that opens in Chrome or Firefox.</p>
+  <div class="grid2">
+    <div class="card success">
+      <h4>Best for</h4>
+      <ul style="margin:0;padding-left:18px;">
+        <li>Running queries and seeing results in a table</li>
+        <li>Browsing tables visually</li>
+        <li>Viewing and editing data row by row</li>
+        <li>Creating tables with a form (right-click → Create → Table)</li>
+        <li>Reading query execution plans (EXPLAIN ANALYZE)</li>
+      </ul>
+    </div>
+    <div class="card warn">
+      <h4>Limitations</h4>
+      <ul style="margin:0;padding-left:18px;">
+        <li>Can feel heavy and slow to start</li>
+        <li>The interface is complex for beginners</li>
+        <li>Not the prettiest tool</li>
+      </ul>
+    </div>
+  </div>
+  <p><strong>How to connect in pgAdmin:</strong> Open pgAdmin → right-click "Servers" → Register → Server. Name it "Khan Chacha Local". Under Connection: Host = <code>localhost</code>, Port = <code>5432</code>, Database = <code>khan_chacha</code>, Username = <code>kc_app</code>, Password = <code>kc_secure_2026</code>.</p>
+
+  <h2 id="tool-dbeaver">DBeaver — recommended for this training</h2>
+  <p>DBeaver is a free, open-source database client that works with PostgreSQL, MySQL, SQLite, and 80+ other databases. It's our <strong>recommended tool</strong> for this course because it's the most approachable for beginners while being powerful enough for production work.</p>
+  <p>Download: <a href="https://dbeaver.io/download/" target="_blank">dbeaver.io/download</a> — Community Edition is completely free.</p>
+  <div class="card accent">
+    <h4>Why DBeaver for this training</h4>
+    <ul style="margin:0;padding-left:18px;">
+      <li>Visual ER diagram — see all three Khan Chacha tables and their relationships drawn as a diagram automatically</li>
+      <li>Autocomplete SQL — starts suggesting column names as you type</li>
+      <li>Results look like a spreadsheet — easy to read for non-technical students</li>
+      <li>One tool for everything — when we move to Supabase or Azure later, DBeaver connects to those too</li>
+      <li>Dark mode — matching our whole toolkit aesthetic</li>
+    </ul>
+  </div>
+  <p><strong>Connect in DBeaver:</strong> Database → New Database Connection → PostgreSQL → Host: <code>localhost</code>, Port: <code>5432</code>, Database: <code>khan_chacha</code>, User: <code>kc_app</code>, Password: <code>kc_secure_2026</code> → Test Connection → Finish.</p>
+
+  <h2 id="tool-vscode">VS Code — SQLTools extension</h2>
+  <p>If you're already living in VS Code, you can query PostgreSQL without switching apps.</p>
+  <ol>
+    <li>Install the <strong>SQLTools</strong> extension (by Matheus Teixeira) from the VS Code marketplace</li>
+    <li>Install the <strong>SQLTools PostgreSQL/Cockroach Driver</strong> extension alongside it</li>
+    <li>Click the SQLTools icon in the left sidebar → Add New Connection → PostgreSQL → fill in the same details as above</li>
+    <li>Open any <code>.sql</code> file and press Ctrl+Shift+P → "SQLTools: Run Query"</li>
+  </ol>
+
+  <h2 id="which-to-use">Which tool to use when</h2>
+  <table>
+    <tr><th>Task</th><th>Best tool</th></tr>
+    <tr><td>Initial setup (create DB, user, schema)</td><td>psql or pgAdmin</td></tr>
+    <tr><td>Day-to-day querying and exploration</td><td>DBeaver ⭐</td></tr>
+    <tr><td>Viewing table relationships visually</td><td>DBeaver (ER diagram)</td></tr>
+    <tr><td>Editing data row-by-row</td><td>pgAdmin or DBeaver</td></tr>
+    <tr><td>Running SQL alongside Flutter code</td><td>VS Code SQLTools</td></tr>
+    <tr><td>Quick checks and scripting</td><td>psql</td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════ TAB 6 · SCHEMA DESIGN ═══════════════════ -->
+<div class="tabpanel" id="tab-schema">
+  <div class="toc-strip">
+    <a href="#schema-thinking">Thinking in tables</a>
+    <a href="#schema-outlets">outlets table</a>
+    <a href="#schema-users">users table</a>
+    <a href="#schema-requests">maintenance_requests table</a>
+    <a href="#schema-insert">Sample data</a>
+  </div>
+
+  <h2 id="schema-thinking">Thinking in tables before writing SQL</h2>
+  <p class="lead">Before you write a single <code>CREATE TABLE</code>, list the entities in your system. An entity is a "thing" that has properties and needs to be stored. For Khan Chacha:</p>
+  <ul>
+    <li><strong>Outlets</strong> — each Khan Chacha branch. Has an ID, name, and address. Doesn't change often.</li>
+    <li><strong>Users</strong> — managers and staff. Each user belongs to one outlet. Has credentials and a role.</li>
+    <li><strong>Maintenance Requests</strong> — the core of the app. Each request is raised by one user at one outlet. This is where most reads and writes happen.</li>
+  </ul>
+  <p>The relationships: a request <em>belongs to</em> an outlet. A user <em>belongs to</em> an outlet. A request is <em>raised by</em> a user. This is how we avoid repeating the outlet name and address in every single request row.</p>
+
+  <div class="card accent">
+    <h4>Design rule — never store what you can look up</h4>
+    <p style="margin:0">The <code>maintenance_requests</code> table stores the <code>outlet_id</code>. It does not store <code>outlet_name</code> or <code>outlet_address</code> — those live in the <code>outlets</code> table. When you need the address, JOIN the two tables. This means updating an outlet's address is one row change, not a bulk update across all 500 requests.</p>
+  </div>
+
+  <h2 id="schema-outlets">Table 1 — outlets</h2>
+  <div class="sql-box">
+    <div class="sql-label">SQL — Run in pgAdmin or psql after connecting to khan_chacha<button class="copy-btn" onclick="copySQL(this,'sql-outlets')">Copy</button></div>
+    <div class="sql-text" id="sql-outlets"><span class="kw">CREATE TABLE</span> outlets (
+  id           TEXT         <span class="kw">PRIMARY KEY</span>,          <span class="cmt">-- e.g. 'OUT-01'</span>
+  name         TEXT         <span class="kw">NOT NULL</span>,
+  address      TEXT         <span class="kw">NOT NULL</span>,
+  city         TEXT         <span class="kw">NOT NULL</span> <span class="kw">DEFAULT</span> <span class="str">'New Delhi'</span>,
+  pincode      TEXT,
+  is_active    BOOLEAN      <span class="kw">NOT NULL</span> <span class="kw">DEFAULT</span> <span class="kw">TRUE</span>,
+  created_at   TIMESTAMPTZ  <span class="kw">NOT NULL</span> <span class="kw">DEFAULT</span> NOW()
+);</div>
+  </div>
+
+  <h2 id="schema-users">Table 2 — users</h2>
+  <div class="sql-box">
+    <div class="sql-label">SQL<button class="copy-btn" onclick="copySQL(this,'sql-users')">Copy</button></div>
+    <div class="sql-text" id="sql-users"><span class="kw">CREATE TYPE</span> user_role <span class="kw">AS ENUM</span> (<span class="str">'manager'</span>, <span class="str">'staff'</span>);  <span class="cmt">-- restricts to only these two values</span>
+
+<span class="kw">CREATE TABLE</span> users (
+  id           TEXT         <span class="kw">PRIMARY KEY</span>,          <span class="cmt">-- e.g. 'U001'</span>
+  name         TEXT         <span class="kw">NOT NULL</span>,
+  username     TEXT         <span class="kw">NOT NULL UNIQUE</span>,
+  password     TEXT         <span class="kw">NOT NULL</span>,             <span class="cmt">-- store hashed in production</span>
+  role         user_role    <span class="kw">NOT NULL</span>,
+  outlet_id    TEXT         <span class="kw">NOT NULL</span>
+                             <span class="kw">REFERENCES</span> outlets(id),  <span class="cmt">-- foreign key</span>
+  is_active    BOOLEAN      <span class="kw">NOT NULL</span> <span class="kw">DEFAULT</span> <span class="kw">TRUE</span>,
+  created_at   TIMESTAMPTZ  <span class="kw">NOT NULL</span> <span class="kw">DEFAULT</span> NOW()
+);</div>
+  </div>
+
+  <h2 id="schema-requests">Table 3 — maintenance_requests (the main table)</h2>
+  <div class="sql-box">
+    <div class="sql-label">SQL<button class="copy-btn" onclick="copySQL(this,'sql-requests')">Copy</button></div>
+    <div class="sql-text" id="sql-requests"><span class="kw">CREATE TYPE</span> request_status   <span class="kw">AS ENUM</span> (<span class="str">'Open'</span>, <span class="str">'Pending'</span>, <span class="str">'Closed'</span>);
+<span class="kw">CREATE TYPE</span> request_category <span class="kw">AS ENUM</span> (<span class="str">'Electrical'</span>, <span class="str">'AC'</span>, <span class="str">'Kitchen'</span>);
+
+<span class="kw">CREATE TABLE</span> maintenance_requests (
+  id               TEXT              <span class="kw">PRIMARY KEY</span>,
+  product_name     TEXT              <span class="kw">NOT NULL</span>,
+  product_id       TEXT              <span class="kw">NOT NULL</span>,
+  category         request_category  <span class="kw">NOT NULL</span>,
+  status           request_status    <span class="kw">NOT NULL DEFAULT</span> <span class="str">'Open'</span>,
+  request_date     DATE              <span class="kw">NOT NULL DEFAULT</span> CURRENT_DATE,
+  description      TEXT              <span class="kw">NOT NULL</span>,
+  image_path       TEXT,                             <span class="cmt">-- nullable: photo evidence</span>
+  outlet_id        TEXT              <span class="kw">NOT NULL</span>
+                                     <span class="kw">REFERENCES</span> outlets(id),
+  raised_by        TEXT              <span class="kw">NOT NULL</span>
+                                     <span class="kw">REFERENCES</span> users(id),
+  status_history   JSONB             <span class="kw">NOT NULL DEFAULT</span> <span class="str">'[]'</span>,  <span class="cmt">-- array of change logs</span>
+  created_at       TIMESTAMPTZ       <span class="kw">NOT NULL DEFAULT</span> NOW(),
+  updated_at       TIMESTAMPTZ       <span class="kw">NOT NULL DEFAULT</span> NOW()
+);
+
+<span class="cmt">-- Index for the most common filter: status</span>
+<span class="kw">CREATE INDEX</span> idx_requests_status   <span class="kw">ON</span> maintenance_requests(status);
+<span class="cmt">-- Index for outlet-level filtering (staff view)</span>
+<span class="kw">CREATE INDEX</span> idx_requests_outlet   <span class="kw">ON</span> maintenance_requests(outlet_id);
+<span class="cmt">-- Index for date-based sorting</span>
+<span class="kw">CREATE INDEX</span> idx_requests_date     <span class="kw">ON</span> maintenance_requests(request_date <span class="kw">DESC</span>);</div>
+  </div>
+
+  <div class="card purple">
+    <h4>Why JSONB for status_history?</h4>
+    <p style="margin:0">Instead of a separate <code>status_change_log</code> table (which adds complexity), we store the history as a JSON array in a <code>JSONB</code> column. Each entry looks like <code>{"from":"Open","to":"Pending","at":"2026-07-06T14:30:00"}</code>. PostgreSQL can query inside JSONB natively. It's the pragmatic choice for this use case — simple to read from Flutter, no extra JOIN needed.</p>
+  </div>
+
+  <h2 id="schema-insert">Insert sample data</h2>
+  <div class="sql-box">
+    <div class="sql-label">SQL — Insert outlets and users<button class="copy-btn" onclick="copySQL(this,'sql-sample')">Copy</button></div>
+    <div class="sql-text" id="sql-sample"><span class="cmt">-- Outlets</span>
+<span class="kw">INSERT INTO</span> outlets (id, name, address, pincode) <span class="kw">VALUES</span>
+  (<span class="str">'OUT-01'</span>, <span class="str">'Khan Chacha Connaught Place'</span>, <span class="str">'12-A Connaught Place New Delhi'</span>, <span class="str">'110001'</span>),
+  (<span class="str">'OUT-02'</span>, <span class="str">'Khan Chacha Lajpat Nagar'</span>,    <span class="str">'5 Central Market Lajpat Nagar II'</span>, <span class="str">'110024'</span>),
+  (<span class="str">'OUT-03'</span>, <span class="str">'Khan Chacha Cyber City'</span>,       <span class="str">'Unit 4 DLF Cyber Hub Gurugram'</span>, <span class="str">'122002'</span>);
+
+<span class="cmt">-- Users (passwords stored plain for training; use bcrypt in production)</span>
+<span class="kw">INSERT INTO</span> users (id, name, username, password, role, outlet_id) <span class="kw">VALUES</span>
+  (<span class="str">'U001'</span>, <span class="str">'Arjun Sharma'</span>, <span class="str">'manager'</span>, <span class="str">'manager123'</span>, <span class="str">'manager'</span>, <span class="str">'OUT-01'</span>),
+  (<span class="str">'U002'</span>, <span class="str">'Priya Nair'</span>,   <span class="str">'staff'</span>,   <span class="str">'staff123'</span>,   <span class="str">'staff'</span>,   <span class="str">'OUT-02'</span>);
+
+<span class="cmt">-- Maintenance requests</span>
+<span class="kw">INSERT INTO</span> maintenance_requests
+  (id, product_name, product_id, category, status, description, outlet_id, raised_by) <span class="kw">VALUES</span>
+  (<span class="str">'REQ-001'</span>, <span class="str">'HVAC Unit'</span>,    <span class="str">'HVAC-203'</span>, <span class="str">'AC'</span>,          <span class="str">'Pending'</span>, <span class="str">'Not cooling below 28°C despite running for hours'</span>,       <span class="str">'OUT-02'</span>, <span class="str">'U002'</span>),
+  (<span class="str">'REQ-002'</span>, <span class="str">'Generator'</span>,    <span class="str">'GEN-101'</span>,  <span class="str">'Electrical'</span>, <span class="str">'Open'</span>,    <span class="str">'Trips after 2 hours of continuous use'</span>,                   <span class="str">'OUT-01'</span>, <span class="str">'U001'</span>),
+  (<span class="str">'REQ-003'</span>, <span class="str">'Microwave'</span>,    <span class="str">'MWO-55'</span>,   <span class="str">'Kitchen'</span>,    <span class="str">'Closed'</span>,  <span class="str">'Turntable motor stopped working'</span>,                         <span class="str">'OUT-01'</span>, <span class="str">'U001'</span>),
+  (<span class="str">'REQ-004'</span>, <span class="str">'Freight Lift'</span>, <span class="str">'ELEV-007'</span>, <span class="str">'Electrical'</span>, <span class="str">'Closed'</span>,  <span class="str">'Door sensor faulty — door does not close properly'</span>,        <span class="str">'OUT-02'</span>, <span class="str">'U002'</span>),
+  (<span class="str">'REQ-005'</span>, <span class="str">'Refrigerator'</span>, <span class="str">'REF-22'</span>,   <span class="str">'Kitchen'</span>,    <span class="str">'Open'</span>,    <span class="str">'Temperature rising above safe food storage levels'</span>,        <span class="str">'OUT-02'</span>, <span class="str">'U002'</span>),
+  (<span class="str">'REQ-006'</span>, <span class="str">'Split AC'</span>,     <span class="str">'AC-88'</span>,    <span class="str">'AC'</span>,          <span class="str">'Open'</span>,    <span class="str">'Water dripping from indoor unit onto counter area'</span>,        <span class="str">'OUT-01'</span>, <span class="str">'U001'</span>),
+  (<span class="str">'REQ-007'</span>, <span class="str">'Exhaust Fan'</span>,  <span class="str">'EXF-14'</span>,   <span class="str">'Kitchen'</span>,    <span class="str">'Pending'</span>, <span class="str">'Loud grinding noise from kitchen exhaust'</span>,               <span class="str">'OUT-01'</span>, <span class="str">'U001'</span>),
+  (<span class="str">'REQ-008'</span>, <span class="str">'Water Pump'</span>,   <span class="str">'PUMP-045'</span>, <span class="str">'Electrical'</span>, <span class="str">'Open'</span>,    <span class="str">'Inconsistent water pressure on second floor'</span>,             <span class="str">'OUT-02'</span>, <span class="str">'U002'</span>);</div>
+  </div>
+  <div class="verify-box">
+    <div class="verify-label">Verify in pgAdmin / DBeaver</div>
+    <p>Right-click the <code>maintenance_requests</code> table → View/Edit Data → All Rows. You should see 8 rows. The <code>outlet_id</code> column shows 'OUT-01' and 'OUT-02' — not the full address (that's the whole point of normalization).</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ TAB 7 · QUERYING ═══════════════════ -->
+<div class="tabpanel" id="tab-querying">
+  <div class="toc-strip">
+    <a href="#q-basic">Basic SELECT</a>
+    <a href="#q-filter">Filtering with WHERE</a>
+    <a href="#q-sort">Sorting</a>
+    <a href="#q-aggregate">Aggregates — COUNT, GROUP BY</a>
+    <a href="#q-join">JOINs</a>
+    <a href="#q-dashboard">Dashboard queries</a>
+    <a href="#q-honest">Is SQL easy or tough?</a>
+  </div>
+
+  <h2>Learning to query PostgreSQL</h2>
+  <p class="lead">SQL (Structured Query Language) is the language you use to ask questions to PostgreSQL. Every query you'll write in this course is a real business question — "how many open requests are there?" is a question. SQL is just how you ask it.</p>
+
+  <h2 id="q-basic">Basic SELECT — reading rows</h2>
+  <div class="sql-box">
+    <div class="sql-label">Run in pgAdmin or DBeaver query editor<button class="copy-btn" onclick="copySQL(this,'q1')">Copy</button></div>
+    <div class="sql-text" id="q1"><span class="cmt">-- Read all columns from all rows</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> maintenance_requests;
+
+<span class="cmt">-- Read only specific columns</span>
+<span class="kw">SELECT</span> id, product_name, status, request_date
+<span class="kw">FROM</span> maintenance_requests;</div>
+  </div>
+  <p>The <code>*</code> means "all columns." You'll rarely use it in production (fetching unused columns wastes bandwidth), but it's perfect for exploring data.</p>
+
+  <h2 id="q-filter">Filtering with WHERE</h2>
+  <div class="sql-box">
+    <div class="sql-label">SQL<button class="copy-btn" onclick="copySQL(this,'q2')">Copy</button></div>
+    <div class="sql-text" id="q2"><span class="cmt">-- All Open requests</span>
+<span class="kw">SELECT</span> id, product_name, outlet_id, request_date
+<span class="kw">FROM</span> maintenance_requests
+<span class="kw">WHERE</span> status = <span class="str">'Open'</span>;
+
+<span class="cmt">-- Open requests from Outlet OUT-02 only (staff view)</span>
+<span class="kw">SELECT</span> id, product_name, category, request_date
+<span class="kw">FROM</span> maintenance_requests
+<span class="kw">WHERE</span> status = <span class="str">'Open'</span>
+  <span class="kw">AND</span> outlet_id = <span class="str">'OUT-02'</span>;
+
+<span class="cmt">-- All AC or Kitchen requests</span>
+<span class="kw">SELECT</span> id, product_name, category
+<span class="kw">FROM</span> maintenance_requests
+<span class="kw">WHERE</span> category <span class="kw">IN</span> (<span class="str">'AC'</span>, <span class="str">'Kitchen'</span>);</div>
+  </div>
+
+  <h2 id="q-sort">Sorting with ORDER BY</h2>
+  <div class="sql-box">
+    <div class="sql-label">SQL<button class="copy-btn" onclick="copySQL(this,'q3')">Copy</button></div>
+    <div class="sql-text" id="q3"><span class="cmt">-- Newest requests first (this is the default sort in the Flutter list)</span>
+<span class="kw">SELECT</span> id, product_name, status, request_date
+<span class="kw">FROM</span> maintenance_requests
+<span class="kw">ORDER BY</span> request_date <span class="kw">DESC</span>;
+
+<span class="cmt">-- Oldest first</span>
+<span class="kw">SELECT</span> id, product_name, status, request_date
+<span class="kw">FROM</span> maintenance_requests
+<span class="kw">ORDER BY</span> request_date <span class="kw">ASC</span>;
+
+<span class="cmt">-- By outlet, then by date within each outlet</span>
+<span class="kw">SELECT</span> id, product_name, outlet_id, request_date
+<span class="kw">FROM</span> maintenance_requests
+<span class="kw">ORDER BY</span> outlet_id, request_date <span class="kw">DESC</span>;</div>
+  </div>
+
+  <h2 id="q-aggregate">Aggregates — COUNT, GROUP BY</h2>
+  <p>This is where SQL starts to feel powerful. Aggregates answer "how many?" questions — exactly what the dashboard needs.</p>
+  <div class="sql-box">
+    <div class="sql-label">SQL<button class="copy-btn" onclick="copySQL(this,'q4')">Copy</button></div>
+    <div class="sql-text" id="q4"><span class="cmt">-- Total number of requests</span>
+<span class="kw">SELECT COUNT</span>(*) <span class="kw">FROM</span> maintenance_requests;
+
+<span class="cmt">-- How many requests per status → this powers the dashboard pie chart</span>
+<span class="kw">SELECT</span> status, <span class="kw">COUNT</span>(*) <span class="kw">AS</span> total
+<span class="kw">FROM</span> maintenance_requests
+<span class="kw">GROUP BY</span> status;
+<span class="cmt">-- Result: Open|4   Pending|2   Closed|2</span>
+
+<span class="cmt">-- How many requests per outlet → busiest outlets chart</span>
+<span class="kw">SELECT</span> outlet_id, <span class="kw">COUNT</span>(*) <span class="kw">AS</span> request_count
+<span class="kw">FROM</span> maintenance_requests
+<span class="kw">GROUP BY</span> outlet_id
+<span class="kw">ORDER BY</span> request_count <span class="kw">DESC</span>;
+
+<span class="cmt">-- Category breakdown for the past 30 days</span>
+<span class="kw">SELECT</span> category, <span class="kw">COUNT</span>(*) <span class="kw">AS</span> total
+<span class="kw">FROM</span> maintenance_requests
+<span class="kw">WHERE</span> request_date >= CURRENT_DATE - <span class="kw">INTERVAL</span> <span class="str">'30 days'</span>
+<span class="kw">GROUP BY</span> category
+<span class="kw">ORDER BY</span> total <span class="kw">DESC</span>;</div>
+  </div>
+
+  <h2 id="q-join">JOINs — combining tables</h2>
+  <p>JOINs are how you bring data from two tables together. Instead of storing the outlet name on every request, we JOIN to the outlets table when we need it.</p>
+  <div class="sql-box">
+    <div class="sql-label">SQL<button class="copy-btn" onclick="copySQL(this,'q5')">Copy</button></div>
+    <div class="sql-text" id="q5"><span class="cmt">-- Get requests with full outlet name and address (for the detail screen)</span>
+<span class="kw">SELECT</span>
+  r.id,
+  r.product_name,
+  r.category,
+  r.status,
+  r.description,
+  o.name        <span class="kw">AS</span> outlet_name,
+  o.address     <span class="kw">AS</span> outlet_address,
+  u.name        <span class="kw">AS</span> manager_name
+<span class="kw">FROM</span>   maintenance_requests r
+<span class="kw">JOIN</span>   outlets o <span class="kw">ON</span> r.outlet_id = o.id
+<span class="kw">JOIN</span>   users   u <span class="kw">ON</span> r.raised_by = u.id
+<span class="kw">WHERE</span>  r.status = <span class="str">'Open'</span>
+<span class="kw">ORDER BY</span> r.request_date <span class="kw">DESC</span>;</div>
+  </div>
+
+  <h2 id="q-dashboard">The 3 dashboard queries — built with SQL you now know</h2>
+  <div class="grid3">
+    <div class="card success">
+      <h4>Status Summary (pie chart)</h4>
+      <pre style="margin:8px 0 0;font-size:12px;"><code><span class="kw">SELECT</span> status, <span class="kw">COUNT</span>(*) total
+<span class="kw">FROM</span> maintenance_requests
+<span class="kw">GROUP BY</span> status;</code></pre>
+    </div>
+    <div class="card accent">
+      <h4>Outlet Leaderboard (bar chart)</h4>
+      <pre style="margin:8px 0 0;font-size:12px;"><code><span class="kw">SELECT</span> o.name, <span class="kw">COUNT</span>(*) cnt
+<span class="kw">FROM</span> maintenance_requests r
+<span class="kw">JOIN</span> outlets o <span class="kw">ON</span> r.outlet_id=o.id
+<span class="kw">WHERE</span> r.status=<span class="str">'Open'</span>
+<span class="kw">GROUP BY</span> o.name
+<span class="kw">ORDER BY</span> cnt <span class="kw">DESC</span>;</code></pre>
+    </div>
+    <div class="card purple">
+      <h4>Category Breakdown</h4>
+      <pre style="margin:8px 0 0;font-size:12px;"><code><span class="kw">SELECT</span> category, <span class="kw">COUNT</span>(*) total
+<span class="kw">FROM</span> maintenance_requests
+<span class="kw">GROUP BY</span> category
+<span class="kw">ORDER BY</span> total <span class="kw">DESC</span>;</code></pre>
+    </div>
+  </div>
+
+  <h2 id="q-honest">Is SQL easy or tough? An honest answer.</h2>
+  <div class="analogy-box">
+    <p><em class="analogy-tag">Honest Assessment</em></p>
+    <p><strong>Basic SQL is easy.</strong> SELECT, WHERE, ORDER BY, and even GROUP BY are readable in plain English. You can write all three dashboard queries above within your first hour of learning SQL. The logic maps directly to plain-language questions: "Show me all open requests, newest first" translates almost word for word into SQL.</p>
+    <p><strong>Advanced SQL takes time.</strong> Complex JOINs across many tables, window functions, recursive queries, query optimization — these take months to get comfortable with. You won't need them for the Khan Chacha app.</p>
+    <p><strong>The hard part isn't the syntax.</strong> It's thinking in sets. SQL operates on entire tables at once, not row by row. Once that mental model clicks, everything else follows. It usually clicks after writing about 20–30 real queries on real data you care about.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ TAB 8 · FLUTTER CONNECTION ═══════════════════ -->
+<div class="tabpanel" id="tab-connect">
+  <div class="toc-strip">
+    <a href="#conn-options">Connection options</a>
+    <a href="#conn-package">The postgres package</a>
+    <a href="#conn-service">DatabaseService</a>
+    <a href="#conn-prompts">Claude Code prompts</a>
+  </div>
+
+  <h2>Connecting the Flutter app to PostgreSQL</h2>
+  <p class="lead">There are three ways a Flutter app can talk to a PostgreSQL database. Understanding the difference helps you choose the right one for each stage of the project.</p>
+
+  <h2 id="conn-options">The three connection options</h2>
+  <table>
+    <tr><th>Option</th><th>How it works</th><th>Good for</th><th>Risk</th></tr>
+    <tr><td>Direct connection</td><td>Flutter → PostgreSQL port 5432 (the <code>postgres</code> Dart package)</td><td>Local development and learning. What we use today.</td><td>Exposes DB credentials in the app binary. Never do this in production.</td></tr>
+    <tr><td>REST API layer</td><td>Flutter → Node.js/Express API → PostgreSQL</td><td>Production on-premises. Credentials stay on the server.</td><td>Requires building and hosting a backend API.</td></tr>
+    <tr><td>Supabase SDK</td><td>Flutter → Supabase (which runs PostgreSQL) via HTTPS</td><td>Production cloud. Handles auth, storage, realtime too.</td><td>Requires moving to cloud. Simple migration from Option 1.</td></tr>
+  </table>
+
+  <div class="card accent">
+    <h4>Today's approach — Option 1 (direct, local)</h4>
+    <p style="margin:0">We use the <code>postgres</code> Dart package for a direct connection to <code>localhost:5432</code>. This is fine because both the app and the database are on the same machine. When you move to production, you upgrade to Option 3 (Supabase) — the SQL stays identical, only the connection code changes.</p>
+  </div>
+
+  <h2 id="conn-package">Adding the postgres package</h2>
+  <pre><code><span class="cmt"># In your pubspec.yaml, under dependencies:</span>
+postgres: ^3.3.3</code></pre>
+  <pre><code><span class="cmt"># Then run:</span>
+flutter pub get</code></pre>
+
+  <h3>What a connection looks like in Dart</h3>
+  <pre><code><span class="kw">import</span> <span class="str">'package:postgres/postgres.dart'</span>;
+
+<span class="kw">final</span> conn = <span class="kw">await</span> <span class="cls">Connection</span>.open(
+  <span class="cls">Endpoint</span>(
+    host:     <span class="str">'localhost'</span>,
+    port:     <span class="num">5432</span>,
+    database: <span class="str">'khan_chacha'</span>,
+    username: <span class="str">'kc_app'</span>,
+    password: <span class="str">'kc_secure_2026'</span>,
+  ),
+  settings: <span class="kw">const</span> <span class="cls">ConnectionSettings</span>(
+    sslMode: <span class="cls">SslMode</span>.disable,   <span class="cmt">// OK for localhost; enable for cloud</span>
+  ),
+);
+
+<span class="cmt">// When moving to Supabase later, only these five values change:</span>
+<span class="cmt">// host: 'db.xxxxxxxxxxxx.supabase.co'</span>
+<span class="cmt">// database: 'postgres'</span>
+<span class="cmt">// username: 'postgres'</span>
+<span class="cmt">// password: '[supabase-db-password]'</span>
+<span class="cmt">// sslMode: SslMode.require</span></code></pre>
+
+  <h2 id="conn-service">What DatabaseService will do</h2>
+  <p>We are creating <code>lib/services/database_service.dart</code> — a singleton that manages the connection and exposes clean methods the rest of the app calls. Screens never write raw SQL — they call <code>DatabaseService().fetchAll()</code> or <code>DatabaseService().createRequest(request)</code>.</p>
+  <table>
+    <tr><th>Method</th><th>SQL behind it</th><th>Used by</th></tr>
+    <tr><td><code>fetchAll()</code></td><td>SELECT + JOIN outlets + JOIN users, ORDER BY date DESC</td><td>RequestListScreen, Dashboard</td></tr>
+    <tr><td><code>fetchByOutlet(outletId)</code></td><td>Same + WHERE outlet_id = $1</td><td>Staff's RequestListScreen</td></tr>
+    <tr><td><code>createRequest(r)</code></td><td>INSERT INTO maintenance_requests</td><td>RequestFormScreen (create mode)</td></tr>
+    <tr><td><code>updateStatus(id, status)</code></td><td>UPDATE SET status = $1 WHERE id = $2</td><td>DetailScreen Update Status</td></tr>
+    <tr><td><code>updateRequest(r)</code></td><td>UPDATE SET all fields WHERE id = $1</td><td>RequestFormScreen (edit mode)</td></tr>
+    <tr><td><code>deleteRequest(id)</code></td><td>DELETE FROM maintenance_requests WHERE id = $1</td><td>DetailScreen Delete</td></tr>
+    <tr><td><code>getStatusCounts()</code></td><td>SELECT status, COUNT(*) GROUP BY status</td><td>Dashboard stat cards</td></tr>
+  </table>
+
+  <h2 id="conn-prompts">Claude Code prompts — connecting the Flutter app</h2>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Prompt 1 of 4 — Add the postgres package and update the model<button class="copy-btn" onclick="copyPrompt(this,'cc-db1')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-context">Context: existing Flutter MRMS app</span>
+      <span class="meta-pill meta-task">Task: add DB package, update model</span>
+      <span class="meta-pill meta-output">2 files modified</span>
+    </div>
+    <div class="prompt-text" id="cc-db1">In our Khan Chacha MRMS Flutter app, make these two changes:
+
+1. In pubspec.yaml, add this under dependencies:
+   postgres: ^3.3.3
+   Then run flutter pub get.
+
+2. In lib/models/maintenance_request.dart, add a factory constructor
+   fromRow(Map<String, dynamic> row) that maps a PostgreSQL row to a
+   MaintenanceRequest object. The DB column names use snake_case:
+   product_name, product_id, outlet_id, raised_by, request_date, status_history
+   Map them to the Dart fields: productName, productId, outletId, managerName,
+   requestDate (convert DATE to String using .toString()), statusHistory
+   (decode the JSONB array to List<String>).
+
+   Also add a toInsertMap() method that returns a Map<String, dynamic>
+   with all fields in snake_case format, suitable for an INSERT statement.
+   Exclude id (auto-handled) and statusHistory (default empty).
+
+Do not change any screen files yet.</div>
+  </div>
+  <div class="expect-box"><div class="expect-label">What this does</div><p>Prepares the model to speak both "Dart" (for the UI) and "SQL" (for the database). The <code>fromRow</code> constructor is the bridge between a database row and the Flutter widget tree.</p></div>
+  <div class="verify-box"><div class="verify-label">Verify it worked</div><p>No flutter run needed yet. Open <code>maintenance_request.dart</code> — it should have a <code>fromRow</code> factory and a <code>toInsertMap()</code> method with no red underlines in VS Code.</p></div>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Prompt 2 of 4 — Create DatabaseService<button class="copy-btn" onclick="copyPrompt(this,'cc-db2')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-context">Context: postgres package installed, model updated</span>
+      <span class="meta-pill meta-task">Task: create database service</span>
+      <span class="meta-pill meta-output">1 new file</span>
+    </div>
+    <div class="prompt-text" id="cc-db2">Create lib/services/database_service.dart for our Khan Chacha MRMS Flutter app.
+
+This is a singleton class (factory constructor pattern) that manages a single
+PostgreSQL connection and exposes methods for all database operations.
+
+CONNECTION CONFIG (constants at top of file):
+  host: 'localhost', port: 5432, database: 'khan_chacha',
+  username: 'kc_app', password: 'kc_secure_2026', sslMode: SslMode.disable
+
+METHODS TO IMPLEMENT:
+
+Future<void> connect() — opens the connection, called once on app start from main.dart.
+  Store the Connection object as a private field _conn.
+
+Future<List<MaintenanceRequest>> fetchAll() — returns all requests.
+  SQL: SELECT r.*, o.name AS outlet_name, o.address AS outlet_address,
+       u.name AS manager_name
+  FROM maintenance_requests r
+  JOIN outlets o ON r.outlet_id = o.id
+  JOIN users   u ON r.raised_by = u.id
+  ORDER BY r.request_date DESC
+
+Future<List<MaintenanceRequest>> fetchByOutlet(String outletId) — same as above
+  but adds: WHERE r.outlet_id = outletId
+
+Future<void> createRequest(MaintenanceRequest r) — inserts a new request.
+  Use parameterized query (never string interpolation for SQL).
+
+Future<void> updateStatus(String id, String newStatus, String historyEntry) —
+  updates status and appends the historyEntry string to the status_history JSONB array.
+  SQL: UPDATE maintenance_requests
+  SET status=$1, status_history = status_history || $2::jsonb, updated_at=NOW()
+  WHERE id=$3
+
+Future<void> updateRequest(MaintenanceRequest r) — updates all editable fields.
+
+Future<void> deleteRequest(String id) — deletes a row by id.
+
+Future<Map<String,int>> getStatusCounts() — returns {'Open':4,'Pending':2,'Closed':2}
+  SQL: SELECT status, COUNT(*) FROM maintenance_requests GROUP BY status
+
+Use package:postgres/postgres.dart for all database calls.
+Handle exceptions: wrap each method in try/catch, rethrow with a descriptive message.
+
+Create lib/services/database_service.dart only.</div>
+  </div>
+  <div class="expect-box"><div class="expect-label">What this does</div><p>The entire database layer in one file. Every screen now calls clean, readable Dart methods — not raw SQL strings. This separation means if you ever change the database, you only update this one file.</p></div>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Prompt 3 of 4 — Connect app startup + replace HomeScreen data source<button class="copy-btn" onclick="copyPrompt(this,'cc-db3')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-context">Context: DatabaseService created</span>
+      <span class="meta-pill meta-task">Task: wire DB into app startup and list screen</span>
+      <span class="meta-pill meta-constraint">Constraint: do not change auth logic</span>
+      <span class="meta-pill meta-output">2 files modified</span>
+    </div>
+    <div class="prompt-text" id="cc-db3">In our Khan Chacha MRMS Flutter app, make these two changes:
+
+1. In main.dart:
+   - Add WidgetsFlutterBinding.ensureInitialized() as the first line of main()
+   - Call await DatabaseService().connect() before runApp()
+   - Show a loading screen (centered CircularProgressIndicator on dark background)
+     while the DB connection is being established
+   - If the connection fails, show an error screen with the error message and
+     a "Retry" button that calls connect() again
+
+2. In lib/screens/request_list_screen.dart:
+   - Remove the import of dummy_data.dart and the local sampleRequests list
+   - In initState(), call DatabaseService().fetchAll() (or fetchByOutlet if role==staff)
+     and store the result. Show a CircularProgressIndicator while loading.
+   - In the RefreshIndicator onRefresh callback, call the same fetch method again
+   - The rest of the filtering logic (status tab, category chip, search, sort)
+     stays exactly the same — it still operates on the local in-memory list
+     that was fetched from the DB
+
+Keep the existing auth (AuthService) and navigation completely unchanged.
+Files to modify: main.dart, request_list_screen.dart</div>
+  </div>
+  <div class="verify-box"><div class="verify-label">Verify it worked</div><p>Run <code>flutter run</code>. Log in as manager. The request list should show 8 real requests from your PostgreSQL database. Pull to refresh — it re-fetches from DB. If you see an error about connection refused, check that PostgreSQL is running: <code>psql -U postgres -c "SELECT 1;"</code></p></div>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Prompt 4 of 4 — Wire create, edit, delete, and status update to real DB<button class="copy-btn" onclick="copyPrompt(this,'cc-db4')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-context">Context: DB fetch working, list shows real data</span>
+      <span class="meta-pill meta-task">Task: wire all write operations to the DB</span>
+      <span class="meta-pill meta-output">3 files modified</span>
+    </div>
+    <div class="prompt-text" id="cc-db4">In our Khan Chacha MRMS Flutter app, replace the remaining in-memory operations
+with real database calls. The UI flow and navigation stay exactly the same.
+
+1. In lib/screens/request_form_screen.dart:
+   - On submit (create mode): call DatabaseService().createRequest(newRequest)
+     Wrap in try/catch — show a SnackBar with the error if it fails
+   - On submit (edit mode): call DatabaseService().updateRequest(updatedRequest)
+   - Both: after success, pop the screen and return the new/updated request
+     so the calling screen can refresh
+
+2. In lib/screens/detail_screen.dart:
+   - Update Status button: call DatabaseService().updateStatus(id, newStatus, historyEntry)
+     where historyEntry is formatted as a JSON string:
+     '{"from":"Open","to":"Pending","at":"2026-07-06T14:30:00"}'
+     Use DateTime.now().toIso8601String() for the timestamp.
+   - Delete button: call DatabaseService().deleteRequest(id)
+   - Both: wrap in try/catch, show SnackBar on error
+
+3. In lib/screens/dashboard_screen.dart:
+   - Replace the hardcoded count calculations (which counted from sampleRequests)
+   - Call DatabaseService().getStatusCounts() in initState()
+   - Use the returned map to populate the stat cards: map['Open'], map['Pending'], map['Closed']
+   - Show a loading state while the counts are being fetched
+
+Do not change the confirmation dialogs, navigation, or animation code.
+Files to modify: request_form_screen.dart, detail_screen.dart, dashboard_screen.dart</div>
+  </div>
+  <div class="expect-box"><div class="expect-label">What this does</div><p>The app is now fully connected to PostgreSQL. Create a request → it appears in pgAdmin. Update a status → refresh pgAdmin and see the change. Delete a request → it's gone from the DB. Restart the app → all data is still there.</p></div>
+  <div class="verify-box"><div class="verify-label">Final verification</div><p>In pgAdmin, open the Query Tool and run <code>SELECT COUNT(*) FROM maintenance_requests;</code>. Create a request in the Flutter app. Run the query again — the count increases by 1. That's the moment when the app stops being a prototype and starts being a real product.</p></div>
+</div>
+
+<!-- ═══════════════════ TAB 9 · LOCAL VS CLOUD ═══════════════════ -->
+<div class="tabpanel" id="tab-localcloud">
+  <div class="toc-strip">
+    <a href="#local-now">On-premises right now</a>
+    <a href="#local-limits">Limits of on-premises</a>
+    <a href="#cloud-options">Cloud options</a>
+    <a href="#supabase-path">The Supabase path</a>
+    <a href="#migration">Migration plan</a>
+  </div>
+
+  <h2 id="local-now">On-premises — what it means and why we start here</h2>
+  <p class="lead">On-premises means the database runs on a machine that you own and control — your laptop today, a company server later. There is no third-party cloud provider involved. You are the data centre.</p>
+
+  <div class="card accent">
+    <h4>Why on-premises is right for Days 3–4</h4>
+    <ul style="margin:0;padding-left:18px;">
+      <li>Zero cost — no cloud bills, no sign-up, no credit card</li>
+      <li>Works without internet — train, office without stable WiFi, anywhere</li>
+      <li>You see and control everything — great for learning</li>
+      <li>The SQL, schema, and Flutter code you write today is 100% identical to what you'd run on the cloud</li>
+    </ul>
+  </div>
+
+  <h2 id="local-limits">The honest limitations of on-premises</h2>
+  <div class="card danger">
+    <h4>Why you can't ship to production with a laptop database</h4>
+    <ul style="margin:0;padding-left:18px;">
+      <li><strong>Always-on requirement:</strong> The database only works while the machine running it is switched on and connected. A laptop closes, the app for all 20 outlets breaks.</li>
+      <li><strong>Network access:</strong> The Flutter app connects to <code>localhost</code>. No other phone on another WiFi network can reach it. Outlet managers across Delhi cannot use the same database that's on your laptop.</li>
+      <li><strong>Backups:</strong> You are responsible for backing up the database. If the hard drive fails, all data is gone.</li>
+      <li><strong>Server room cost:</strong> A dedicated on-premises server for Khan Chacha means a machine that runs 24/7 in a server room with power backup (UPS), physical security, IT maintenance, and cooling. That's expensive for a restaurant chain.</li>
+      <li><strong>Updates and patches:</strong> You manually apply PostgreSQL security updates and OS patches. Cloud providers do this automatically.</li>
+    </ul>
+  </div>
+
+  <h2 id="cloud-options">The cloud options compared</h2>
+  <table>
+    <tr><th>Option</th><th>Best for</th><th>PostgreSQL?</th><th>Flutter SDK?</th><th>Free tier?</th><th>Complexity</th></tr>
+    <tr><td><strong>Supabase</strong></td><td>Apps like ours — Flutter, auth, realtime</td><td>✅ Native</td><td>✅ Official SDK</td><td>✅ Generous</td><td>⭐ Lowest</td></tr>
+    <tr><td>AWS RDS</td><td>Enterprise, existing AWS infrastructure</td><td>✅</td><td>❌ (need API layer)</td><td>⚠️ 12 months only</td><td>⭐⭐⭐ High</td></tr>
+    <tr><td>Azure Database for PostgreSQL</td><td>Microsoft-stack enterprises</td><td>✅</td><td>❌ (need API layer)</td><td>⚠️ Limited trial</td><td>⭐⭐⭐ High</td></tr>
+    <tr><td>Google Cloud SQL</td><td>GCP-first shops</td><td>✅</td><td>❌ (need API layer)</td><td>⚠️ Limited</td><td>⭐⭐ Medium</td></tr>
+    <tr><td>Neon</td><td>Serverless PostgreSQL, pay-per-query</td><td>✅</td><td>❌ (need API layer)</td><td>✅</td><td>⭐⭐ Medium</td></tr>
+  </table>
+
+  <h2 id="supabase-path">Why Supabase is the right next step for Khan Chacha</h2>
+  <div class="card success">
+    <h4>Everything Khan Chacha needs, already built</h4>
+    <ul style="margin:0;padding-left:18px;">
+      <li><strong>PostgreSQL at the core</strong> — all the SQL you wrote today works unchanged on Supabase</li>
+      <li><strong>Flutter SDK</strong> — <code>supabase_flutter</code> replaces the <code>postgres</code> package. Connection change = 5 lines of code.</li>
+      <li><strong>Row Level Security</strong> — a PostgreSQL feature that Supabase makes easy. Outlet managers can only see their own outlet's data — enforced at the database level, not in the Flutter app.</li>
+      <li><strong>Realtime</strong> — when one manager updates a status, every other manager's phone sees the change automatically. No refresh button needed.</li>
+      <li><strong>Storage</strong> — image evidence uploads go to Supabase Storage instead of the device. Accessible from anywhere.</li>
+      <li><strong>Auth</strong> — replaces our dummy AuthService with real email/phone OTP login. No password storage.</li>
+      <li><strong>Free tier</strong> — 500 MB database, 1 GB file storage, 50,000 monthly active users. More than enough for Khan Chacha's 20 outlets.</li>
+    </ul>
+  </div>
+
+  <h2 id="migration">The migration path — when you're ready</h2>
+  <div class="step-flow">
+    <div class="step">
+      <div class="step-rail"><div class="step-dot done">✓</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-title">Today — Local PostgreSQL</div><div class="step-desc">App connects to localhost. Schema and queries are identical to production. The learning is done.</div></div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot">→</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Next — Create a Supabase project (free)</div>
+        <div class="step-desc">Sign up at supabase.com. Create a new project. In the SQL Editor, paste the exact same CREATE TABLE statements you ran locally. Your schema is identical — no rewriting.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot">→</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Swap the package and connection</div>
+        <div class="step-desc">In pubspec.yaml: remove <code>postgres: ^3.3.3</code>, add <code>supabase_flutter: ^2.0.0</code>. In <code>database_service.dart</code>: replace the Connection object with Supabase client calls. The method signatures (fetchAll, createRequest, etc.) stay the same — only the internals change.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot">→</div></div>
+      <div class="step-body">
+        <div class="step-title">Enable Row Level Security + real auth</div>
+        <div class="step-desc">Add RLS policies so staff can only read their own outlet. Replace AuthService with Supabase Auth. Deploy. Every outlet manager across Delhi can now use the same app, same database, real-time.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="analogy-box">
+    <p><em class="analogy-tag">The Big Picture</em></p>
+    <p>Think of PostgreSQL as the engine, and on-premises vs. Supabase vs. AWS as different garages where you park that engine. The engine is the same. The garage determines who can access it, how safe it is, and who maintains the building. Today you learn the engine. Later you pick the best garage for Khan Chacha's needs.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ TAB 10 · DISCUSSION ═══════════════════ -->
+<div class="tabpanel" id="tab-discuss">
+  <h2>Questions &amp; Discussion</h2>
+  <p class="lead">Common questions from this session, answered.</p>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this.parentElement)">
+      Do I need to keep PostgreSQL running all the time while building the app?
+      <span class="faq-arrow">▼</span>
+    </div>
+    <div class="faq-a">Yes — while developing locally, PostgreSQL must be running on your machine for the app to connect. On Windows, it starts automatically as a service when your PC boots (you can verify in Services → postgresql-16). On Mac with Postgres.app, click the elephant icon in the menu bar. On Linux, <code>sudo systemctl start postgresql</code> starts it and <code>sudo systemctl enable postgresql</code> makes it start automatically on boot. You only notice this matters when you try to run the app and the DB is off — it shows a connection error.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this.parentElement)">
+      Can another phone on my WiFi network connect to my local PostgreSQL?
+      <span class="faq-arrow">▼</span>
+    </div>
+    <div class="faq-a">Yes, with configuration changes — but we don't recommend it for this training. By default, PostgreSQL only accepts connections from <code>localhost</code> (the same machine). To allow other machines on the local network: edit <code>pg_hba.conf</code> to allow connections from your local IP range, edit <code>postgresql.conf</code> to set <code>listen_addresses = '*'</code>, restart PostgreSQL, and update the Flutter app's host to your machine's local IP (e.g. 192.168.1.5) instead of localhost. This works fine for demo on a local network — but it's a lab setup, not production.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this.parentElement)">
+      What happens to the data if I reinstall PostgreSQL?
+      <span class="faq-arrow">▼</span>
+    </div>
+    <div class="faq-a">Reinstalling can erase all data. Always take a backup first: <code>pg_dump -U postgres khan_chacha > khan_chacha_backup.sql</code>. This saves all your tables and data as a SQL file. Restore with: <code>psql -U postgres khan_chacha &lt; khan_chacha_backup.sql</code>. Make this a habit — run a backup at the end of each training day.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this.parentElement)">
+      We have 5 students, each with their own laptop. How do we share the same database?
+      <span class="faq-arrow">▼</span>
+    </div>
+    <div class="faq-a">For this training: each student runs their own PostgreSQL locally. Everyone has the same schema and same sample data — it's like each person having their own copy of the whiteboard to practice on. When you move to Supabase (the cloud path), everyone's Flutter app points to the same Supabase project URL. Then all five students are reading and writing to the same database, exactly like the real production scenario.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this.parentElement)">
+      Are we storing passwords as plain text in the database? Is that safe?
+      <span class="faq-arrow">▼</span>
+    </div>
+    <div class="faq-a">For this training: yes, passwords are plain text in the <code>users</code> table. This is intentional — it's clearer for learning. In production, you <strong>never</strong> store plain passwords. You use a hashing algorithm (bcrypt, argon2, or PBKDF2) that converts "manager123" into a long random-looking string. When the user logs in, you hash what they typed and compare the hash — you never compare raw passwords. When we move to Supabase, their built-in Auth handles all of this for us.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this.parentElement)">
+      Why don't we just use Supabase from day one?
+      <span class="faq-arrow">▼</span>
+    </div>
+    <div class="faq-a">Three reasons: First, Supabase abstracts away the database — you click a UI and tables appear. That's great for speed but bad for understanding. Writing raw SQL, seeing the data in pgAdmin, understanding JOINs and GROUP BY — that's the learning. Second, Supabase requires a stable internet connection. A training session on local PostgreSQL works in a hotel room with bad WiFi. Third, when something breaks in production (and it will), knowing how PostgreSQL actually works is what lets you debug it — whether it's running locally or on Supabase.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this.parentElement)">
+      The Flutter app gets a "Connection refused" error. What do I check?
+      <span class="faq-arrow">▼</span>
+    </div>
+    <div class="faq-a">
+      Check in this order:
+      <ol style="margin-top:8px;">
+        <li>Is PostgreSQL running? Run <code>psql -U postgres -c "SELECT 1;"</code> — if that fails, start the PostgreSQL service.</li>
+        <li>Is the port correct? Default is 5432. Run <code>SELECT * FROM pg_settings WHERE name='port';</code> in psql to confirm.</li>
+        <li>Are the credentials correct? Try logging in with <code>psql -h localhost -U kc_app -d khan_chacha</code>. If that fails, the username/password/database name in your Dart code won't work either.</li>
+        <li>Is <code>SslMode.disable</code> set? Some configurations reject non-SSL connections. Conversely, some require SSL. Match your <code>pg_hba.conf</code> setting.</li>
+        <li>On Android emulator: the emulator's localhost is 10.0.2.2, not 127.0.0.1. If running on emulator, change the host in DatabaseService to '10.0.2.2'.</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ TAB 11 · REFERENCES ═══════════════════ -->
+<div class="tabpanel" id="tab-references">
+  <h2>References &amp; Resources</h2>
+  <p class="lead">Everything you need outside the classroom — official docs, tools, and community resources.</p>
+
+  <h3>PostgreSQL Official</h3>
+  <div class="ref-card">
+    <div class="ref-icon">🐘</div>
+    <div class="ref-body">
+      <h4>PostgreSQL Official Documentation</h4>
+      <p>The authoritative reference. The SQL Commands section documents every statement. The Data Types section explains TEXT, JSONB, UUID, and more.</p>
+      <a href="https://www.postgresql.org/docs/current/" target="_blank">postgresql.org/docs/current</a>
+    </div>
+  </div>
+  <div class="ref-card">
+    <div class="ref-icon">⬇️</div>
+    <div class="ref-body">
+      <h4>PostgreSQL Downloads</h4>
+      <p>Official installers for Windows, macOS, Linux. Always download from the official site.</p>
+      <a href="https://www.postgresql.org/download/" target="_blank">postgresql.org/download</a>
+    </div>
+  </div>
+
+  <h3>Tools</h3>
+  <div class="ref-card">
+    <div class="ref-icon">🦫</div>
+    <div class="ref-body">
+      <h4>DBeaver Community Edition</h4>
+      <p>Recommended tool for this training. Free, works with PostgreSQL and 80+ databases, dark mode, ER diagram view.</p>
+      <a href="https://dbeaver.io/download/" target="_blank">dbeaver.io/download</a>
+    </div>
+  </div>
+  <div class="ref-card">
+    <div class="ref-icon">🐘</div>
+    <div class="ref-body">
+      <h4>pgAdmin 4</h4>
+      <p>Official PostgreSQL GUI. Comes bundled with the Windows installer. Available standalone for Mac/Linux.</p>
+      <a href="https://www.pgadmin.org/download/" target="_blank">pgadmin.org/download</a>
+    </div>
+  </div>
+  <div class="ref-card">
+    <div class="ref-icon">🍎</div>
+    <div class="ref-body">
+      <h4>Postgres.app (macOS)</h4>
+      <p>Simplest PostgreSQL installation for Mac. One download, one click to start.</p>
+      <a href="https://postgresapp.com" target="_blank">postgresapp.com</a>
+    </div>
+  </div>
+
+  <h3>Flutter / Dart Integration</h3>
+  <div class="ref-card">
+    <div class="ref-icon">🎯</div>
+    <div class="ref-body">
+      <h4>postgres Dart package</h4>
+      <p>The package we use for direct local connections today. Full documentation including parameterized queries and connection pooling.</p>
+      <a href="https://pub.dev/packages/postgres" target="_blank">pub.dev/packages/postgres</a>
+    </div>
+  </div>
+  <div class="ref-card">
+    <div class="ref-icon">⚡</div>
+    <div class="ref-body">
+      <h4>Supabase Flutter SDK</h4>
+      <p>The package we use when moving to the cloud. Same SQL, different connection method. Adds auth, realtime, and storage.</p>
+      <a href="https://pub.dev/packages/supabase_flutter" target="_blank">pub.dev/packages/supabase_flutter</a>
+    </div>
+  </div>
+  <div class="ref-card">
+    <div class="ref-icon">🌐</div>
+    <div class="ref-body">
+      <h4>Supabase</h4>
+      <p>PostgreSQL in the cloud. Free tier. Our recommended cloud path for Khan Chacha. Flutter quickstart guide in the docs.</p>
+      <a href="https://supabase.com/docs/guides/getting-started/quickstarts/flutter" target="_blank">supabase.com — Flutter quickstart</a>
+    </div>
+  </div>
+
+  <h3>Learning SQL</h3>
+  <div class="ref-card">
+    <div class="ref-icon">📖</div>
+    <div class="ref-body">
+      <h4>SQLZoo — Interactive SQL Practice</h4>
+      <p>Browser-based SQL exercises. Start with SELECT basics, move to GROUP BY. All exercises run real queries on real data.</p>
+      <a href="https://sqlzoo.net" target="_blank">sqlzoo.net</a>
+    </div>
+  </div>
+  <div class="ref-card">
+    <div class="ref-icon">🔧</div>
+    <div class="ref-body">
+      <h4>pg_dump — PostgreSQL Backup</h4>
+      <p>Official backup command reference. Run at end of every training day.</p>
+      <pre style="margin:6px 0 0;font-size:12px;"><code>pg_dump -U postgres khan_chacha > backup_$(date +%Y%m%d).sql</code></pre>
+    </div>
+  </div>
+
+  <div class="card accent" style="margin-top:32px;">
+    <h4>Khan Chacha SQL Reference Card</h4>
+    <p>The four queries you'll use most often — save this.</p>
+    <pre><code><span class="cmt">-- All open requests (list screen)</span>
+<span class="kw">SELECT</span> r.id, r.product_name, r.category, r.status, r.request_date, o.name <span class="kw">AS</span> outlet_name
+<span class="kw">FROM</span> maintenance_requests r <span class="kw">JOIN</span> outlets o <span class="kw">ON</span> r.outlet_id=o.id
+<span class="kw">WHERE</span> r.status=<span class="str">'Open'</span> <span class="kw">ORDER BY</span> r.request_date <span class="kw">DESC</span>;
+
+<span class="cmt">-- Status counts (dashboard)</span>
+<span class="kw">SELECT</span> status, <span class="kw">COUNT</span>(*) <span class="kw">AS</span> total <span class="kw">FROM</span> maintenance_requests <span class="kw">GROUP BY</span> status;
+
+<span class="cmt">-- Outlet leaderboard (which outlet has the most issues?)</span>
+<span class="kw">SELECT</span> o.name, <span class="kw">COUNT</span>(*) <span class="kw">FROM</span> maintenance_requests r
+<span class="kw">JOIN</span> outlets o <span class="kw">ON</span> r.outlet_id=o.id <span class="kw">GROUP BY</span> o.name <span class="kw">ORDER BY</span> count <span class="kw">DESC</span>;
+
+<span class="cmt">-- Backup the whole database</span>
+<span class="cmt">-- (run in terminal, not in psql)</span>
+<span class="cmt">-- pg_dump -U postgres khan_chacha > khan_chacha_backup.sql</span></code></pre>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      Powered by <strong>RR Skillverse (Raushan Ranjan)</strong> · Built for <strong>Koenig Solutions</strong> · Khan Chacha MRMS · Day 3
+    </div>
+    <div class="footer-links">
+      <a href="index.html">All Sessions</a>
+      <a href="day2.html">← Day 2</a>
+      <a href="https://rrskillverse.in" target="_blank">RR Skillverse</a>
+    </div>
+  </div>
+  <div class="footer-bottom">Beast AI Initiative · Khan Chacha MRMS Training Programme · 2026</div>
+</footer>
+
+<script>
+const tabs = document.querySelectorAll('.tabnav button');
+tabs.forEach(btn => {
+  btn.addEventListener('click', () => {
+    tabs.forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tabpanel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+
+function copyPrompt(btn, id) {
+  const text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1800);
+  });
+}
+
+function copySQL(btn, id) {
+  const text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    btn.style.color = 'var(--green)';
+    setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 1800);
+  });
+}
+
+function toggleFaq(el) { el.classList.toggle('open'); }
+
+function switchOS(group, os, btn) {
+  document.querySelectorAll('.os-block[data-group="' + group + '"]').forEach(b => b.classList.remove('active'));
+  document.querySelector('.os-block[data-group="' + group + '"][data-os="' + os + '"]').classList.add('active');
+  btn.parentElement.querySelectorAll('span').forEach(s => s.classList.remove('active'));
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
