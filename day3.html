@@ -149,10 +149,12 @@ td:first-child{color:var(--text); font-weight:600;}
 .note-box .note-label{font-size:11.5px; color:var(--amber); text-transform:uppercase; letter-spacing:0.5px; font-weight:700; margin-bottom:6px;}
 .note-box p{margin-bottom:0; color:#d4c08a;}
 
-.db-compare{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:16px 0;}
-@media(max-width:640px){.db-compare{grid-template-columns:1fr;}}
+.confirm-box{background:rgba(163,113,247,0.08); border:2px solid rgba(163,113,247,0.4); border-radius:var(--radius); padding:20px 22px; margin:24px 0;}
+.confirm-box h4{color:var(--purple); font-size:13px; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px;}
 
-.timeline-h{display:flex; flex-direction:column; gap:0;}
+.cmd-table-row{display:flex; gap:14px; padding:10px 0; border-bottom:1px solid var(--border-soft); align-items:flex-start;}
+.cmd-table-row code{min-width:200px; flex-shrink:0;}
+.cmd-table-row .cmd-desc{font-size:13.5px; color:var(--text-dim); padding-top:2px;}
 .tl-item-h{display:grid; grid-template-columns:130px 1fr; gap:0;}
 .tl-item-h:not(:last-child) .tl-right-h{border-left:2px solid var(--border); padding-left:24px; padding-bottom:24px;}
 .tl-right-h{padding-left:24px; padding-bottom:24px; position:relative;}
@@ -197,6 +199,7 @@ footer{border-top:1px solid var(--border-soft); margin-top:40px; padding:36px 24
       <button data-tab="whypg">Why PostgreSQL</button>
       <button data-tab="install">Installation</button>
       <button data-tab="tools">Tools</button>
+      <button data-tab="claude-sql">🤖 Claude as SQL Pair</button>
       <button data-tab="schema">Schema Design</button>
       <button data-tab="querying">Querying</button>
       <button data-tab="connect">Flutter Connection</button>
@@ -770,7 +773,289 @@ postgres=# </code></pre>
   </table>
 </div>
 
-<!-- ═══════════════════ TAB 6 · SCHEMA DESIGN ═══════════════════ -->
+
+<!-- ═══════════════════ TAB 6 · CLAUDE AS SQL PAIR ═══════════════════ -->
+<div class="tabpanel" id="tab-claude-sql">
+  <div class="toc-strip">
+    <a href="#claude-philosophy">The mindset</a>
+    <a href="#claude-where">Where to give prompts</a>
+    <a href="#claude-schema-prompt">Generate the schema</a>
+    <a href="#claude-data-prompt">Generate sample data</a>
+    <a href="#claude-query-prompt">Generate queries</a>
+    <a href="#claude-debug-prompt">Debug errors</a>
+    <a href="#claude-migrate-prompt">Alter the schema</a>
+    <a href="#claude-workflow">The workflow</a>
+  </div>
+
+  <h2 id="claude-philosophy">Claude is your SQL pair-programmer</h2>
+  <p class="lead">Just as we used Claude Code to write Flutter and Dart without memorising every widget, we use Claude to write PostgreSQL without memorising every SQL syntax rule. The goal is the same: describe what you want in plain English, Claude writes it, you review, paste, and verify.</p>
+
+  <div class="card accent">
+    <h4>What changes — and what doesn't</h4>
+    <p style="margin:0">You still need to understand <em>what</em> you are building — how many tables, what the relationships are, why an index matters. Claude handles the exact syntax. The understanding of the data model is yours. The typing is Claude's. This is the same division of labour we established on Day 1 with Flutter.</p>
+  </div>
+
+  <div class="card warn">
+    <h4>One important rule — always read before you run</h4>
+    <p style="margin:0">In Flutter, running a bad prompt rebuilds a screen incorrectly — easy to undo. In SQL, a <code>DROP TABLE</code> or a <code>DELETE</code> without a <code>WHERE</code> clause destroys data permanently. Before you paste any SQL Claude generates into pgAdmin or psql, read it. Make sure it says what you expect. This takes 30 seconds and saves hours of recovery.</p>
+  </div>
+
+  <h2 id="claude-where">Where to give Claude SQL prompts</h2>
+  <div class="grid2">
+    <div class="card success">
+      <h4>Option A — Claude.ai (chat) for SQL generation</h4>
+      <p style="font-size:14px; color:var(--text-dim); margin-bottom:0">Go to <a href="https://claude.ai" target="_blank">claude.ai</a>, start a conversation, describe your table. Claude generates the SQL. You copy-paste it into pgAdmin's Query Tool or psql. Best for: schema creation, one-off queries, learning.</p>
+    </div>
+    <div class="card accent">
+      <h4>Option B — Claude Code (terminal) for full integration</h4>
+      <p style="font-size:14px; color:var(--text-dim); margin-bottom:0">Open the Claude Code terminal in VS Code. Give Claude a prompt about both the SQL schema AND the Dart code that maps to it. Claude writes the <code>.sql</code> file AND the <code>database_service.dart</code> together. Best for: complete feature builds.</p>
+    </div>
+  </div>
+
+  <div class="analogy-box">
+    <p><em class="analogy-tag">The split</em></p>
+    <p><strong>Claude.ai chat:</strong> "Write me the SQL to create the outlets table" — you paste the result into pgAdmin.<br/><strong>Claude Code terminal:</strong> "Create the database schema file AND update the Flutter service to match it" — Claude writes both files to your project folder.</p>
+  </div>
+
+  <h2 id="claude-schema-prompt">Prompt 1 — Generate the full Khan Chacha schema</h2>
+  <p>Paste this into Claude.ai chat. Claude generates all three CREATE TABLE statements, the ENUM types, foreign keys, and indexes. Then paste Claude's output into pgAdmin's Query Tool and run it.</p>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Claude.ai Chat Prompt — Schema Generation<button class="copy-btn" onclick="copyPrompt(this,'sql-p1')">Copy</button></div>
+    <div class="prompt-text" id="sql-p1">I am building a PostgreSQL database for a restaurant chain called Khan Chacha. The app is a Maintenance Request Management System used by outlet managers and maintenance staff.
+
+I need three tables: outlets, users, and maintenance_requests.
+
+OUTLETS table:
+- id: short text code like 'OUT-01' (primary key)
+- name: outlet full name
+- address: full address text
+- city: defaults to 'New Delhi'
+- pincode: text
+- is_active: boolean, default true
+- created_at: timestamp with timezone, default now
+
+USERS table:
+- id: short text code like 'U001' (primary key)
+- name: full name
+- username: unique text, for login
+- password: text (we know this should be hashed in production)
+- role: either 'manager' or 'staff' — use a PostgreSQL ENUM type
+- outlet_id: foreign key referencing outlets.id
+- is_active: boolean, default true
+- created_at: timestamp with timezone
+
+MAINTENANCE_REQUESTS table:
+- id: text primary key like 'REQ-001'
+- product_name: required text
+- product_id: required text, e.g. 'HVAC-203'
+- category: ENUM with values 'Electrical', 'AC', 'Kitchen' — create the ENUM type
+- status: ENUM with values 'Open', 'Pending', 'Closed' — create the ENUM type, default 'Open'
+- request_date: date, default today
+- description: required text
+- image_path: nullable text (local file path)
+- outlet_id: foreign key referencing outlets.id
+- raised_by: foreign key referencing users.id
+- status_history: JSONB array storing change log entries, default empty array
+- created_at: timestamp with timezone, default now
+- updated_at: timestamp with timezone, default now
+
+Please also add three indexes on maintenance_requests for the most common queries:
+1. Filter by status
+2. Filter by outlet_id
+3. Sort by request_date descending
+
+Generate the full SQL with CREATE TYPE statements first, then tables in the right order (outlets before users before requests, because of the foreign keys). Add a short comment above each CREATE TABLE explaining what it does.</div>
+  </div>
+  <div class="expect-box">
+    <div class="expect-label">What Claude produces</div>
+    <p>A complete, copy-paste-ready SQL script — ENUM types, all three CREATE TABLE statements in dependency order, foreign key constraints, and indexes. Paste the entire output into pgAdmin's Query Tool and press F5 (Execute). Done.</p>
+  </div>
+  <div class="verify-box">
+    <div class="verify-label">Verify in DBeaver or pgAdmin</div>
+    <p>In DBeaver: refresh the database → expand Tables → you should see outlets, users, maintenance_requests. Right-click any table → View Diagram — DBeaver draws the ER diagram automatically showing the foreign key relationships.</p>
+  </div>
+
+  <h2 id="claude-data-prompt">Prompt 2 — Generate realistic sample data</h2>
+  <p>Run this after the schema exists. Claude generates INSERT statements with realistic Delhi-specific data matching Khan Chacha's actual outlets.</p>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Claude.ai Chat Prompt — Sample Data<button class="copy-btn" onclick="copyPrompt(this,'sql-p2')">Copy</button></div>
+    <div class="prompt-text" id="sql-p2">I have a PostgreSQL database for Khan Chacha restaurant chain with these tables: outlets, users, maintenance_requests.
+
+Generate INSERT statements for the following:
+
+3 OUTLETS:
+- OUT-01: Khan Chacha Connaught Place, 12-A Connaught Place New Delhi, pincode 110001
+- OUT-02: Khan Chacha Lajpat Nagar, 5 Central Market Lajpat Nagar II, pincode 110024
+- OUT-03: Khan Chacha Cyber City, Unit 4 DLF Cyber Hub Gurugram, city Gurugram, pincode 122002
+
+2 USERS:
+- U001: Arjun Sharma, username 'manager', password 'manager123', role 'manager', outlet OUT-01
+- U002: Priya Nair, username 'staff', password 'staff123', role 'staff', outlet OUT-02
+
+8 MAINTENANCE REQUESTS across different outlets, categories, and statuses:
+- Cover all 3 categories: Electrical, AC, Kitchen (at least 2 each)
+- Cover all 3 statuses: at least 3 Open, 2 Pending, 2 Closed
+- Mix between OUT-01 and OUT-02 outlets
+- Use realistic product names and IDs (e.g. HVAC-203, GEN-101, MWO-55)
+- Write realistic descriptions of maintenance issues a restaurant would face
+- Dates should be spread across June–July 2026
+
+Only generate INSERT statements — no CREATE TABLE. Make sure the INSERT order is correct (outlets first, then users, then requests because of foreign keys).</div>
+  </div>
+  <div class="expect-box">
+    <div class="expect-label">What Claude produces</div>
+    <p>Properly ordered INSERT statements — outlets first (no dependencies), then users (reference outlets), then maintenance_requests (reference both). Paste directly into pgAdmin. If you get a foreign key violation error, it means the order is wrong — ask Claude to fix the insert order.</p>
+  </div>
+
+  <h2 id="claude-query-prompt">Prompt 3 — Generate queries on demand</h2>
+  <p>Any time you need a specific query — for the dashboard, for a filter, for a report — describe it to Claude in plain English. Here are the most useful patterns:</p>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Claude.ai Chat — Dashboard Query Prompts<button class="copy-btn" onclick="copyPrompt(this,'sql-p3')">Copy</button></div>
+    <div class="prompt-text" id="sql-p3">I have a PostgreSQL table called maintenance_requests with columns: id, product_name, category, status, request_date, outlet_id, raised_by.
+
+Write me the following SQL queries — one at a time, each with a comment explaining what it does:
+
+1. Count of requests grouped by status (for the dashboard pie chart)
+2. Count of requests grouped by category
+3. All Open requests from outlet 'OUT-01' ordered by date descending
+4. The 5 most recent requests across all outlets, with the outlet name joined from the outlets table
+5. Count of requests per outlet, showing outlet name and count, sorted by count descending (for the leaderboard chart)
+6. All requests raised in the last 30 days
+
+For each query, also show me what the result columns will look like.</div>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Claude.ai Chat — Explain a Query I Don't Understand<button class="copy-btn" onclick="copyPrompt(this,'sql-p3b')">Copy</button></div>
+    <div class="prompt-text" id="sql-p3b">Explain this PostgreSQL query to me in plain English, step by step. I am a beginner — avoid jargon. Tell me what each line does, what the result will look like, and why we need the JOIN:
+
+SELECT r.id, r.product_name, r.status, o.name AS outlet_name, u.name AS manager_name
+FROM maintenance_requests r
+JOIN outlets o ON r.outlet_id = o.id
+JOIN users   u ON r.raised_by = u.id
+WHERE r.status = 'Open'
+ORDER BY r.request_date DESC;</div>
+  </div>
+
+  <h2 id="claude-debug-prompt">Prompt 4 — Debug connection and SQL errors</h2>
+  <p>When something goes wrong — a Flutter connection error, a SQL syntax error, a foreign key violation — paste the error into Claude. Always include the error message, the SQL or code you ran, and what you were trying to do.</p>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Claude.ai Chat — Debug a PostgreSQL Error<button class="copy-btn" onclick="copyPrompt(this,'sql-p4')">Copy</button></div>
+    <div class="prompt-text" id="sql-p4">I am trying to connect my Flutter app to a local PostgreSQL database using the postgres Dart package (version 3.3.3). I got this error:
+
+[PASTE YOUR ERROR MESSAGE HERE]
+
+Here is the connection code I used:
+
+[PASTE YOUR DART CONNECTION CODE HERE]
+
+My PostgreSQL is running locally on port 5432. The database is called khan_chacha and the user is kc_app.
+
+What is causing this error and how do I fix it? Also tell me how to verify the fix worked before running the Flutter app again.</div>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Claude.ai Chat — Debug a SQL Error<button class="copy-btn" onclick="copyPrompt(this,'sql-p4b')">Copy</button></div>
+    <div class="prompt-text" id="sql-p4b">I ran this SQL in pgAdmin and got an error. Tell me what is wrong and give me the corrected SQL:
+
+SQL I ran:
+[PASTE YOUR SQL HERE]
+
+Error message:
+[PASTE THE FULL ERROR MESSAGE HERE]
+
+My table structure: maintenance_requests with columns id (TEXT), product_name (TEXT), category (ENUM: Electrical/AC/Kitchen), status (ENUM: Open/Pending/Closed), outlet_id (TEXT), raised_by (TEXT).</div>
+  </div>
+
+  <div class="card success">
+    <h4>The most common errors — and what to tell Claude</h4>
+    <table style="margin:8px 0 0;">
+      <tr><th>Error you see</th><th>What to paste to Claude</th></tr>
+      <tr><td><code>connection refused</code> in Flutter</td><td>Your full DatabaseService connection code + the error</td></tr>
+      <tr><td><code>invalid input value for enum</code></td><td>The INSERT that failed + the ENUM definition</td></tr>
+      <tr><td><code>foreign key constraint violation</code></td><td>The INSERT that failed + which table the FK references</td></tr>
+      <tr><td><code>column does not exist</code></td><td>Your query + the output of <code>\d maintenance_requests</code> from psql</td></tr>
+      <tr><td><code>permission denied for table</code></td><td>The GRANT commands you ran + which user you connected as</td></tr>
+    </table>
+  </div>
+
+  <h2 id="claude-migrate-prompt">Prompt 5 — Alter the schema as the app grows</h2>
+  <p>The Khan Chacha schema will evolve. When you need to add a column, rename a field, or add a new table, never re-create everything from scratch. Use <code>ALTER TABLE</code>. Ask Claude to write it.</p>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Claude.ai Chat — Schema Migration Prompts<button class="copy-btn" onclick="copyPrompt(this,'sql-p5')">Copy</button></div>
+    <div class="prompt-text" id="sql-p5">I have an existing PostgreSQL table called maintenance_requests. I need to make some changes to it without losing the data that's already in it.
+
+Change 1: Add a new nullable column called assigned_to (TEXT) that will store the id of the maintenance staff member assigned to handle the request. It should be a foreign key referencing the users table.
+
+Change 2: Add a new column called priority with values 'Low', 'Medium', 'High' — create a new ENUM type for this. Default value should be 'Medium'.
+
+Change 3: Add a new column called resolved_at (TIMESTAMPTZ, nullable) — to record when a Closed request was actually resolved.
+
+Write only ALTER TABLE statements — do not DROP and re-CREATE the table. For each change, also write a brief comment explaining what the change does and why the nullable/default values were chosen.</div>
+  </div>
+  <div class="card warn">
+    <h4>Never DROP TABLE on a database with real data</h4>
+    <p style="margin:0">Once you have real data, the workflow is always <code>ALTER TABLE</code> — never drop and recreate. If Claude ever generates a DROP TABLE as part of a migration, remove that line and ask Claude to rewrite using only ALTER statements. A good prompt to Claude: "Rewrite this migration using only ALTER TABLE — do not drop any tables or lose any data."</p>
+  </div>
+
+  <h2 id="claude-workflow">The complete Claude + PostgreSQL workflow</h2>
+  <div class="step-flow">
+    <div class="step">
+      <div class="step-rail"><div class="step-dot done">1</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Describe your need in plain English to Claude</div>
+        <div class="step-desc">Don't try to write the SQL first. Open Claude.ai or Claude Code and describe what you're trying to accomplish. "I need a table for maintenance requests with these fields…" is all you need to start.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot done">2</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Read what Claude generates — every line</div>
+        <div class="step-desc">Before copying, read through the SQL. If you see anything you don't recognise — ask Claude: "What does <code>ON DELETE CASCADE</code> mean in this context?" Understanding what you're running is part of the learning. Claude's explanations are as valuable as the code it generates.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot done">3</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Copy → pgAdmin Query Tool → Execute (F5)</div>
+        <div class="step-desc">Paste into pgAdmin's Query Tool (or the DBeaver SQL editor). Execute. Read the output. "Query returned successfully" means it worked. An error message means paste that error back into Claude with the SQL that failed.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot done">4</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Verify visually in DBeaver</div>
+        <div class="step-desc">After running schema SQL: right-click Tables in DBeaver → Refresh → check all three tables appear. After INSERT: right-click the table → View Data → confirm the rows. The visual confirmation is faster than reading output text.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot done">5</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Switch to Claude Code to wire it into Flutter</div>
+        <div class="step-desc">Once the database is set up and you can see data in DBeaver, open the Claude Code terminal in VS Code. Use the Flutter connection prompts from the <strong>Flutter Connection</strong> tab to generate <code>DatabaseService</code> and replace the dummy data layer.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot">6</div></div>
+      <div class="step-body">
+        <div class="step-title">Iterate — app breaks? Debug with Claude.</div>
+        <div class="step-desc">If the Flutter app throws an error after connecting, paste the error into Claude Code or Claude.ai. Describe what you were doing, paste the error, paste the relevant code. Claude will pinpoint the issue and suggest the fix. Every error message is a question — Claude knows the answer.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="confirm-box">
+    <h4>🎯 Putting it all together — in a single Claude Code session</h4>
+    <p style="color:var(--text-dim); font-size:14.5px; margin-bottom:0">If you want to do everything from one place — create the schema, seed the data, AND update the Flutter app — use Claude Code in the terminal with this approach: first run "create a khan_chacha_schema.sql file with all three tables", then "run this SQL file against my local PostgreSQL database using psql", then move straight to the Flutter Connection prompts. Claude Code can chain these steps together. The Schema Design and Querying tabs that follow show you the reference SQL so you understand what Claude generated — not so you have to type it yourself.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ TAB 7 · SCHEMA DESIGN ═══════════════════ -->
 <div class="tabpanel" id="tab-schema">
   <div class="toc-strip">
     <a href="#schema-thinking">Thinking in tables</a>
@@ -781,7 +1066,11 @@ postgres=# </code></pre>
   </div>
 
   <h2 id="schema-thinking">Thinking in tables before writing SQL</h2>
-  <p class="lead">Before you write a single <code>CREATE TABLE</code>, list the entities in your system. An entity is a "thing" that has properties and needs to be stored. For Khan Chacha:</p>
+  <div class="card purple" style="margin-bottom:20px;">
+    <h4>👈 Don't want to write this SQL yourself?</h4>
+    <p style="margin:0">Go to the <strong>🤖 Claude as SQL Pair</strong> tab. Prompt 1 generates this entire schema in one paste. This tab is the reference — it explains <em>why</em> the schema looks the way it does. Understanding the "why" makes you a better prompter when you ask Claude to extend it later.</p>
+  </div>
+  <p class="lead">Before you write a single <code>CREATE TABLE</code>, list the entities in your system.</p>
   <ul>
     <li><strong>Outlets</strong> — each Khan Chacha branch. Has an ID, name, and address. Doesn't change often.</li>
     <li><strong>Users</strong> — managers and staff. Each user belongs to one outlet. Has credentials and a role.</li>
@@ -908,7 +1197,11 @@ postgres=# </code></pre>
   </div>
 
   <h2>Learning to query PostgreSQL</h2>
-  <p class="lead">SQL (Structured Query Language) is the language you use to ask questions to PostgreSQL. Every query you'll write in this course is a real business question — "how many open requests are there?" is a question. SQL is just how you ask it.</p>
+  <div class="card accent" style="margin-bottom:20px;">
+    <h4>💡 Get any query from Claude</h4>
+    <p style="margin:0">Every query on this tab can be generated by Claude — describe the business question in plain English and Claude writes the SQL. The <strong>🤖 Claude as SQL Pair</strong> tab has Prompt 3 specifically for this. Use this tab to understand <em>how</em> queries work, then use Claude to generate any query you need in practice.</p>
+  </div>
+  <p class="lead">SQL (Structured Query Language) is the language you use to ask questions to PostgreSQL.</p>
 
   <h2 id="q-basic">Basic SELECT — reading rows</h2>
   <div class="sql-box">
