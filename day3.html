@@ -200,10 +200,12 @@ footer{border-top:1px solid var(--border-soft); margin-top:40px; padding:36px 24
       <button data-tab="install">Installation</button>
       <button data-tab="tools">Tools</button>
       <button data-tab="claude-sql">🤖 Claude as SQL Pair</button>
+      <button data-tab="claude-live">🔄 Claude Code: DB Build</button>
       <button data-tab="schema">Schema Design</button>
       <button data-tab="querying">Querying</button>
       <button data-tab="connect">Flutter Connection</button>
       <button data-tab="localcloud">Local vs Cloud</button>
+      <button data-tab="golive">☁️ Go Live — What's Next</button>
       <button data-tab="discuss">Questions &amp; Discussion</button>
       <button data-tab="references">References</button>
     </nav>
@@ -1055,7 +1057,565 @@ Write only ALTER TABLE statements — do not DROP and re-CREATE the table. For e
   </div>
 </div>
 
-<!-- ═══════════════════ TAB 7 · SCHEMA DESIGN ═══════════════════ -->
+
+<!-- ═══════════════════ TAB · CLAUDE CODE DB BUILD ═══════════════════ -->
+<div class="tabpanel" id="tab-claude-live">
+  <div class="toc-strip">
+    <a href="#live-startpoint">Where we start</a>
+    <a href="#live-p1">P1 · Claude reads your project</a>
+    <a href="#live-p2">P2 · Generate schema.sql</a>
+    <a href="#live-p3">P3 · Connect to PostgreSQL</a>
+    <a href="#live-p4">P4 · Run the schema</a>
+    <a href="#live-p5">P5 · Seed from dummy data</a>
+    <a href="#live-p6">P6 · Verify the database</a>
+    <a href="#live-p7">P7 · Add fromRow() to model</a>
+    <a href="#live-p8">P8 · Create DatabaseService</a>
+    <a href="#live-p9">P9 · Wire app startup + pubspec</a>
+    <a href="#live-p10">P10 · Wire the list screen</a>
+    <a href="#live-capstone">Capstone · Wire all write operations</a>
+  </div>
+
+  <h2 id="live-startpoint">Where we are — and where we're going</h2>
+  <p class="lead">Your Flutter app is complete from Day 2. Login works, all 5 screens are built, filters and forms work. One problem: every time you restart the app, all data resets to the hardcoded list in <code>dummy_data.dart</code>. Today we fix that permanently — using Claude Code to read your existing project and build the database layer for you.</p>
+
+  <div class="card accent">
+    <h4>What Claude Code will do across these prompts</h4>
+    <ul style="margin:0;padding-left:18px;">
+      <li>Read your existing Dart model files to understand the data shape</li>
+      <li>Generate SQL that exactly matches your model — no manual mapping errors</li>
+      <li>Connect to your local PostgreSQL using psql in the terminal</li>
+      <li>Ask for your password exactly once, then handle all commands automatically</li>
+      <li>Convert your existing dummy data into real INSERT statements</li>
+      <li>Update your Flutter files to talk to the database — without touching the UI</li>
+    </ul>
+  </div>
+
+  <div class="card warn">
+    <h4>Before starting — confirm these are ready</h4>
+    <ul style="margin:0;padding-left:18px;">
+      <li>PostgreSQL is installed and running (check with <code>psql --version</code> in terminal)</li>
+      <li>The <code>khan_chacha</code> database exists and the <code>kc_app</code> user has access (from the Installation tab)</li>
+      <li>Your Flutter project <code>khan_chacha_mrms</code> is open in VS Code</li>
+      <li>Claude Code is started in the VS Code terminal — type <code>claude</code> and press Enter</li>
+    </ul>
+  </div>
+
+  <!-- ── P1 ── -->
+  <h2 id="live-p1">Prompt 1 — Let Claude read your project first</h2>
+  <p>Never start by telling Claude what to build. Start by letting Claude read what already exists. This ensures everything it generates matches your actual code — not what it assumes your code looks like.</p>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code Terminal — P1 of 12<button class="copy-btn" onclick="copyPrompt(this,'lp1')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-context">Context: project from Day 2</span>
+      <span class="meta-pill meta-task">Read only — no code changes</span>
+    </div>
+    <div class="prompt-text" id="lp1">Read every file inside lib/models/ and lib/data/ in this Flutter project.
+
+For each file you find, report:
+1. The file name and path
+2. Every field name and its Dart type (e.g. productName: String, status: String, imagePath: String?)
+3. For lib/data/dummy_data.dart: how many sample records exist in sampleRequests, and list the unique values used for category and status
+
+Do not write any code or make any changes. Just report what you find.</div>
+  </div>
+
+  <div class="expect-box">
+    <div class="expect-label">What Claude reports back</div>
+    <p>Claude lists all fields from <code>MaintenanceRequest</code> and <code>UserAccount</code>, and tells you "6 sample requests using categories: Electrical, AC, Kitchen and statuses: Open, Pending, Closed". You now know Claude has read and understood the project. The class sees this — it's the proof that Claude knows what we built in Days 1 and 2.</p>
+  </div>
+
+  <!-- ── P2 ── -->
+  <h2 id="live-p2">Prompt 2 — Generate schema.sql matching your models</h2>
+  <p>Now that Claude has read your models, ask it to generate the SQL. Because it just read the exact field names from your Dart files, the column names will match perfectly — no typos, no mismatches.</p>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code Terminal — P2 of 12<button class="copy-btn" onclick="copyPrompt(this,'lp2')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-context">After P1 — Claude knows the models</span>
+      <span class="meta-pill meta-task">Creates db/schema.sql</span>
+      <span class="meta-pill meta-output">1 new file</span>
+    </div>
+    <div class="prompt-text" id="lp2">Based on the Dart models you just read, create a new folder called db/ and a file db/schema.sql.
+
+The SQL should create 3 tables in this exact order (order matters because of foreign keys):
+
+TABLE 1 — outlets
+  id TEXT PRIMARY KEY (e.g. 'OUT-01')
+  name TEXT NOT NULL
+  address TEXT NOT NULL
+  city TEXT NOT NULL DEFAULT 'New Delhi'
+  pincode TEXT
+  is_active BOOLEAN NOT NULL DEFAULT TRUE
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+
+TABLE 2 — users
+  id TEXT PRIMARY KEY (e.g. 'U001')
+  name TEXT NOT NULL
+  username TEXT NOT NULL UNIQUE
+  password TEXT NOT NULL
+  role — create an ENUM type called user_role with values 'manager' and 'staff'
+  outlet_id TEXT NOT NULL REFERENCES outlets(id)
+  is_active BOOLEAN NOT NULL DEFAULT TRUE
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+
+TABLE 3 — maintenance_requests
+  Map every field from the MaintenanceRequest Dart model you read:
+  - String fields → TEXT NOT NULL
+  - String? (nullable) fields → TEXT (no NOT NULL)
+  - List<String> fields → JSONB NOT NULL DEFAULT '[]'
+  - category → ENUM type called request_category with values 'Electrical', 'AC', 'Kitchen'
+  - status → ENUM type called request_status with values 'Open', 'Pending', 'Closed', DEFAULT 'Open'
+  - outlet_id → TEXT NOT NULL REFERENCES outlets(id)
+  - raised_by → TEXT NOT NULL REFERENCES users(id)  (maps to managerName in Dart — store the user id here)
+  - created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  - updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+
+Also add 3 indexes on maintenance_requests:
+  idx_status on (status)
+  idx_outlet on (outlet_id)
+  idx_date on (request_date DESC)
+
+Add a comment above each CREATE TABLE explaining what it stores.
+Save to db/schema.sql. Do not run it yet — just create the file.</div>
+  </div>
+
+  <div class="expect-box">
+    <div class="expect-label">What Claude creates</div>
+    <p>A file <code>db/schema.sql</code> appears in your project. Open it in VS Code and read through — you'll recognise every field name because Claude took them directly from your Dart model. The column names are in snake_case (PostgreSQL convention) while your Dart fields are in camelCase. Claude handles this mapping automatically.</p>
+  </div>
+
+  <!-- ── P3 ── -->
+  <h2 id="live-p3">Prompt 3 — Connect Claude to PostgreSQL (the password step)</h2>
+  <p>This is the moment students always ask about: <em>how does Claude actually talk to PostgreSQL?</em> Claude Code runs <code>psql</code> as a terminal command. The first time, psql asks for a password — you type it once. After that, Claude sets an environment variable so it never asks again during this session.</p>
+
+  <div class="card accent">
+    <h4>How the password works — explain this to the class</h4>
+    <ul style="margin:0;padding-left:18px;">
+      <li>Claude Code runs bash commands inside your terminal — including <code>psql</code></li>
+      <li>When psql needs a password, the terminal pauses and shows a <code>Password:</code> prompt</li>
+      <li>You type the password — Claude Code waits</li>
+      <li>After success, the next line in the prompt tells Claude to set <code>PGPASSWORD</code></li>
+      <li><code>PGPASSWORD</code> is a system variable that psql reads automatically — no more prompts</li>
+      <li>This variable lives only for this terminal session — it resets when you close VS Code</li>
+    </ul>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code Terminal — P3 of 12<button class="copy-btn" onclick="copyPrompt(this,'lp3')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-context">PostgreSQL must be running</span>
+      <span class="meta-pill meta-task">Test connection + set password</span>
+      <span class="meta-pill meta-constraint">You type password once when prompted</span>
+    </div>
+    <div class="prompt-text" id="lp3">Run this command to test the PostgreSQL connection:
+
+psql -h localhost -U kc_app -d khan_chacha -c "SELECT 'Connection OK' AS status;"
+
+If the terminal asks for a password, pause and wait for me to type it.
+After the command succeeds, run this to store the password for this session:
+
+export PGPASSWORD='kc_secure_2026'
+
+Then run the test command again to confirm it works without a password prompt this time.
+Show me the output of both runs.</div>
+  </div>
+
+  <div class="verify-box">
+    <div class="verify-label">What you should see</div>
+    <p>First run: psql asks for password, you type <code>kc_secure_2026</code>, terminal shows <code>status: Connection OK</code>.<br/>Second run (after export): psql connects immediately with no password prompt, same result. Every psql command for the rest of this session is now passwordless.</p>
+  </div>
+
+  <div class="card warn">
+    <h4>If you see "connection refused" instead</h4>
+    <p style="margin:0">PostgreSQL is not running. Windows: open Services app → find postgresql-16 → Start. Mac (Postgres.app): click the elephant in the menu bar → Start. Linux: <code>sudo systemctl start postgresql</code>. Then retry P3.</p>
+  </div>
+
+  <div class="card" style="border-left:3px solid var(--purple);">
+    <h4>Alternatively — tell Claude your password directly</h4>
+    <p style="margin:0">If you prefer not to interact with the password prompt, use this instead: just tell Claude in plain English: <em>"My kc_app PostgreSQL password is kc_secure_2026. Set PGPASSWORD to this and then run the connection test."</em> Claude sets the variable before running psql, so no prompt ever appears.</p>
+  </div>
+
+  <!-- ── P4 ── -->
+  <h2 id="live-p4">Prompt 4 — Run the schema against the database</h2>
+  <p>The schema file exists. PostgreSQL is connected. Now Claude runs the SQL file using psql and creates all three tables.</p>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code Terminal — P4 of 12<button class="copy-btn" onclick="copyPrompt(this,'lp4')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-context">PGPASSWORD set, db/schema.sql exists</span>
+      <span class="meta-pill meta-task">Creates tables in PostgreSQL</span>
+    </div>
+    <div class="prompt-text" id="lp4">Run db/schema.sql against the khan_chacha PostgreSQL database using this command:
+
+psql -h localhost -U kc_app -d khan_chacha -f db/schema.sql
+
+After it runs, verify by listing the tables that now exist:
+
+psql -h localhost -U kc_app -d khan_chacha -c "\dt"
+
+Show me the full output of both commands.</div>
+  </div>
+
+  <div class="expect-box">
+    <div class="expect-label">What Claude shows you</div>
+    <p>The first command shows output like <code>CREATE TYPE</code>, <code>CREATE TABLE</code>, <code>CREATE INDEX</code> for each statement in the file. The second command lists the three tables: outlets, users, maintenance_requests. If any line shows <code>ERROR</code>, paste the output back to Claude and say "fix this error in db/schema.sql and run it again".</p>
+  </div>
+
+  <div class="card danger">
+    <h4>If you see "already exists" errors</h4>
+    <p style="margin:0">The ENUM types or tables already exist from a previous attempt. Ask Claude: <em>"The schema has already been partially created. Add DROP TYPE IF EXISTS and DROP TABLE IF EXISTS CASCADE statements at the top of schema.sql before each CREATE, then run it again."</em> Claude will add the cleanup lines and re-run cleanly.</p>
+  </div>
+
+  <!-- ── P5 ── -->
+  <h2 id="live-p5">Prompt 5 — Convert dummy data to real SQL and seed the database</h2>
+  <p>Your <code>dummy_data.dart</code> file already has 6–8 sample requests. Claude reads it and converts the Dart objects into SQL INSERT statements — then runs them. You never type a single row of SQL by hand.</p>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code Terminal — P5 of 12<button class="copy-btn" onclick="copyPrompt(this,'lp5')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-context">Tables exist, PGPASSWORD set</span>
+      <span class="meta-pill meta-task">Creates db/seed.sql and runs it</span>
+      <span class="meta-pill meta-output">Real rows in the database</span>
+    </div>
+    <div class="prompt-text" id="lp5">Read lib/data/dummy_data.dart carefully.
+
+Create a file db/seed.sql with INSERT statements that load this data into the database.
+The INSERT order must be: outlets first, then users, then maintenance_requests.
+(Foreign key constraints require this order.)
+
+Rules for the conversion:
+- dummyUsers: each UserAccount becomes one row in both outlets and users tables.
+  Extract the outlet details (outletId, outletName) to create the outlets rows first.
+  Then create the users rows referencing those outlet ids.
+- sampleRequests: each MaintenanceRequest becomes one row in maintenance_requests.
+  The raised_by column should use the user id (U001 or U002) that matches
+  the managerName field in the Dart object.
+  The status_history column should be '[]' for all seed rows (empty JSONB array).
+  Leave image_path as NULL for all rows.
+
+After creating db/seed.sql, run it:
+
+psql -h localhost -U kc_app -d khan_chacha -f db/seed.sql
+
+Show me the output and confirm how many rows were inserted into each table.</div>
+  </div>
+
+  <div class="expect-box">
+    <div class="expect-label">What Claude creates and runs</div>
+    <p>Claude reads your Dart file, maps each field to the right SQL column, generates correctly ordered INSERTs, saves <code>db/seed.sql</code>, and runs it. Output should show INSERT 0 2 for outlets, INSERT 0 2 for users, INSERT 0 6 (or however many you have) for maintenance_requests. Open <code>db/seed.sql</code> and you'll see your dummy data translated perfectly into SQL.</p>
+  </div>
+
+  <!-- ── P6 ── -->
+  <h2 id="live-p6">Prompt 6 — Verify the database is populated correctly</h2>
+  <p>Before writing a single line of Flutter database code, confirm the data is actually there. This is the moment students open pgAdmin or DBeaver and see real rows — a moment worth pausing for in the session.</p>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code Terminal — P6 of 12<button class="copy-btn" onclick="copyPrompt(this,'lp6')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-task">Read-only verification queries</span>
+    </div>
+    <div class="prompt-text" id="lp6">Run these verification queries against the khan_chacha database and show me the results:
+
+1. Count rows in each table:
+SELECT 'outlets' AS table_name, COUNT(*) FROM outlets
+UNION ALL
+SELECT 'users', COUNT(*) FROM users
+UNION ALL
+SELECT 'maintenance_requests', COUNT(*) FROM maintenance_requests;
+
+2. Show the status breakdown (this is what our dashboard will show):
+SELECT status, COUNT(*) AS total FROM maintenance_requests GROUP BY status;
+
+3. Show the first 3 requests with their outlet names joined:
+SELECT r.id, r.product_name, r.category, r.status, o.name AS outlet_name
+FROM maintenance_requests r
+JOIN outlets o ON r.outlet_id = o.id
+ORDER BY r.request_date DESC
+LIMIT 3;
+
+Run each as a separate psql -c command and show all three results.</div>
+  </div>
+
+  <div class="verify-box">
+    <div class="verify-label">Teaching moment — pause here</div>
+    <p>The third query — the one with a JOIN — is exactly what the request list screen will run when it loads. Ask the class: "Do you recognise this data? It's the same as what dummy_data.dart had, but now it's in a real database. Restart the app and the data will still be there. That's what we're building towards."</p>
+  </div>
+
+  <!-- ── P7 ── -->
+  <h2 id="live-p7">Prompt 7 — Add fromRow() to the MaintenanceRequest model</h2>
+  <p>When PostgreSQL returns a row, it gives Dart a <code>Map&lt;String, dynamic&gt;</code> with snake_case keys. The model needs a way to turn that into a <code>MaintenanceRequest</code> object. Claude adds this — reading the existing model so the field mapping is exact.</p>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code Terminal — P7 of 12<button class="copy-btn" onclick="copyPrompt(this,'lp7')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-context">Model file exists from Day 1/2</span>
+      <span class="meta-pill meta-task">Adds fromRow() and toInsertMap()</span>
+      <span class="meta-pill meta-constraint">Do not change existing fields or copyWith()</span>
+    </div>
+    <div class="prompt-text" id="lp7">Read lib/models/maintenance_request.dart.
+
+Add two new methods to the MaintenanceRequest class:
+
+1. factory MaintenanceRequest.fromRow(Map<String, dynamic> row)
+   This maps a PostgreSQL result row (snake_case keys) to the Dart object.
+   Mapping rules:
+   - product_name → productName
+   - product_id → productId
+   - outlet_id → outletId
+   - raised_by → use this as managerName (it's the user id stored in DB)
+   - request_date → convert DateTime to String using .toString().split(' ')[0]
+     to get just the date part (YYYY-MM-DD)
+   - status_history → cast from dynamic to List<String> using
+     (row['status_history'] as List).map((e) => e.toString()).toList()
+   - image_path → imagePath, can be null
+   - All other fields map directly by replacing underscores with camelCase
+
+2. Map<String, dynamic> toInsertMap()
+   Returns a Map with all insertable fields in snake_case for use in INSERT queries.
+   Include: id, product_name, product_id, category, status, request_date,
+   description, image_path, outlet_id, raised_by (use managerName for this),
+   status_history (encode List<String> to a JSON string using dart:convert jsonEncode)
+   Exclude: created_at, updated_at (the database sets these automatically)
+
+Do not remove or change any existing code — only add these two methods.
+Only modify lib/models/maintenance_request.dart.</div>
+  </div>
+
+  <div class="expect-box">
+    <div class="expect-label">What gets added</div>
+    <p>Two new methods appear at the bottom of the <code>MaintenanceRequest</code> class. The existing constructor, copyWith(), and all other code is untouched. Flutter won't show any errors because we only added — never changed.</p>
+  </div>
+
+  <!-- ── P8 ── -->
+  <h2 id="live-p8">Prompt 8 — Create DatabaseService</h2>
+  <p>The service that the Flutter screens will call. It holds the database connection and exposes clean Dart methods — screens never write SQL directly.</p>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code Terminal — P8 of 12<button class="copy-btn" onclick="copyPrompt(this,'lp8')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-context">Model has fromRow() and toInsertMap()</span>
+      <span class="meta-pill meta-task">Creates lib/services/database_service.dart</span>
+      <span class="meta-pill meta-output">1 new file</span>
+    </div>
+    <div class="prompt-text" id="lp8">Create lib/services/database_service.dart.
+
+This is a singleton class (factory constructor pattern, same pattern as AuthService).
+
+CONNECTION CONSTANTS at the top:
+  host: 'localhost', port: 5432, database: 'khan_chacha',
+  username: 'kc_app', password: 'kc_secure_2026'
+  sslMode: SslMode.disable (local connection, no SSL needed)
+
+METHODS:
+
+Future<void> connect()
+  Opens a PostgreSQL connection using the postgres package.
+  Stores the Connection object as a private field _conn.
+  Throws a descriptive error if connection fails.
+
+Future<List<MaintenanceRequest>> fetchAll()
+  SQL: SELECT r.*, o.name AS outlet_name, o.address AS outlet_address,
+       u.name AS manager_name
+  FROM maintenance_requests r
+  JOIN outlets o ON r.outlet_id = o.id
+  JOIN users   u ON r.raised_by = u.id
+  ORDER BY r.request_date DESC
+  Maps each row using MaintenanceRequest.fromRow(row.toColumnMap())
+
+Future<List<MaintenanceRequest>> fetchByOutlet(String outletId)
+  Same as fetchAll() but adds WHERE r.outlet_id = @outletId
+  Use named parameters (not string interpolation) for safety.
+
+Future<void> createRequest(MaintenanceRequest r)
+  Uses r.toInsertMap() to get the values.
+  INSERT INTO maintenance_requests with those values.
+  Use positional parameters.
+
+Future<void> updateStatus(String id, String newStatus, String historyEntry)
+  UPDATE maintenance_requests
+  SET status = @status,
+      status_history = status_history || @entry::jsonb,
+      updated_at = NOW()
+  WHERE id = @id
+
+Future<void> updateRequest(MaintenanceRequest r)
+  UPDATE maintenance_requests with all editable fields using r.toInsertMap()
+  WHERE id = r.id
+
+Future<void> deleteRequest(String id)
+  DELETE FROM maintenance_requests WHERE id = @id
+
+Future<Map<String, int>> getStatusCounts()
+  SELECT status, COUNT(*) AS total FROM maintenance_requests GROUP BY status
+  Return as Map: {'Open': 3, 'Pending': 2, 'Closed': 1}
+
+Wrap every method in try/catch. On error, rethrow with a message that includes
+the method name and the original error, so debugging is easy.
+
+Use package:postgres/postgres.dart throughout.
+Create lib/services/database_service.dart only.</div>
+  </div>
+
+  <!-- ── P9 ── -->
+  <h2 id="live-p9">Prompt 9 — Wire pubspec.yaml and app startup</h2>
+  <p>Two quick wiring steps: add the postgres package to dependencies, then tell the app to connect to the database before showing any screen.</p>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code Terminal — P9 of 12<button class="copy-btn" onclick="copyPrompt(this,'lp9')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-context">DatabaseService created</span>
+      <span class="meta-pill meta-task">pubspec.yaml + main.dart</span>
+      <span class="meta-pill meta-output">2 files modified</span>
+    </div>
+    <div class="prompt-text" id="lp9">Make these two changes:
+
+1. In pubspec.yaml, add this line under dependencies (same indent level as flutter):
+   postgres: ^3.3.3
+   Then run: flutter pub get
+
+2. In main.dart, update the main() function:
+   - Add WidgetsFlutterBinding.ensureInitialized() as the very first line
+   - Wrap everything in a try/catch
+   - Before runApp(), call: await DatabaseService().connect()
+   - Show a full-screen loading widget (dark background, CircularProgressIndicator,
+     text "Connecting to database...") while connecting
+   - If connect() throws an error, show an error screen with the error message
+     in red text and a "Retry" button that calls connect() again
+
+Do not change the LoginScreen, AuthService, or NavigationService.
+Files to modify: pubspec.yaml, main.dart</div>
+  </div>
+
+  <div class="verify-box">
+    <div class="verify-label">Run the app now</div>
+    <p>Run <code>flutter run</code> in a second terminal. You should see the "Connecting to database..." screen for a fraction of a second, then the login screen appears. If you see a connection error, go back to P3 and confirm PGPASSWORD is set and PostgreSQL is running.</p>
+  </div>
+
+  <!-- ── P10 ── -->
+  <h2 id="live-p10">Prompt 10 — Wire the request list to the real database</h2>
+  <p>Replace the dummy data source in the request list screen. The filtering, search, sort, and UI stay completely unchanged — only where the data comes from changes.</p>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code Terminal — P10 of 12<button class="copy-btn" onclick="copyPrompt(this,'lp10')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-context">App starts and connects to DB</span>
+      <span class="meta-pill meta-task">Replace dummy data in list screen</span>
+      <span class="meta-pill meta-constraint">Do not touch filter logic, search, sort, card UI</span>
+      <span class="meta-pill meta-output">1 file modified</span>
+    </div>
+    <div class="prompt-text" id="lp10">Read lib/screens/request_list_screen.dart (or home_screen.dart — check which one exists).
+
+Replace the data source from dummy_data.dart to DatabaseService. Specifically:
+
+1. Remove the import of dummy_data.dart and any direct reference to sampleRequests
+2. Add a List<MaintenanceRequest> _requests = []; field to the state class
+3. Add a bool _isLoading = true; field
+4. In initState(), call _loadRequests() which:
+   - If currentUser.role == 'manager': calls DatabaseService().fetchAll()
+   - If currentUser.role == 'staff': calls DatabaseService().fetchByOutlet(currentUser.outletId)
+   - Sets _requests to the result and _isLoading = false
+   - Wraps in try/catch — shows a SnackBar with the error if DB call fails
+5. In the RefreshIndicator onRefresh callback, call _loadRequests() again
+6. Show a CircularProgressIndicator centered on screen while _isLoading is true
+7. All existing filtering (status tab, category chip, search text, sort)
+   must still work — apply them to _requests after loading, exactly as before
+
+Do not change: card UI, filter tab layout, search bar, FAB, navigation.
+Only modify the data source and loading state handling.</div>
+  </div>
+
+  <div class="verify-box">
+    <div class="verify-label">The real test — restart the app</div>
+    <p>Run <code>flutter run</code>. Log in as manager. The list loads from PostgreSQL — you'll see a very brief loading spinner, then the 6+ real requests appear. Now open pgAdmin and run <code>INSERT INTO maintenance_requests ...</code> to add a row manually. Pull to refresh in the app. The new row appears. <strong>That's the moment — real-time data from a real database in a real Flutter app.</strong></p>
+  </div>
+
+  <!-- ── CAPSTONE ── -->
+  <h2 id="live-capstone">Capstone — Wire all write operations to the database</h2>
+  <p>The final prompt wires the remaining three operations: creating requests via the form, updating status from the detail screen, deleting requests, and wiring the dashboard stat cards to real database counts. One prompt, everything completes.</p>
+
+  <div class="card purple" style="margin-bottom:18px;">
+    <h4>What this prompt connects</h4>
+    <ul style="margin:0;padding-left:18px;">
+      <li><strong>RequestFormScreen</strong> — on submit, calls <code>DatabaseService().createRequest()</code> or <code>updateRequest()</code></li>
+      <li><strong>DetailScreen</strong> — Update Status calls <code>DatabaseService().updateStatus()</code>, Delete calls <code>deleteRequest()</code></li>
+      <li><strong>DashboardScreen</strong> — stat cards call <code>DatabaseService().getStatusCounts()</code> instead of counting from an in-memory list</li>
+    </ul>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code Terminal — Capstone (P11–12 combined)<button class="copy-btn" onclick="copyPrompt(this,'lp-cap')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-context">List screen wired to DB, read works</span>
+      <span class="meta-pill meta-task">Wire all write operations and dashboard</span>
+      <span class="meta-pill meta-constraint">Keep all confirmation dialogs, animations, UI unchanged</span>
+      <span class="meta-pill meta-output">3 files modified</span>
+    </div>
+    <div class="prompt-text" id="lp-cap">The request list now loads from PostgreSQL. Wire the remaining operations.
+
+Read lib/screens/request_form_screen.dart, lib/screens/detail_screen.dart,
+and lib/screens/dashboard_screen.dart before making any changes.
+
+CHANGE 1 — lib/screens/request_form_screen.dart:
+On submit button tap (after form.currentState!.validate() passes):
+  Create mode: call await DatabaseService().createRequest(newRequest)
+    Generate the id as 'REQ-' + DateTime.now().millisecondsSinceEpoch.toString().substring(8)
+    to ensure uniqueness. Set requestDate to DateTime.now().toString().split(' ')[0]
+  Edit mode: call await DatabaseService().updateRequest(updatedRequest)
+Both: wrap in try/catch. On error: show SnackBar with error message, do not pop.
+On success: show SnackBar "Saved", then Navigator.pop(context, newOrUpdatedRequest)
+
+CHANGE 2 — lib/screens/detail_screen.dart:
+Update Status action (the ModalBottomSheet selection):
+  Build the history entry string:
+  '{"from":"$oldStatus","to":"$newStatus","at":"${DateTime.now().toIso8601String()}"}'
+  Call: await DatabaseService().updateStatus(request.id, newStatus, historyEntry)
+  Then update local state with copyWith(status: newStatus) and add history entry
+
+Delete action (after confirmation dialog confirmed):
+  Call: await DatabaseService().deleteRequest(request.id)
+  On success: Navigator.pop(context) — do not pass anything back (item is gone)
+  On error: show SnackBar, keep the user on the screen
+
+Keep the existing confirmation dialogs (AlertDialog) for both actions.
+Keep all animation code unchanged.
+
+CHANGE 3 — lib/screens/dashboard_screen.dart:
+In initState(), call DatabaseService().getStatusCounts() and store the result Map.
+Replace the hardcoded count calculations (which filtered sampleRequests)
+with map['Open'] ?? 0, map['Pending'] ?? 0, map['Closed'] ?? 0
+Show a CircularProgressIndicator on the stat cards while loading.
+Keep the staggered animation on the cards — run it after the data loads.
+
+Do not change: login flow, navigation animations, card UI, form field layout,
+any confirmation dialog text, the AuthService, or NavigationService.
+
+Modify only: request_form_screen.dart, detail_screen.dart, dashboard_screen.dart</div>
+  </div>
+
+  <div class="expect-box">
+    <div class="expect-label">Full integration — what to test after this prompt</div>
+    <p style="margin-bottom:10px;">Run these four checks in order. Each one proves a different operation is wired correctly.</p>
+    <ol style="color:#bcd9c0; padding-left:20px; margin:0;">
+      <li style="margin-bottom:6px;"><strong>Create:</strong> Tap the + FAB, fill the form, submit. Check pgAdmin — the new row should be there.</li>
+      <li style="margin-bottom:6px;"><strong>Read:</strong> Pull to refresh on the list. The new request appears. Restart the app — it's still there.</li>
+      <li style="margin-bottom:6px;"><strong>Update:</strong> Open any request, tap "Update Status", pick a different status. Check pgAdmin — the status column changed.</li>
+      <li style="margin-bottom:0;"><strong>Delete:</strong> Open any request as manager, tap Delete, confirm. Check pgAdmin — the row is gone. Pull to refresh — it's gone from the app too.</li>
+    </ol>
+  </div>
+
+  <div class="verify-box">
+    <div class="verify-label">The final check — dashboard counts are real</div>
+    <p>Log in as manager. Dashboard shows "Open: 4, Pending: 2, Closed: 2" (or whatever your seed data has). Now go to the list, update one Open request to Closed. Go back to the Dashboard — pull to refresh or navigate away and back. The counts update. The dashboard is now powered by a live SQL GROUP BY query. The prototype is now a real product.</p>
+  </div>
+
+  <div class="confirm-box">
+    <h4>🎓 What the students now have — and why it matters</h4>
+    <p style="color:var(--text-dim); font-size:14.5px; margin:0;">The entire database layer was built using Claude Code as the driver — not copy-paste from a tutorial. Claude read the existing Flutter code, generated SQL that matches it exactly, connected to PostgreSQL for them, converted their dummy data into seed data, and updated each screen one at a time without breaking the UI. The students' job was to understand what each prompt was asking for and to verify the output at each step. That skill — directing an AI with precise intent, reading what it produces, and knowing how to verify — transfers to every technology they will ever work with.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ TAB · SCHEMA DESIGN ═══════════════════ -->
 <div class="tabpanel" id="tab-schema">
   <div class="toc-strip">
     <a href="#schema-thinking">Thinking in tables</a>
@@ -1655,7 +2215,313 @@ Files to modify: request_form_screen.dart, detail_screen.dart, dashboard_screen.
   </div>
 </div>
 
-<!-- ═══════════════════ TAB 10 · DISCUSSION ═══════════════════ -->
+<!-- ═══════════════════ TAB · GO LIVE ═══════════════════ -->
+<div class="tabpanel" id="tab-golive">
+  <div class="toc-strip">
+    <a href="#golive-today">Day 3 endpoint</a>
+    <a href="#golive-supabase">Move to Supabase</a>
+    <a href="#golive-migrate">Migrating your data</a>
+    <a href="#golive-aws">AWS / Azure path</a>
+    <a href="#golive-api">API layer — Day 4</a>
+    <a href="#golive-roadmap">Full roadmap</a>
+  </div>
+
+  <h2 id="golive-today">Where Day 3 ends — and that's enough for now</h2>
+  <p class="lead">By end of today, your Flutter app is connected to a real PostgreSQL database running on your machine. Data persists across restarts. CRUD works. The dashboard shows live counts. That is a real product — not a prototype.</p>
+
+  <div class="card success">
+    <h4>✅ Day 3 complete — what you now have</h4>
+    <ul style="margin:0;padding-left:18px;">
+      <li>PostgreSQL installed locally — three tables, indexes, foreign keys</li>
+      <li>Schema generated directly from your Dart model — no mismatches</li>
+      <li>Seed data converted from dummy_data.dart — no manual SQL typing</li>
+      <li>Flutter app reads from and writes to the real database</li>
+      <li>Create, read, update, delete — all operations wired</li>
+      <li>Dashboard stat cards powered by a live <code>GROUP BY</code> query</li>
+    </ul>
+  </div>
+
+  <div class="note-box">
+    <div class="note-label">📌 Important note for students</div>
+    <p>The app only works on your machine right now — that's intentional. Outlet managers in Delhi cannot yet reach your localhost database from their phones. Making it globally accessible is the next step — and it takes less than 30 minutes to do. We will cover it properly in Day 4. This page is a preview so you know exactly where we are heading.</p>
+  </div>
+
+  <!-- ── SUPABASE ── -->
+  <h2 id="golive-supabase">Next step — move to Supabase (free, 30 minutes)</h2>
+  <p>Supabase is PostgreSQL hosted in the cloud. It is open source, has a generous free tier, and an official Flutter SDK. Most importantly: <strong>the SQL you already wrote locally runs on Supabase without a single change.</strong> You are not rebuilding anything — you are just changing where the database lives.</p>
+
+  <div class="card accent">
+    <h4>What stays exactly the same</h4>
+    <ul style="margin:0;padding-left:18px;">
+      <li>Your <code>db/schema.sql</code> file — runs on Supabase as-is</li>
+      <li>All SQL queries inside DatabaseService — SELECT, INSERT, UPDATE, DELETE</li>
+      <li>Your Flutter screens — no changes to any UI file</li>
+      <li>Your MaintenanceRequest model — fromRow() and toInsertMap() unchanged</li>
+    </ul>
+  </div>
+  <div class="card warn">
+    <h4>What changes — only 5 values</h4>
+    <p style="margin:0">Five constants at the top of <code>database_service.dart</code>: host, port, database, username, password. And <code>SslMode.disable</code> becomes <code>SslMode.require</code>. That's the entire migration in Flutter code.</p>
+  </div>
+
+  <h3>The 5 steps to go live on Supabase</h3>
+  <div class="step-flow">
+    <div class="step">
+      <div class="step-rail"><div class="step-dot">1</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Create a free Supabase project</div>
+        <div class="step-desc">Go to <a href="https://supabase.com" target="_blank">supabase.com</a> → Sign in with GitHub → New Project. Name it <code>khan-chacha-mrms</code>. Choose the Mumbai or Singapore region (closest to India). Set a strong database password — write it down. Wait about 2 minutes for it to provision.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot">2</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Run your schema in Supabase SQL Editor</div>
+        <div class="step-desc">In the Supabase dashboard: left sidebar → <strong>SQL Editor</strong> → New query. Open your local <code>db/schema.sql</code> file in VS Code. Copy everything. Paste into the SQL Editor. Click <strong>Run</strong>. You'll see CREATE TYPE, CREATE TABLE, CREATE INDEX output — identical to what ran locally.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot">3</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Run your seed data</div>
+        <div class="step-desc">New query in SQL Editor. Open <code>db/seed.sql</code>, copy, paste, run. Your outlets, users, and all maintenance requests are now in the cloud. Verify: left sidebar → <strong>Table Editor</strong> — you'll see all three tables with real rows.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot">4</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">Get your connection details</div>
+        <div class="step-desc">Left sidebar → <strong>Project Settings</strong> → <strong>Database</strong> → scroll to "Connection parameters". You need: <strong>Host</strong> (looks like <code>db.xxxxxxxxxxxx.supabase.co</code>), Port <code>5432</code>, Database <code>postgres</code>, User <code>postgres</code>, and the password you set in Step 1.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot">5</div><div class="step-line"></div></div>
+      <div class="step-body">
+        <div class="step-title">One Claude Code prompt — update DatabaseService</div>
+        <div class="step-desc">Open your Flutter project, start Claude Code, run the prompt below. Five constants update. <code>flutter run</code>. The app is now globally connected.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code Terminal — Migrate to Supabase<button class="copy-btn" onclick="copyPrompt(this,'supabase-migrate')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-context">Have your Supabase connection details ready</span>
+      <span class="meta-pill meta-task">Updates 5 constants only</span>
+      <span class="meta-pill meta-constraint">Do not change any method or SQL query</span>
+    </div>
+    <div class="prompt-text" id="supabase-migrate">Read lib/services/database_service.dart.
+
+Update only the five connection constants at the top of the file:
+  host: 'db.xxxxxxxxxxxx.supabase.co'   ← replace with your actual Supabase host
+  port: 5432
+  database: 'postgres'
+  username: 'postgres'
+  password: 'your-supabase-db-password'  ← replace with your actual password
+  sslMode: SslMode.require               ← change from SslMode.disable to SslMode.require
+
+Also update the ConnectionSettings block:
+  settings: const ConnectionSettings(sslMode: SslMode.require)
+
+Do not change any method, any SQL query, any return type, or any other code.
+Only the five constants and the sslMode value change.
+
+After updating, tell me which lines were changed so I can verify.</div>
+  </div>
+
+  <div class="verify-box">
+    <div class="verify-label">Proof it's working globally</div>
+    <p>Run the app on your phone connected to <strong>mobile data</strong> (turn off WiFi — this proves it's not your local network). Log in, create a request. Then open the Supabase Table Editor on your laptop. Refresh the maintenance_requests table. The row your phone just created is there. One database. Multiple devices. Globally accessible.</p>
+  </div>
+
+  <div class="card" style="border-left:3px solid var(--purple);">
+    <h4>One thing to disable first — Row Level Security</h4>
+    <p style="margin:0">Supabase has Row Level Security (RLS) which blocks all reads/writes by default when using the direct postgres connection. Run this in the Supabase SQL Editor before testing the Flutter app:</p>
+    <pre style="margin:10px 0 0;"><code><span class="kw">ALTER TABLE</span> outlets               <span class="kw">DISABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> users                 <span class="kw">DISABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> maintenance_requests  <span class="kw">DISABLE ROW LEVEL SECURITY</span>;</code></pre>
+    <p style="margin:8px 0 0; font-size:13.5px; color:var(--text-dim);">This is fine for now. When we move to the Supabase Flutter SDK with proper auth in a later session, we'll re-enable RLS with policies that automatically restrict data by outlet.</p>
+  </div>
+
+  <!-- ── MIGRATION ── -->
+  <h2 id="golive-migrate">Migrating existing on-premises data to the cloud</h2>
+  <p>If you've been running the app locally for a while and have real data you don't want to lose, migration is simple. You are not recreating anything manually. PostgreSQL has a built-in export tool called <code>pg_dump</code>.</p>
+
+  <div class="grid2">
+    <div class="card success">
+      <h4>Option A — You only have seed data (today's situation)</h4>
+      <p style="margin:0; font-size:14px; color:var(--text-dim);">Just run <code>db/schema.sql</code> then <code>db/seed.sql</code> in the Supabase SQL Editor. Both files are already in your project. No export needed — the files are your migration.</p>
+    </div>
+    <div class="card accent">
+      <h4>Option B — You have real production data locally</h4>
+      <p style="margin:0; font-size:14px; color:var(--text-dim);">Use <code>pg_dump</code> to export your local database, then import to Supabase. Claude handles both commands — see below.</p>
+    </div>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code Terminal — Export local data and import to Supabase<button class="copy-btn" onclick="copyPrompt(this,'pg-migrate')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-context">Use only when you have real data locally to preserve</span>
+    </div>
+    <div class="prompt-text" id="pg-migrate">I want to migrate my local PostgreSQL data to Supabase.
+
+Step 1 — Export the local database to a SQL file:
+Run this command (it exports both schema and data):
+pg_dump -h localhost -U kc_app -d khan_chacha --no-owner --no-acl -f db/migration_export.sql
+
+Step 2 — Show me the first 30 lines of db/migration_export.sql so I can
+confirm it captured the tables and data correctly.
+
+Step 3 — I will paste db/migration_export.sql into the Supabase SQL Editor manually.
+Tell me if there are any lines in the export I should remove before pasting
+(e.g. any lines that might conflict with Supabase's existing setup).</div>
+  </div>
+
+  <div class="note-box">
+    <div class="note-label">💡 The key teaching point</div>
+    <p>The <code>db/migration_export.sql</code> file contains your entire database — schema, ENUM types, data, indexes — as portable SQL. This is standard PostgreSQL. It runs identically on Supabase, AWS RDS, Azure Database for PostgreSQL, or any other PostgreSQL host. You built the database once. You take it anywhere.</p>
+  </div>
+
+  <!-- ── AWS / AZURE ── -->
+  <h2 id="golive-aws">If you want AWS or Azure instead — brief guide</h2>
+  <p>Supabase is the fastest path. But if Khan Chacha already has an AWS or Azure subscription, or if they want enterprise-grade managed infrastructure, here's what the path looks like. The core idea is identical — PostgreSQL on the cloud, same schema, same SQL.</p>
+
+  <table>
+    <tr><th>Cloud</th><th>Service name</th><th>How to create</th><th>Extra step vs Supabase</th></tr>
+    <tr>
+      <td><strong>AWS</strong></td>
+      <td>Amazon RDS for PostgreSQL</td>
+      <td>AWS Console → RDS → Create database → PostgreSQL → choose instance size → set password</td>
+      <td>Must configure Security Groups to allow port 5432 from your IP. Direct DB connection from mobile is a security concern — API layer needed for production.</td>
+    </tr>
+    <tr>
+      <td><strong>Azure</strong></td>
+      <td>Azure Database for PostgreSQL — Flexible Server</td>
+      <td>Azure Portal → Create a resource → Azure Database for PostgreSQL → Flexible Server → fill in details</td>
+      <td>Must configure Firewall Rules to allow your IP. Same API layer concern as AWS.</td>
+    </tr>
+    <tr>
+      <td><strong>Supabase</strong></td>
+      <td>Supabase (PostgreSQL)</td>
+      <td>supabase.com → New Project → done in 2 minutes</td>
+      <td>None for today. Flutter SDK available. Free tier generous.</td>
+    </tr>
+  </table>
+
+  <div class="card warn">
+    <h4>AWS / Azure — why we need an API layer for those</h4>
+    <p style="margin:0">When you use Supabase, it provides a secure HTTPS gateway so Flutter can talk to it safely. With raw AWS RDS or Azure PostgreSQL, you're exposing port 5432 directly to the internet — which means your database password is inside the Flutter app binary. Anyone who decompiles the app gets your database credentials. That's a serious security risk. The solution is an <strong>API layer</strong> — a small Node.js or Python server that sits between Flutter and PostgreSQL, handles auth, and never exposes the DB directly. This is exactly what Day 4 covers.</p>
+  </div>
+
+  <div class="analogy-box">
+    <p><em class="analogy-tag">Why the order matters</em></p>
+    <p>Supabase first → API layer second is the right learning order. Supabase lets you connect directly today (safely, because Supabase handles the security layer for you) and understand the full CRUD flow. Then when you build the API layer in Day 4, you understand exactly what it's replacing — and why it's worth the extra complexity at enterprise scale.</p>
+  </div>
+
+  <!-- ── API LAYER ── -->
+  <h2 id="golive-api">Day 4 preview — the API layer</h2>
+  <p>Right now, Flutter talks directly to PostgreSQL. This is fine for learning and acceptable for Supabase (which adds its own security layer). But for a production system on AWS or Azure — or for any system with complex business logic — you add a middle layer between the app and the database.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h4>Current architecture (Days 1–3)</h4>
+      <p style="font-family:'SF Mono',monospace; font-size:13px; color:#7dd3fc; margin:0; line-height:2;">
+        Flutter App<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;↓ postgres Dart package<br/>
+        PostgreSQL (local or Supabase)<br/>
+      </p>
+    </div>
+    <div class="card accent">
+      <h4>Production architecture (Day 4+)</h4>
+      <p style="font-family:'SF Mono',monospace; font-size:13px; color:#7dd3fc; margin:0; line-height:2;">
+        Flutter App<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;↓ HTTP (JSON over HTTPS)<br/>
+        Node.js / Express API<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;↓ pg / postgres package<br/>
+        PostgreSQL (AWS RDS / Azure)<br/>
+      </p>
+    </div>
+  </div>
+
+  <p>The API layer in Day 4 will:</p>
+  <ul>
+    <li>Expose endpoints like <code>GET /requests</code>, <code>POST /requests</code>, <code>PATCH /requests/:id/status</code></li>
+    <li>Handle JWT authentication — no dummy username/password in the app</li>
+    <li>Enforce role-based access on the server — managers can't be bypassed by editing the Flutter app</li>
+    <li>Keep the database password safely on the server — never inside the app binary</li>
+    <li>Make cloud migration trivial — change the API base URL, nothing else</li>
+  </ul>
+
+  <div class="note-box">
+    <div class="note-label">📌 Day 4 scope note</div>
+    <p>Day 4 covers the API layer build (Node.js + Express + pg) AND migrating the database to the cloud. By end of Day 4, the full production architecture is running: Flutter → REST API → PostgreSQL on the cloud. Real auth. Role-based access enforced server-side. Ready for real outlet managers.</p>
+  </div>
+
+  <!-- ── ROADMAP ── -->
+  <h2 id="golive-roadmap">The complete programme roadmap</h2>
+  <p>Here is where every day fits in the larger picture — so students can see the path from a blank project to a live production app.</p>
+
+  <div class="timeline-h">
+    <div class="tl-item-h">
+      <div class="tl-left-h"><div class="tl-label" style="color:var(--green);">Days 1–2</div><div class="tl-sub">Done ✓</div></div>
+      <div class="tl-right-h">
+        <strong>Flutter Foundations + Full App Build</strong><br/>
+        <span style="font-size:13.5px; color:var(--text-dim);">5 screens, role-based auth, all CRUD with dummy data. The product exists — it just has a fake database.</span>
+      </div>
+    </div>
+    <div class="tl-item-h">
+      <div class="tl-left-h"><div class="tl-label" style="color:var(--green);">Day 3</div><div class="tl-sub">Today ✓</div></div>
+      <div class="tl-right-h">
+        <strong>PostgreSQL on-premises + Flutter connected</strong><br/>
+        <span style="font-size:13.5px; color:var(--text-dim);">Real database. Real data. CRUD wired. Works on localhost. The fake database is replaced.</span>
+      </div>
+    </div>
+    <div class="tl-item-h">
+      <div class="tl-left-h"><div class="tl-label" style="color:var(--amber);">Day 4</div><div class="tl-sub">Next</div></div>
+      <div class="tl-right-h">
+        <strong>API layer (Node.js + Express) + move database to cloud</strong><br/>
+        <span style="font-size:13.5px; color:var(--text-dim);">REST API sits between Flutter and PostgreSQL. Database migrates to Supabase or AWS RDS. Real JWT auth replaces dummy AuthService. Works from any device anywhere.</span>
+      </div>
+    </div>
+    <div class="tl-item-h">
+      <div class="tl-left-h"><div class="tl-label" style="color:var(--text-faint);">Day 5</div><div class="tl-sub">Future</div></div>
+      <div class="tl-right-h">
+        <strong>Real authentication + role-based API security</strong><br/>
+        <span style="font-size:13.5px; color:var(--text-dim);">Outlet-level data isolation enforced on the server. Image upload to cloud storage. Push notifications when a request is approved.</span>
+      </div>
+    </div>
+    <div class="tl-item-h">
+      <div class="tl-left-h"><div class="tl-label" style="color:var(--text-faint);">Day 6+</div><div class="tl-sub">Future</div></div>
+      <div class="tl-right-h">
+        <strong>Deployment + dashboards + App Store</strong><br/>
+        <span style="font-size:13.5px; color:var(--text-dim);">API deployed to Azure App Service. Flutter app built as APK, distributed to outlet managers. Real-time dashboard with fl_chart. Khan Chacha MRMS is live.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="confirm-box">
+    <h4>🎯 The message to leave students with at end of Day 3</h4>
+    <p style="color:var(--text-dim); font-size:14.5px; margin:0;">In two days of training, you built a mobile app for a real restaurant chain — 5 screens, role-based access, image upload, animations, and a real PostgreSQL database. Non-technical people built this using Claude as a pair programmer. The app works. The data persists. The next step is making it globally accessible — and that's a 30-minute job we'll do at the start of Day 4. You are not beginners anymore.</p>
+  </div>
+
+  <h3>Day 3 checklist — confirm before you close</h3>
+  <table>
+    <tr><th>Item</th><th>Check</th></tr>
+    <tr><td>PostgreSQL installed and running locally</td><td>☐</td></tr>
+    <tr><td>khan_chacha database and kc_app user created</td><td>☐</td></tr>
+    <tr><td>db/schema.sql created and run — 3 tables exist</td><td>☐</td></tr>
+    <tr><td>db/seed.sql created and run — rows visible in pgAdmin</td><td>☐</td></tr>
+    <tr><td>Flutter app connects to PostgreSQL on startup</td><td>☐</td></tr>
+    <tr><td>Request list loads from the real database</td><td>☐</td></tr>
+    <tr><td>Create a new request — appears in pgAdmin</td><td>☐</td></tr>
+    <tr><td>Update a status — changes in pgAdmin</td><td>☐</td></tr>
+    <tr><td>Delete a request — gone from pgAdmin</td><td>☐</td></tr>
+    <tr><td>Dashboard counts are powered by GROUP BY query</td><td>☐</td></tr>
+    <tr><td><strong>Backup taken:</strong> <code>pg_dump -U postgres khan_chacha &gt; backup_day3.sql</code></td><td>☐</td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════ TAB · DISCUSSION ═══════════════════ -->
 <div class="tabpanel" id="tab-discuss">
   <h2>Questions &amp; Discussion</h2>
   <p class="lead">Common questions from this session, answered.</p>
