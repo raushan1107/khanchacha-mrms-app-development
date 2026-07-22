@@ -1181,7 +1181,19 @@ Do not change any Dart files yet. Just update pubspec.yaml and report.</div>
   <!-- ══ P11 ══ -->
   <div class="proj-banner proj-flutter"><div class="proj-dot"></div>&#128309; FLUTTER PROJECT &#8212; Window 2 &#8212; Continue in Claude Code</div>
   <h2 id="sb-p11">Prompt 11 &#8212; Create ApiService (replaces DatabaseService)</h2>
-  <div class="what-box"><div class="what-label">What this prompt does</div><p>Creates <code>lib/services/api_service.dart</code> &#8212; a singleton service using the <code>http</code> package instead of the <code>postgres</code> package. Every method has the same name and return type as DatabaseService so the screens need minimal changes. The <code>BASE_URL</code> points to the Node.js API. The comment inside the file explains how to change the URL for a real device vs the emulator.</p></div>
+  <div class="what-box"><div class="what-label">What this prompt does</div><p>Creates <code>lib/services/api_service.dart</code> &#8212; a singleton service using the <code>http</code> package. Includes a <code>loginUser()</code> method that calls the auth endpoint and maps the response to a <code>UserAccount</code> object. The BASE_URL is set for <strong>Windows desktop by default</strong> (localhost) with comments for all other platforms. All JSON field mapping uses safe null-tolerant casting so the app never crashes on unexpected null values.</p></div>
+
+  <div class="card warn" style="margin-bottom:14px;">
+    <h4>&#127919; BASE_URL &#8212; pick the right value for your run target</h4>
+    <table style="margin:8px 0 0;">
+      <tr><th>Running on</th><th>BASE_URL to use</th></tr>
+      <tr><td>Windows desktop (<code>flutter run -d windows</code>)</td><td><code>http://localhost:3000/api</code></td></tr>
+      <tr><td>Android emulator (<code>flutter run -d emulator</code>)</td><td><code>http://10.0.2.2:3000/api</code></td></tr>
+      <tr><td>Real Android phone (same WiFi)</td><td><code>http://192.168.x.x:3000/api</code> &#8212; find IP with ipconfig</td></tr>
+      <tr><td>After AWS deployment</td><td><code>https://your-api.amazonaws.com/api</code></td></tr>
+    </table>
+  </div>
+
   <div class="prompt-box">
     <div class="prompt-label">Claude Code &#8212; P11 of 12 &#8212; Paste in Window 2 (Flutter project)<button class="copy-btn" onclick="copyPrompt(this,'p11')">Copy</button></div>
     <div class="prompt-meta">
@@ -1196,60 +1208,100 @@ Use the same singleton factory constructor pattern as DatabaseService.
 Use the EXACT same public method names and return types as DatabaseService (you listed them in P10).
 
 BASE URL constant:
-  static const String _baseUrl = 'http://10.0.2.2:3000/api';
-  // 10.0.2.2 is the Android emulator's alias for the host machine's localhost.
-  // For a real Android phone on the same WiFi, replace with your machine's local IP,
-  // e.g. 'http://192.168.1.105:3000/api'
-  // Find your local IP: ipconfig (Windows) / ifconfig (Mac/Linux)
+  // Choose the correct URL based on where Flutter is running:
+  // Windows desktop (flutter run -d windows): 'http://localhost:3000/api'
+  // Android emulator:                         'http://10.0.2.2:3000/api'
+  // Real Android phone (same WiFi):           'http://192.168.x.x:3000/api'
+  // After AWS deployment:                     'https://your-api.amazonaws.com/api'
+  static const String _baseUrl = 'http://localhost:3000/api';
 
 IMPLEMENT these methods using package:http/http.dart as http + dart:convert:
 
-Future&#60;List&#60;MaintenanceRequest&#62;&#62; fetchAll()
-  GET $_baseUrl/requests &#8594; jsonDecode &#8594; map each item using MaintenanceRequest.fromJson()
+Future<UserAccount?> loginUser(String username, String password)
+  POST $_baseUrl/auth/login
+  body: jsonEncode({'username': username, 'password': password})
+  Headers: {'Content-Type': 'application/json'}
+  If statusCode == 200: parse JSON and return:
+    UserAccount(
+      id:         data['id']?.toString() ?? '',
+      name:       data['name']?.toString() ?? '',
+      username:   data['username']?.toString() ?? '',
+      password:   '',        // API never returns password for security
+      role:       data['role']?.toString() ?? 'staff',
+      outletId:   data['outletId']?.toString() ?? '',
+      outletName: data['outletName']?.toString() ?? '',
+    )
+  If statusCode != 200: return null
+  Wrap in try/catch &#8212; on any exception return null
 
-Future&#60;List&#60;MaintenanceRequest&#62;&#62; fetchByOutlet(String outletId)
-  GET $_baseUrl/requests?outlet_id=$outletId &#8594; same mapping as fetchAll()
+SAFE CASTING RULE for ALL fromJson mapping in this file:
+  Never use: data['field'] as String
+  Always use: data['field']?.toString() ?? ''
+  For integers: (data['field'] as num?)?.toInt() ?? 0
+  For lists: (data['field'] as List?)?.map((e) => e.toString()).toList() ?? []
+  Reason: API may return null for optional fields &#8212; unsafe casts crash the app
 
-Future&#60;void&#62; createRequest(MaintenanceRequest r)
+Future<List<MaintenanceRequest>> fetchAll()
+  GET $_baseUrl/requests &#8594; jsonDecode &#8594; map each item using MaintenanceRequest.fromJson(item)
+
+Future<List<MaintenanceRequest>> fetchByOutlet(String outletId)
+  GET $_baseUrl/requests?outlet_id=$outletId &#8594; same mapping
+
+Future<void> createRequest(MaintenanceRequest r)
   POST $_baseUrl/requests, body: jsonEncode(r.toInsertMap()), Content-Type: application/json
-  If response.statusCode != 201: throw Exception('Create failed: ${response.body}')
+  If statusCode != 201: throw Exception('Create failed: ${response.body}')
 
-Future&#60;void&#62; updateStatus(String id, String newStatus, String historyEntry)
+Future<void> updateStatus(String id, String newStatus, String historyEntry)
   PATCH $_baseUrl/requests/$id/status
   body: jsonEncode({'status': newStatus, 'history_entry': historyEntry})
   Content-Type: application/json
 
-Future&#60;void&#62; updateRequest(MaintenanceRequest r)
+Future<void> updateRequest(MaintenanceRequest r)
   PUT $_baseUrl/requests/${r.id}, body: jsonEncode(r.toInsertMap()), Content-Type: application/json
 
-Future&#60;void&#62; deleteRequest(String id)
+Future<void> deleteRequest(String id)
   DELETE $_baseUrl/requests/$id
   If statusCode != 200: throw Exception('Delete failed: ${response.body}')
 
-Future&#60;Map&#60;String, int&#62;&#62; getStatusCounts({String? outletId})
-  final url = outletId != null ? '$_baseUrl/dashboard/counts?outlet_id=$outletId'
-                               : '$_baseUrl/dashboard/counts'
-  GET url &#8594; jsonDecode &#8594; Map&#60;String, int&#62;
+Future<Map<String, int>> getStatusCounts({String? outletId})
+  final url = outletId != null
+      ? '$_baseUrl/dashboard/counts?outlet_id=$outletId'
+      : '$_baseUrl/dashboard/counts'
+  GET url &#8594; jsonDecode &#8594; safe cast:
+  final raw = jsonDecode(response.body) as Map<String, dynamic>;
+  return raw.map((k, v) => MapEntry(k, (v as num?)?.toInt() ?? 0));
 
-For ALL methods: if statusCode &#62;= 400: throw Exception('API Error ${response.statusCode}: ${response.body}')
+For ALL methods: if statusCode >= 400: throw Exception('API Error ${response.statusCode}: ${response.body}')
 
-Create lib/services/api_service.dart only. Do not modify any screen files yet.</div>
+Also read lib/models/maintenance_request.dart and its fromJson() constructor.
+If any field uses 'data[x] as String', update to safe casting: data['x']?.toString() ?? ''
+This prevents null-cast crashes when the API returns null for optional fields.
+
+Create lib/services/api_service.dart only. Do not modify screen files yet.</div>
   </div>
+  <div class="expect-box"><div class="expect-label">After P11 you should have</div><p><code>api_service.dart</code> with all methods including <code>loginUser()</code>. The password field in the <code>UserAccount</code> mapping is an empty string &#8212; the API intentionally never returns it. Safe null casting is used throughout. No crash when the API returns null for optional fields.</p></div>
 
   <!-- ══ P12 ══ -->
   <div class="proj-banner proj-flutter"><div class="proj-dot"></div>&#128309; FLUTTER PROJECT &#8212; Window 2 &#8212; Continue in Claude Code</div>
-  <h2 id="sb-p12">Prompt 12 &#8212; Replace DatabaseService with ApiService across all screens</h2>
-  <div class="what-box"><div class="what-label">What this prompt does</div><p>Reads every screen file that imports DatabaseService and replaces each reference with ApiService. The UI, animations, navigation, forms, and confirmation dialogs stay completely untouched. In <code>main.dart</code>, the old <code>DatabaseService().connect()</code> call and its loading screen are removed because HTTP connections need no initialization &#8212; the first API call either succeeds or throws an exception that the screen handles.</p></div>
+  <h2 id="sb-p12">Prompt 12 &#8212; Replace DatabaseService with ApiService across all files</h2>
+  <div class="what-box"><div class="what-label">What this prompt does</div><p>Replaces every reference to <code>DatabaseService</code> with <code>ApiService</code> across all screens. Critically, it also updates <code>auth_service.dart</code> &#8212; the login gatekeeper. If <code>AuthService</code> is not updated, login will always fail with "Invalid credentials" even when the API is working perfectly, because <code>AuthService</code> will still try to call the old <code>DatabaseService.loginUser()</code>. In <code>main.dart</code>, the old <code>DatabaseService().connect()</code> startup call is removed &#8212; HTTP needs no persistent connection.</p></div>
+
+  <div class="card danger" style="margin-bottom:14px;">
+    <h4>&#9888;&#65039; Critical &#8212; AuthService must be updated or login will always fail</h4>
+    <p style="margin:0;"><code>auth_service.dart</code> is the file that handles login. If it still imports <code>database_service.dart</code> and calls <code>DatabaseService().loginUser()</code>, every login attempt returns null (because <code>DatabaseService</code> has no database connection after <code>postgres</code> package was removed), which the login screen shows as "Invalid credentials." This is step 5 in the prompt below and is not optional.</p>
+  </div>
+
   <div class="prompt-box">
     <div class="prompt-label">Claude Code &#8212; P12 of 12 &#8212; Paste in Window 2 (Flutter project)<button class="copy-btn" onclick="copyPrompt(this,'p12')">Copy</button></div>
     <div class="prompt-meta">
       <span class="meta-pill meta-context">&#128309; Window 2 &#8212; ApiService created</span>
-      <span class="meta-pill meta-task">Replace DatabaseService() with ApiService() across all affected files</span>
+      <span class="meta-pill meta-task">Replace DatabaseService with ApiService across ALL affected files including AuthService</span>
       <span class="meta-pill meta-constraint">Do NOT change any UI widget, animation, navigation call, or dialog</span>
-      <span class="meta-pill meta-output">4&#8211;5 files updated</span>
+      <span class="meta-pill meta-output">5&#8211;6 files updated</span>
     </div>
-    <div class="prompt-text" id="p12">Read all five of these files before making any changes:
+    <div class="prompt-text" id="p12">Read all of these files before making any changes:
   lib/main.dart
+  lib/services/auth_service.dart
   lib/screens/request_list_screen.dart (or home_screen.dart &#8212; check which exists)
   lib/screens/detail_screen.dart
   lib/screens/request_form_screen.dart
@@ -1262,20 +1314,27 @@ Then make these changes:
 
 2. In every file: replace DatabaseService() with ApiService()
 
-3. In main.dart specifically:
-   Remove: await DatabaseService().connect()
-   Remove: the try/catch block around it and its loading/error screen widget
-   Reason: ApiService uses HTTP &#8212; no persistent connection is needed at startup.
-   The app should start directly: runApp(MaterialApp(home: LoginScreen()))
+3. In lib/services/auth_service.dart &#8212; THIS IS CRITICAL:
+   The login method currently calls DatabaseService().loginUser()
+   Change it to call ApiService().loginUser(username, password) instead.
+   auth_service.dart must import api_service.dart, not database_service.dart.
+   If auth_service.dart is not updated, login will always show "Invalid credentials"
+   even when the API is running correctly.
 
-4. In dashboard_screen.dart:
-   When calling getStatusCounts, pass outletId for staff users:
+4. In main.dart:
+   Remove: await DatabaseService().connect()
+   Remove: the try/catch around it and its loading/error screen
+   Reason: ApiService uses HTTP &#8212; no persistent connection needed.
+   App starts directly: runApp(MaterialApp(home: LoginScreen()))
+
+5. In dashboard_screen.dart:
+   Update getStatusCounts call to pass outletId for staff users:
    ApiService().getStatusCounts(outletId: currentUser.role == 'staff' ? currentUser.outletId : null)
 
 Do NOT change: any widget layout, any ListView, any Card, any animation code,
-any Navigator.push/pop, any AlertDialog, any SnackBar text, AuthService, or NavigationService.
+any Navigator.push/pop, any AlertDialog, any SnackBar text, or NavigationService.
 
-Show me a summary of every file changed and every specific line that was modified.</div>
+Show me a summary of every file changed and every specific line modified.</div>
   </div>
 
   <!-- ══ RUN BOTH ══ -->
@@ -1464,26 +1523,24 @@ Create all files completely. No placeholders. No TODOs.</p>
 <!-- ══════════════════════════════ TAB 8 · ARCHITECTURE ══════════════════════════════ -->
 <div class="tabpanel" id="tab-architecture">
   <div class="toc-strip">
-    <a href="#arch-full">Full stack diagram</a>
+    <a href="#arch-full">Local stack (Day 4)</a>
     <a href="#arch-files">File responsibility map</a>
     <a href="#arch-request-flow">A request's journey</a>
-    <a href="#arch-cloud">Moving to cloud</a>
+    <a href="#arch-cloud">Production target</a>
   </div>
 
-  <h2 id="arch-full">The complete Khan Chacha stack after Day 4</h2>
+  <h2 id="arch-full">The complete Khan Chacha stack — local development (Day 4)</h2>
+  <p>This is what you have built and tested today. Both programs run on your local machine.</p>
   <div class="arch-box" style="line-height:2.5;">
-    <span style="color:#6b7480;font-size:12px;">FLUTTER APP (khan_chacha_mrms/)</span><br/>
-    <span class="layer">&nbsp;&nbsp;ApiService</span>&nbsp;&nbsp;&nbsp;<span style="color:#475569;font-size:12px;">← lib/services/api_service.dart</span><br/>
-    <span class="arrow">&nbsp;&nbsp;&nbsp;&nbsp;│ HTTP / JSON over port 3000</span><br/>
-    <span style="color:#6b7480;font-size:12px;">NODE.JS API (khan_chacha_api/)</span><br/>
-    <span class="layer">&nbsp;&nbsp;server.js</span>&nbsp;&nbsp;<span style="color:#475569;font-size:12px;">← entry point, middleware, route mounting</span><br/>
-    <span class="layer">&nbsp;&nbsp;routes/requests.js</span>&nbsp;&nbsp;<span style="color:#475569;font-size:12px;">← GET/POST/PUT/PATCH/DELETE /api/requests</span><br/>
-    <span class="layer">&nbsp;&nbsp;routes/auth.js</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#475569;font-size:12px;">← POST /api/auth/login</span><br/>
-    <span class="layer">&nbsp;&nbsp;routes/dashboard.js</span>&nbsp;<span style="color:#475569;font-size:12px;">← GET /api/dashboard/counts</span><br/>
-    <span class="layer">&nbsp;&nbsp;db/connection.js</span>&nbsp;&nbsp;&nbsp;<span style="color:#475569;font-size:12px;">← pg Pool, reads from .env</span><br/>
-    <span class="arrow">&nbsp;&nbsp;&nbsp;&nbsp;│ pg package / port 5432</span><br/>
-    <span style="color:#6b7480;font-size:12px;">POSTGRESQL DATABASE (local → Supabase → AWS/Azure)</span><br/>
-    <span class="layer">&nbsp;&nbsp;outlets&nbsp;&nbsp;</span><span class="arrow">←FK—</span><span class="layer">&nbsp;users&nbsp;&nbsp;</span><span class="arrow">←FK—</span><span class="layer">&nbsp;maintenance_requests</span>
+    <span style="color:#6b7480;font-size:12px;">FLUTTER APP (khan_chacha_mrms/) &#8212; your machine, Windows/Mac</span><br/>
+    <span class="layer">&nbsp;&nbsp;ApiService</span>&nbsp;&nbsp;&nbsp;<span style="color:#475569;font-size:12px;">&#8592; lib/services/api_service.dart &#183; BASE_URL = localhost:3000</span><br/>
+    <span class="arrow">&nbsp;&nbsp;&nbsp;&nbsp;&#9474; HTTP / JSON over port 3000</span><br/>
+    <span style="color:#6b7480;font-size:12px;">NODE.JS API (khan_chacha_api/) &#8212; same machine, port 3000</span><br/>
+    <span class="layer">&nbsp;&nbsp;server.js &#8594; routes/requests.js &#8594; routes/auth.js &#8594; routes/dashboard.js</span><br/>
+    <span class="layer">&nbsp;&nbsp;db/connection.js</span>&nbsp;&nbsp;&nbsp;<span style="color:#475569;font-size:12px;">&#8592; pg Pool, reads .env credentials</span><br/>
+    <span class="arrow">&nbsp;&nbsp;&nbsp;&nbsp;&#9474; pg package / port 5432</span><br/>
+    <span style="color:#6b7480;font-size:12px;">POSTGRESQL &#8212; same machine, port 5432, database: khan_chacha</span><br/>
+    <span class="layer">&nbsp;&nbsp;outlets &#8592;FK&#8212; users &#8592;FK&#8212; maintenance_requests</span>
   </div>
 
   <h2 id="arch-files">File responsibility — what each file owns</h2>
@@ -1530,30 +1587,121 @@ Create all files completely. No placeholders. No TODOs.</p>
     </div>
   </div>
 
-  <h2 id="arch-cloud">Moving to cloud — what changes</h2>
+  <h2 id="arch-cloud">The production target — where everything goes in Day 5</h2>
+  <p>The architecture you built today is identical in structure to the production setup. The only differences are <em>where</em> each component runs and <em>how</em> the Flutter app is distributed.</p>
+
+  <div class="analogy-box">
+    <p><em class="analogy-tag">Key insight — Flutter apps are not deployed like websites</em></p>
+    <p>A Node.js API is "deployed" to a server &#8212; it runs on that server and listens for incoming requests. A Flutter app is <strong>not deployed</strong>. It is compiled into an installable binary file and distributed to devices. Users download and install it, just like any other mobile or desktop app. The server never runs the Flutter code &#8212; it runs on the user's device.</p>
+  </div>
+
+  <div class="grid2" style="margin:18px 0;">
+    <div class="card orange">
+      <h4>&#128230; Flutter app &#8212; exported, not deployed</h4>
+      <p style="font-size:13.5px;color:var(--text-dim);margin-bottom:10px;">You run one build command. Flutter compiles your Dart code into a native binary for the target platform.</p>
+      <table style="margin:0;font-size:13px;">
+        <tr><th>Platform</th><th>Output file</th><th>How distributed</th></tr>
+        <tr><td>Android</td><td><code>.apk</code> or <code>.aab</code></td><td>Play Store or direct install</td></tr>
+        <tr><td>iOS</td><td><code>.ipa</code></td><td>App Store (via Xcode)</td></tr>
+        <tr><td>Windows</td><td><code>.exe</code> installer</td><td>Direct download or Microsoft Store</td></tr>
+        <tr><td>macOS</td><td><code>.dmg</code></td><td>App Store or direct download</td></tr>
+      </table>
+    </div>
+    <div class="card accent">
+      <h4>&#9729;&#65039; API + Database &#8212; deployed to AWS</h4>
+      <p style="font-size:13.5px;color:var(--text-dim);margin-bottom:10px;">The Node.js API and PostgreSQL database move from your local machine to AWS cloud servers that run 24/7.</p>
+      <table style="margin:0;font-size:13px;">
+        <tr><th>Component</th><th>AWS service</th></tr>
+        <tr><td>Node.js API</td><td>EC2 or Elastic Beanstalk</td></tr>
+        <tr><td>PostgreSQL</td><td>RDS (managed PostgreSQL)</td></tr>
+        <tr><td>Domain / HTTPS</td><td>Route 53 + Certificate Manager</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h3>Production architecture diagram</h3>
+  <div class="arch-box" style="line-height:2.5;">
+    <span style="color:#6b7480;font-size:12px;">USER'S ANDROID PHONE &#8212; Khan Chacha MRMS.apk installed</span><br/>
+    <span class="layer">&nbsp;&nbsp;ApiService</span>&nbsp;&nbsp;&nbsp;<span style="color:#475569;font-size:12px;">&#8592; BASE_URL = https://api.khanchacha.com/api</span><br/>
+    <span class="arrow">&nbsp;&nbsp;&nbsp;&nbsp;&#9474; HTTPS / JSON &#8212; internet</span><br/>
+    <span style="color:#6b7480;font-size:12px;">AWS EC2 / ELASTIC BEANSTALK &#8212; always-on cloud server</span><br/>
+    <span class="layer">&nbsp;&nbsp;Node.js API &#8212; server.js + routes/</span>&nbsp;&nbsp;<span style="color:#475569;font-size:12px;">&#8592; .env has RDS connection string</span><br/>
+    <span class="arrow">&nbsp;&nbsp;&nbsp;&nbsp;&#9474; pg package &#8212; private AWS network</span><br/>
+    <span style="color:#6b7480;font-size:12px;">AWS RDS &#8212; managed PostgreSQL &#8212; same schema, same SQL</span><br/>
+    <span class="layer">&nbsp;&nbsp;outlets &#8592;FK&#8212; users &#8592;FK&#8212; maintenance_requests</span>
+  </div>
+
+  <h3>What changes when moving to production</h3>
   <table>
-    <tr><th>Component</th><th>Change needed</th><th>How hard</th></tr>
-    <tr><td>PostgreSQL database</td><td>Update .env: DB_HOST, DB_NAME, DB_USER, DB_PASSWORD</td><td>⭐ Trivial — one file, 4 values</td></tr>
-    <tr><td>Node.js API server</td><td>Deploy to Azure App Service / AWS Elastic Beanstalk / Railway</td><td>⭐⭐ Moderate — covered in Day 6</td></tr>
-    <tr><td>Flutter app</td><td>Change BASE_URL in api_service.dart from localhost to the deployed API URL</td><td>⭐ Trivial — one constant</td></tr>
-    <tr><td>PostgreSQL schema</td><td>No change — same db/schema.sql runs on any PostgreSQL host</td><td>✅ Zero changes</td></tr>
-    <tr><td>SQL queries in routes</td><td>No change — queries are standard SQL</td><td>✅ Zero changes</td></tr>
+    <tr><th>Component</th><th>Change needed</th><th>Effort</th></tr>
+    <tr><td>Flutter app</td><td>Change <code>_baseUrl</code> in api_service.dart from <code>localhost:3000</code> to the AWS API URL. Then run <code>flutter build apk</code></td><td>&#11088; One line + one command</td></tr>
+    <tr><td>Node.js API</td><td>Deploy <code>khan_chacha_api/</code> to AWS EC2 or Elastic Beanstalk. Set environment variables on the server (same .env values, but pointing to RDS)</td><td>&#11088;&#11088; Moderate &#8212; Day 5</td></tr>
+    <tr><td>PostgreSQL</td><td>Create AWS RDS instance, run <code>db/schema.sql</code> on it, migrate data. Update .env DB_HOST, DB_NAME, DB_USER, DB_PASSWORD</td><td>&#11088;&#11088; Moderate &#8212; Day 5</td></tr>
+    <tr><td>SQL queries in routes</td><td>No change &#8212; standard PostgreSQL SQL runs identically on RDS</td><td>&#9989; Zero</td></tr>
+    <tr><td>Flutter UI code</td><td>No change &#8212; screens don't know or care where the data comes from</td><td>&#9989; Zero</td></tr>
   </table>
 </div>
 
 <!-- ══════════════════════════════ TAB 9 · Q&A ══════════════════════════════ -->
 <div class="tabpanel" id="tab-qna">
   <h2>Questions &amp; Discussion</h2>
-  <p class="lead">Common questions from Day 4 sessions.</p>
+  <p class="lead">Questions from real Day 4 sessions — including errors actually encountered during testing.</p>
 
   <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this.parentElement)">Do I need to run both the Flutter app AND the Node.js server at the same time? <span class="faq-arrow">▼</span></div>
-    <div class="faq-a">Yes — both must be running simultaneously. Terminal 1 runs <code>npm run dev</code> (Node.js). Terminal 2 runs <code>flutter run</code>. If you close Terminal 1, Flutter loses the API and you'll see connection errors. In production, the API runs on a cloud server that's always on — you only run Flutter locally during development.</div>
+    <div class="faq-q" onclick="toggleFaq(this.parentElement)">Login shows "Invalid credentials" even though the API is running and curl works. Why? <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">
+      <p style="margin-bottom:8px;"><strong>Root cause: <code>auth_service.dart</code> was not updated.</strong> <code>AuthService</code> is the login gatekeeper — the <code>LoginScreen</code> calls <code>AuthService().login(username, password)</code>, which internally calls another service to do the actual validation. If <code>auth_service.dart</code> still imports <code>database_service.dart</code> and calls <code>DatabaseService().loginUser()</code>, then login will always fail. The <code>postgres</code> package has been removed from pubspec, so <code>DatabaseService</code> can't connect — it throws an exception silently caught by the <code>try/catch</code>, which returns <code>null</code>, which the login screen shows as "Invalid credentials."</p>
+      <strong>Fix:</strong> In <code>lib/services/auth_service.dart</code>:<br/>
+      Change <code>import 'database_service.dart';</code> to <code>import 'api_service.dart';</code><br/>
+      Change <code>await DatabaseService().loginUser(username, password)</code> to <code>await ApiService().loginUser(username, password)</code><br/><br/>
+      This is the most common error in Day 4 and is easy to miss because the screens were updated but the auth service wasn't.
+    </div>
   </div>
 
   <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this.parentElement)">Why does Flutter use 10.0.2.2 instead of localhost to reach the API? <span class="faq-arrow">▼</span></div>
-    <div class="faq-a">The Android emulator is a virtual machine inside your computer. From the emulator's perspective, "localhost" means the emulator itself — not your host machine. Android reserves the special IP <code>10.0.2.2</code> to mean "the host machine's localhost". So when Flutter (running in the emulator) calls <code>http://10.0.2.2:3000/api/requests</code>, it reaches your Node.js server. On a real physical Android device connected to the same WiFi, use your machine's local network IP (e.g. <code>192.168.1.5</code>).</div>
+    <div class="faq-q" onclick="toggleFaq(this.parentElement)">Login works now but the dashboard crashes with "type 'Null' is not a subtype of type 'String' in type cast." What's happening? <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">
+      <p style="margin-bottom:8px;"><strong>Root cause: unsafe casting in <code>fromJson()</code>.</strong> The API returns JSON where some fields may be <code>null</code> — for example, <code>image_path</code> is optional. If <code>MaintenanceRequest.fromJson()</code> has lines like <code>data['image_path'] as String</code>, Dart throws a null cast exception because you cannot cast <code>null</code> to <code>String</code>.</p>
+      <strong>Fix — apply safe casting to every String field in fromJson():</strong><br/>
+      Instead of: <code>data['field_name'] as String</code><br/>
+      Use: <code>data['field_name']?.toString() ?? ''</code><br/><br/>
+      For integers: <code>(data['count'] as num?)?.toInt() ?? 0</code><br/>
+      For lists: <code>(data['status_history'] as List?)?.map((e) => e.toString()).toList() ?? []</code><br/><br/>
+      Ask Claude: "Read lib/models/maintenance_request.dart and replace every unsafe 'as String' cast in fromJson() with safe null-tolerant casting using ?.toString() ?? ''"
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this.parentElement)">Which BASE_URL should I use? The docs show 10.0.2.2 but that doesn't work on my Windows machine. <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">
+      The correct <code>BASE_URL</code> depends entirely on <em>where</em> Flutter is running — not where the API is:
+      <table style="margin:10px 0;">
+        <tr><th>Running Flutter on</th><th>Use this BASE_URL</th></tr>
+        <tr><td>Windows desktop (<code>flutter run -d windows</code>)</td><td><code>http://localhost:3000/api</code></td></tr>
+        <tr><td>Android emulator (<code>flutter run -d emulator</code>)</td><td><code>http://10.0.2.2:3000/api</code></td></tr>
+        <tr><td>Real Android phone (same WiFi as your machine)</td><td><code>http://192.168.x.x:3000/api</code> &#8212; get IP with <code>ipconfig</code></td></tr>
+        <tr><td>Chrome browser (<code>flutter run -d chrome</code>)</td><td><code>http://localhost:3000/api</code> but CORS must be configured in server.js</td></tr>
+      </table>
+      <code>10.0.2.2</code> is only meaningful inside the Android emulator &#8212; it's the emulator's internal alias for the host machine. On Windows desktop, Flutter runs natively on the same machine as the Node.js server, so <code>localhost</code> works directly.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this.parentElement)">curl in PowerShell gives "SyntaxError: Expected property name" when I try to test the API. Is the API broken? <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">
+      <p style="margin-bottom:8px;">The API is not broken. PowerShell's <code>curl</code> is actually an alias for <code>Invoke-WebRequest</code>, not the real curl command. It mangles the JSON body when you escape quotes with backslashes, which sends malformed JSON to the API. The "SyntaxError" is from Node.js trying to parse that malformed JSON.</p>
+      <strong>Use <code>Invoke-RestMethod</code> instead — PowerShell's proper HTTP client:</strong>
+      <pre style="margin:8px 0 0;"><code>Invoke-RestMethod -Uri "http://localhost:3000/api/auth/login" `
+  -Method POST `
+  -ContentType "application/json" `
+  -Body '{"username":"manager","password":"manager123"}'</code></pre>
+      Single quotes around the JSON body mean PowerShell does not try to interpret its contents. This works reliably on any Windows machine.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this.parentElement)">Do I need to run both the Flutter app AND the Node.js server at the same time? <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">Yes — both must be running simultaneously. One terminal runs <code>npm run dev</code> in the API folder (Node.js server). A separate terminal runs <code>flutter run -d windows</code> in the Flutter folder. If the Node.js server is not running, every API call from Flutter will fail with a connection error. In production, the API runs on AWS and is always on — you only need to start it manually during local development.</div>
   </div>
 
   <div class="faq-item">
