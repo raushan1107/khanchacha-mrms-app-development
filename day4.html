@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 4 — API Layer | Khan Chacha MRMS | RR Skillverse × Koenig Solutions</title>
+<style>
+:root{
+  --bg:#0d1117; --bg2:#11161d; --card:#161b22; --border:#26303d; --border-soft:#1d2530;
+  --text:#e6edf3; --text-dim:#9da7b3; --text-faint:#6b7480;
+  --teal:#00c2e0; --teal-deep:#0082A0; --teal-glow:rgba(0,194,224,0.12);
+  --green:#3fb950; --amber:#d29922; --red:#f85149; --purple:#a371f7;
+  --orange:#e88c1f;
+  --radius:10px; --maxw:1000px; --code-bg:#0a0e14;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px;}
+a{color:var(--teal);text-decoration:none;}
+a:hover{text-decoration:underline;}
+code{font-family:"SF Mono",Consolas,"Courier New",monospace;background:var(--code-bg);color:#7ee787;padding:2px 6px;border-radius:4px;font-size:.88em;}
+pre{background:var(--code-bg);border:1px solid var(--border-soft);border-radius:var(--radius);padding:14px 16px;overflow-x:auto;font-family:"SF Mono",Consolas,"Courier New",monospace;font-size:13.5px;line-height:1.6;margin:14px 0;position:relative;}
+pre code{background:none;padding:0;color:#c9d1d9;}
+.kw{color:#ff7b72;}.cls{color:#79c0ff;}.str{color:#a5d6ff;}.cmt{color:#6e7681;}.fn{color:#d2a8ff;}.num{color:#f2cc60;}.hl-line{background:rgba(0,194,224,.08);display:block;margin:0 -16px;padding:0 16px;}
+
+header{background:linear-gradient(180deg,#0f141b 0%,var(--bg) 100%);border-bottom:1px solid var(--border-soft);padding:28px 24px 0;position:sticky;top:0;z-index:100;}
+.header-inner{max-width:var(--maxw);margin:0 auto;}
+.brand-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px;}
+.brand-left{display:flex;align-items:center;gap:12px;}
+.logo-mark{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--orange) 0%,var(--amber) 100%);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#1a0a00;flex-shrink:0;}
+.brand-title{font-size:15px;font-weight:600;color:var(--text);}
+.brand-sub{font-size:12.5px;color:var(--text-faint);}
+.brand-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.koenig-badge{font-size:11.5px;color:var(--text-dim);border:1px solid var(--border);padding:5px 12px;border-radius:20px;white-space:nowrap;}
+.home-btn{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--text-dim);background:rgba(255,255,255,0.05);border:1px solid var(--border);padding:5px 14px;border-radius:20px;text-decoration:none;transition:color .15s,border-color .15s,background .15s;white-space:nowrap;}
+.home-btn:hover{color:var(--teal);border-color:var(--teal-deep);background:var(--teal-glow);text-decoration:none;}
+h1.page-title{font-size:28px;font-weight:700;margin-bottom:6px;letter-spacing:-.3px;}
+.page-subtitle{font-size:15px;color:var(--text-dim);margin-bottom:22px;max-width:680px;}
+.tabnav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;}
+.tabnav::-webkit-scrollbar{display:none;}
+.tabnav button{background:none;border:none;color:var(--text-dim);font-size:13.5px;font-weight:500;padding:12px 16px;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;font-family:inherit;}
+.tabnav button:hover{color:var(--text);}
+.tabnav button.active{color:var(--orange);border-bottom-color:var(--orange);}
+
+main{max-width:var(--maxw);margin:0 auto;padding:36px 24px 60px;}
+.tabpanel{display:none;}
+.tabpanel.active{display:block;animation:fadein .25s ease;}
+@keyframes fadein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+h2{font-size:22px;font-weight:700;margin:38px 0 14px;letter-spacing:-.2px;}
+h2:first-child{margin-top:0;}
+h3{font-size:17px;font-weight:600;margin:24px 0 10px;color:var(--text);}
+p{margin-bottom:14px;color:#c5ccd4;}
+p.lead{font-size:17px;color:var(--text);margin-bottom:20px;}
+ul,ol{margin:10px 0 16px 22px;color:#c5ccd4;}
+li{margin-bottom:8px;}
+strong{color:var(--text);font-weight:600;}
+em.analogy-tag{color:var(--orange);font-style:normal;font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px;}
+
+.card{background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:18px 20px;margin:16px 0;}
+.card.accent{border-left:3px solid var(--teal);}
+.card.warn{border-left:3px solid var(--amber);}
+.card.danger{border-left:3px solid var(--red);}
+.card.success{border-left:3px solid var(--green);}
+.card.purple{border-left:3px solid var(--purple);}
+.card.orange{border-left:3px solid var(--orange);}
+.card h4{font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-faint);margin-bottom:8px;font-weight:600;}
+
+.analogy-box{background:rgba(232,140,31,.08);border:1px solid rgba(232,140,31,.28);border-radius:var(--radius);padding:16px 18px;margin:18px 0;}
+.analogy-box p{color:var(--text);margin-bottom:0;}
+.analogy-box p:not(:last-child){margin-bottom:10px;}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:16px 0;}
+@media(max-width:720px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;}
+th{text-align:left;color:var(--text-faint);font-size:12px;text-transform:uppercase;letter-spacing:.4px;padding:9px 12px;border-bottom:1px solid var(--border);}
+td{padding:10px 12px;border-bottom:1px solid var(--border-soft);color:#c5ccd4;vertical-align:top;}
+td:first-child{color:var(--text);font-weight:600;}
+
+.pill{display:inline-block;font-size:11.5px;padding:3px 10px;border-radius:20px;font-weight:600;margin:2px 4px 2px 0;}
+.pill-teal{background:rgba(0,194,224,.15);color:var(--teal);}
+.pill-green{background:rgba(63,185,80,.15);color:var(--green);}
+.pill-amber{background:rgba(210,153,34,.15);color:var(--amber);}
+.pill-red{background:rgba(248,81,73,.15);color:var(--red);}
+.pill-purple{background:rgba(163,113,247,.15);color:var(--purple);}
+.pill-orange{background:rgba(232,140,31,.15);color:var(--orange);}
+
+.prompt-box{background:#15101f;border:1px solid rgba(163,113,247,.3);border-radius:var(--radius);padding:16px 18px;margin:14px 0;position:relative;}
+.prompt-label{font-size:11.5px;color:var(--purple);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+.prompt-text{font-size:14px;color:#e8e0f7;line-height:1.65;white-space:pre-wrap;}
+.copy-btn{background:rgba(163,113,247,.15);border:1px solid rgba(163,113,247,.4);color:var(--purple);font-size:12px;padding:5px 12px;border-radius:6px;cursor:pointer;font-weight:600;font-family:inherit;transition:background .15s;flex-shrink:0;}
+.copy-btn:hover{background:rgba(163,113,247,.28);}
+.copy-btn.copied{background:rgba(63,185,80,.2);color:var(--green);border-color:rgba(63,185,80,.4);}
+
+.code-box{background:#0a1005;border:1px solid rgba(63,185,80,.25);border-radius:var(--radius);padding:16px 18px;margin:14px 0;}
+.code-label{font-size:11.5px;color:var(--green);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+
+.terminal-box{background:#050d18;border:1px solid rgba(0,194,224,.3);border-radius:var(--radius);padding:14px 18px;margin:12px 0;}
+.terminal-box::before{content:'TERMINAL';font-size:11px;font-weight:700;color:var(--teal);letter-spacing:1px;display:block;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid rgba(0,194,224,.2);}
+.terminal-box pre{background:transparent;border:none;padding:0;margin:0;color:#a5f3fc;font-size:13.5px;}
+
+.expect-box{background:rgba(63,185,80,.07);border:1px solid rgba(63,185,80,.25);border-radius:var(--radius);padding:14px 18px;margin:10px 0 22px;}
+.expect-box .expect-label{font-size:11.5px;color:var(--green);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:6px;}
+.expect-box p{margin-bottom:0;color:#bcd9c0;}
+
+.verify-box{background:rgba(0,194,224,.06);border:1px solid rgba(0,194,224,.25);border-radius:var(--radius);padding:14px 18px;margin:10px 0 22px;}
+.verify-box .verify-label{font-size:11.5px;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:6px;}
+.verify-box p{margin-bottom:0;color:#a8dde8;}
+
+.note-box{background:rgba(210,153,34,.07);border:1px solid rgba(210,153,34,.25);border-radius:var(--radius);padding:14px 18px;margin:16px 0;}
+.note-box .note-label{font-size:11.5px;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:6px;}
+.note-box p{margin-bottom:0;color:#d4c08a;}
+
+.step-flow{margin:20px 0;}
+.step{display:flex;gap:16px;margin-bottom:4px;}
+.step-rail{display:flex;flex-direction:column;align-items:center;flex-shrink:0;}
+.step-dot{width:30px;height:30px;border-radius:50%;background:var(--card);border:2px solid var(--orange);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--orange);flex-shrink:0;}
+.step-dot.done{background:var(--green);border-color:var(--green);color:#001318;}
+.step-dot.now{background:var(--orange);border-color:var(--orange);color:#1a0500;}
+.step-line{width:2px;flex:1;background:var(--border);margin:4px 0;min-height:20px;}
+.step-body{padding-bottom:28px;flex:1;}
+.step-title{font-size:15.5px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.step-desc{font-size:14px;color:var(--text-dim);}
+
+.prompt-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.meta-pill{font-size:10.5px;padding:3px 9px;border-radius:14px;font-weight:600;letter-spacing:.3px;}
+.meta-context{background:rgba(0,194,224,.12);color:var(--teal);}
+.meta-task{background:rgba(163,113,247,.15);color:var(--purple);}
+.meta-constraint{background:rgba(210,153,34,.15);color:var(--amber);}
+.meta-output{background:rgba(63,185,80,.15);color:var(--green);}
+
+.arch-box{background:#060e18;border:1px solid var(--border-soft);border-radius:var(--radius);padding:18px 22px;margin:14px 0;font-family:"SF Mono",Consolas,monospace;font-size:13.5px;line-height:2.2;color:#7dd3fc;}
+.arch-box .layer{color:#c9d1d9;}
+.arch-box .arrow{color:var(--text-faint);}
+.arch-box .label{color:#6b7480;font-size:12px;}
+
+.capstone-box{background:linear-gradient(135deg,#140830,#061422);border:2px solid rgba(163,113,247,.55);border-radius:12px;padding:26px 28px;margin:20px 0;}
+.capstone-box::before{content:'🚀  CAPSTONE PROMPT — PASTE INTO CLAUDE CODE (NEW api/ FOLDER)';font-size:.67rem;font-weight:700;color:#a78bfa;letter-spacing:.9px;display:block;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(163,113,247,.25);}
+.capstone-box p{color:#e0f2fe;font-family:"SF Mono",Consolas,monospace;font-size:.8rem;line-height:1.9;margin:0;white-space:pre-wrap;}
+
+.faq-item{border-bottom:1px solid var(--border-soft);}
+.faq-q{padding:16px 0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:600;color:var(--text);user-select:none;}
+.faq-q:hover{color:var(--teal);}
+.faq-arrow{transition:transform .2s;color:var(--text-faint);font-size:14px;}
+.faq-item.open .faq-arrow{transform:rotate(180deg);color:var(--teal);}
+.faq-a{display:none;padding:0 0 18px;color:#c5ccd4;font-size:14.5px;line-height:1.7;}
+.faq-item.open .faq-a{display:block;}
+
+.toc-strip{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 28px;padding:14px;background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);}
+.toc-strip a{font-size:12.5px;color:var(--text-dim);padding:5px 11px;border:1px solid var(--border);border-radius:16px;}
+.toc-strip a:hover{color:var(--orange);border-color:var(--orange);text-decoration:none;}
+
+.confirm-box{background:rgba(232,140,31,.08);border:2px solid rgba(232,140,31,.35);border-radius:var(--radius);padding:20px 22px;margin:24px 0;}
+.confirm-box h4{color:var(--orange);font-size:13px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;}
+
+.recap-card{background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:16px 20px;margin:12px 0;display:flex;gap:14px;align-items:flex-start;}
+.recap-icon{font-size:1.5rem;flex-shrink:0;margin-top:2px;}
+.recap-body h4{font-size:14px;font-weight:600;color:var(--text);margin-bottom:5px;}
+.recap-body p{font-size:13.5px;color:var(--text-dim);margin:0;}
+
+.file-tree{background:var(--code-bg);border:1px solid var(--border-soft);border-radius:var(--radius);padding:16px 20px;font-family:"SF Mono",Consolas,monospace;font-size:13px;line-height:2;color:#94a3b8;}
+.file-tree .dir{color:#c4b5fd;font-weight:500;}
+.file-tree .file{color:#7dd3fc;}
+.file-tree .note{color:#475569;font-size:12px;}
+
+.timeline-h{display:flex;flex-direction:column;gap:0;}
+.tl-item-h{display:grid;grid-template-columns:120px 1fr;gap:0;}
+.tl-item-h:not(:last-child) .tl-right-h{border-left:2px solid var(--border);padding-left:24px;padding-bottom:24px;}
+.tl-right-h{padding-left:24px;padding-bottom:24px;position:relative;}
+.tl-right-h::before{content:'';width:12px;height:12px;border-radius:50%;background:var(--orange);border:2px solid var(--bg);position:absolute;left:-7px;top:4px;}
+.tl-left-h{padding:2px 16px 24px 0;text-align:right;}
+.tl-label{font-size:12px;font-weight:600;color:var(--orange);text-transform:uppercase;letter-spacing:.5px;}
+.tl-sub{font-size:11px;color:var(--text-faint);margin-top:3px;}
+
+.ref-card{display:flex;align-items:flex-start;gap:14px;background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:16px 18px;margin:12px 0;}
+.ref-icon{width:36px;height:36px;border-radius:8px;background:rgba(232,140,31,.12);color:var(--orange);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0;}
+.ref-body h4{font-size:14.5px;font-weight:600;color:var(--text);margin-bottom:3px;}
+.ref-body p{font-size:13.5px;color:var(--text-dim);margin-bottom:4px;}
+
+footer{border-top:1px solid var(--border-soft);margin-top:40px;padding:36px 24px;background:var(--bg2);}
+.footer-inner{max-width:var(--maxw);margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+.footer-brand{font-size:13.5px;color:var(--text-dim);}
+.footer-brand strong{color:var(--text);}
+.footer-links{display:flex;gap:18px;font-size:13px;}
+.footer-links a{color:var(--text-faint);}
+.footer-links a:hover{color:var(--teal);}
+.footer-bottom{text-align:center;font-size:12px;color:var(--text-faint);margin-top:20px;padding-top:20px;border-top:1px solid var(--border-soft);max-width:var(--maxw);margin-left:auto;margin-right:auto;}
+@media(max-width:600px){h1.page-title{font-size:22px;}.brand-title{font-size:13.5px;}main{padding:24px 16px 50px;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand-row">
+      <div class="brand-left">
+        <div class="logo-mark">🔌</div>
+        <div>
+          <div class="brand-title">Khan Chacha MRMS — Day 4 · API Layer</div>
+          <div class="brand-sub">Koenig Solutions Trainer Series · Beast AI Initiative</div>
+        </div>
+      </div>
+      <div class="brand-right">
+        <div class="koenig-badge">Koenig Solutions × RR Skillverse</div>
+        <a href="index.html" class="home-btn">← All Sessions</a>
+      </div>
+    </div>
+    <h1 class="page-title">Building the API Layer — Future-Proof Your App</h1>
+    <p class="page-subtitle">Why direct database connections aren't enough. How a REST API makes your backend reusable — for Flutter today, for any app or website tomorrow. Build it with Claude Code, step by step.</p>
+    <nav class="tabnav" id="tabnav">
+      <button data-tab="recap" class="active">📋 Recap</button>
+      <button data-tab="whatapi">🔌 What is an API Layer</button>
+      <button data-tab="whyapi">✅ Why API Layer</button>
+      <button data-tab="setup">⚙️ Node.js Setup</button>
+      <button data-tab="claudepair">🤖 Claude as API Pair</button>
+      <button data-tab="stepbystep">🔨 Step-by-Step Build</button>
+      <button data-tab="capstone">🚀 Capstone Prompt</button>
+      <button data-tab="architecture">📖 Architecture Guide</button>
+      <button data-tab="qna">❓ Q&amp;A</button>
+      <button data-tab="references">📚 References</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ══════════════════════════════ TAB 1 · RECAP ══════════════════════════════ -->
+<div class="tabpanel active" id="tab-recap">
+  <div class="toc-strip">
+    <a href="#recap-d1d2">Days 1–2 quick recap</a>
+    <a href="#recap-d3">Day 3 in detail</a>
+    <a href="#recap-tools">Tools installed</a>
+    <a href="#recap-arch">Architecture formed</a>
+    <a href="#recap-bridge">Why API comes next</a>
+  </div>
+
+  <h2>Before Day 4 — where we've been</h2>
+  <p class="lead">Day 4 builds directly on Day 3. If the database concepts feel fuzzy, this recap will sharpen them before we add the API layer on top.</p>
+
+  <h2 id="recap-d1d2">Days 1 &amp; 2 — quick recap</h2>
+  <div class="grid2">
+    <div class="recap-card">
+      <div class="recap-icon">📱</div>
+      <div class="recap-body">
+        <h4>Day 1 — Flutter Foundations</h4>
+        <p>Flutter installed, first app running, Khan Chacha MRMS list screen built. Learned: widgets, hot reload, how to read Dart, first Claude Code prompts.</p>
+      </div>
+    </div>
+    <div class="recap-card">
+      <div class="recap-icon">💬</div>
+      <div class="recap-body">
+        <h4>Day 2 — Full App + Prompting Patterns</h4>
+        <p>All 5 screens built: Login, Dashboard, Request List, Detail, Form. Role-based access, image picker, animated transitions, confirmation dialogs. App ran fully on dummy data.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2 id="recap-d3">Day 3 — detailed recap</h2>
+  <p>Day 3 replaced the fake dummy data with a real PostgreSQL database. Here is every concept that mattered — and why it still matters today.</p>
+
+  <h3 id="recap-tools">What is PostgreSQL — and why we chose it</h3>
+  <p>PostgreSQL is a free, open-source relational database. "Relational" means data lives in tables that reference each other — just like a Khan Chacha office filing system where each maintenance request slip references the outlet file and the staff member file rather than copying all their details onto every slip.</p>
+  <p>We chose PostgreSQL over SQLite (single device only), MongoDB (wrong shape for structured data), Firebase (costly at scale, no SQL), and MySQL (PostgreSQL has better features). The same schema we built locally runs identically on Supabase, AWS RDS, or Azure — no rewriting.</p>
+
+  <h3>The three tools we installed — and when to use each</h3>
+  <table>
+    <tr><th>Tool</th><th>What it is</th><th>Use it when</th></tr>
+    <tr>
+      <td>psql CLI</td>
+      <td>Command-line interface that ships with PostgreSQL. You type SQL directly.</td>
+      <td>Quick checks, running .sql files, scripting, initial setup. Fastest tool once you know the commands.</td>
+    </tr>
+    <tr>
+      <td>pgAdmin 4</td>
+      <td>Official browser-based GUI for PostgreSQL. Installed with the Windows installer.</td>
+      <td>Browsing data visually, running queries, viewing execution plans. Use when you want a spreadsheet-style view of your data.</td>
+    </tr>
+    <tr>
+      <td>DBeaver</td>
+      <td>Free, cross-platform universal database client. Works with PostgreSQL, MySQL, SQLite, and 80+ others.</td>
+      <td>Day-to-day querying. Best for beginners — shows table relationships as an automatic ER diagram, has SQL autocomplete, dark mode. <strong>Recommended for this course.</strong></td>
+    </tr>
+  </table>
+
+  <h3>What the Day 3 Claude Code prompts built — and what each output means</h3>
+  <table>
+    <tr><th>Prompt</th><th>What Claude did</th><th>Output created</th></tr>
+    <tr><td>P1 — Read project</td><td>Scanned lib/models/ and lib/data/ and listed every field and type</td><td>No files — just Claude's understanding of the project before writing anything</td></tr>
+    <tr><td>P2 — Generate schema</td><td>Mapped Dart types to SQL types, created ENUM types, added foreign keys and indexes</td><td><code>db/schema.sql</code> — 3 CREATE TABLE statements</td></tr>
+    <tr><td>P3 — Connect to PostgreSQL</td><td>Ran psql in the terminal, set PGPASSWORD so password is only typed once</td><td>Active database connection for the session</td></tr>
+    <tr><td>P4 — Run schema</td><td>Executed db/schema.sql via psql -f command</td><td>3 tables created in khan_chacha database: outlets, users, maintenance_requests</td></tr>
+    <tr><td>P5 — Seed from dummy data</td><td>Read dummy_data.dart Dart objects, converted to ordered SQL INSERTs</td><td><code>db/seed.sql</code> + 8 real rows in the database</td></tr>
+    <tr><td>P7 — fromRow()</td><td>Added a factory constructor to map PostgreSQL snake_case column names to Dart camelCase fields</td><td>Updated maintenance_request.dart</td></tr>
+    <tr><td>P8 — DatabaseService</td><td>Created a singleton with fetchAll, createRequest, updateStatus, deleteRequest, getStatusCounts methods</td><td><code>lib/services/database_service.dart</code></td></tr>
+    <tr><td>P9–P12 — Wire screens</td><td>Replaced dummy_data.dart references across list screen, form, detail, dashboard</td><td>4 screen files updated — app now reads/writes real data</td></tr>
+  </table>
+
+  <h2 id="recap-arch">The database architecture that was formed</h2>
+  <p>After Day 3, three tables exist inside the PostgreSQL engine with this structure:</p>
+  <div class="arch-box">
+    <span class="layer">outlets</span>  <span class="label">(id, name, address, city, pincode)</span><br/>
+    <span class="arrow">&nbsp;&nbsp;&nbsp;↑ outlet_id FK</span><br/>
+    <span class="layer">users</span>  <span class="label">(id, name, username, password, role, outlet_id)</span><br/>
+    <span class="arrow">&nbsp;&nbsp;&nbsp;↑ raised_by FK &nbsp;&nbsp; ↑ outlet_id FK</span><br/>
+    <span class="layer">maintenance_requests</span>  <span class="label">(id, product_name, category ENUM, status ENUM, outlet_id, raised_by, status_history JSONB, ...)</span>
+  </div>
+  <ul>
+    <li><strong>ENUM types</strong> enforce that category can only be Electrical, AC, or Kitchen — not "electircal" or anything else. The database rejects invalid values before they ever reach the app.</li>
+    <li><strong>Foreign keys</strong> mean a maintenance request cannot reference an outlet that doesn't exist. Referential integrity is enforced at the database level — not in Flutter code.</li>
+    <li><strong>Indexes</strong> on status, outlet_id, and request_date make the most common queries (filter by status, filter by outlet, sort by date) fast even with thousands of rows.</li>
+    <li><strong>JSONB for status_history</strong> stores the change log as a JSON array in a single column — no separate table needed for this use case.</li>
+  </ul>
+
+  <h2 id="recap-bridge">Why API layer comes immediately after database</h2>
+  <div class="analogy-box">
+    <p><em class="analogy-tag">The Bridge</em></p>
+    <p>Right now, the Flutter app talks to PostgreSQL directly using the <code>postgres</code> Dart package. The database password is a constant inside your Dart code. When you build the app into an APK and distribute it, that password travels with the APK. Anyone who decompiles the app gets your database credentials. For a training session on a local network, this is acceptable. For a real restaurant chain's production system — it is not.</p>
+    <p>The API layer is the bridge that fixes this. Flutter talks to the API (a Node.js server) over HTTPS. The API talks to PostgreSQL. The database password never leaves the server. Flutter never knows it. That's the problem Day 4 solves.</p>
+  </div>
+
+  <div class="card orange">
+    <h4>Today's Session Plan — 2 hours</h4>
+    <table style="margin:8px 0 0;">
+      <tr><th>Time</th><th>Topic</th></tr>
+      <tr><td>0:00 – 0:20</td><td>Recap + What is an API layer + Why we need it</td></tr>
+      <tr><td>0:20 – 0:35</td><td>Node.js setup + project structure</td></tr>
+      <tr><td>0:35 – 1:15</td><td>Build the API step by step using Claude Code</td></tr>
+      <tr><td>1:15 – 1:45</td><td>Update Flutter to use the API instead of direct DB</td></tr>
+      <tr><td>1:45 – 2:00</td><td>Architecture review + next steps (cloud deployment)</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ TAB 2 · WHAT IS AN API LAYER ══════════════════════════════ -->
+<div class="tabpanel" id="tab-whatapi">
+  <div class="toc-strip">
+    <a href="#api-definition">What it is</a>
+    <a href="#api-analogy">The restaurant analogy</a>
+    <a href="#api-rest">REST and HTTP</a>
+    <a href="#api-endpoints">Endpoints we'll build</a>
+  </div>
+
+  <h2 id="api-definition">What is an API Layer?</h2>
+  <p class="lead">API stands for Application Programming Interface. The "layer" part means it sits between your frontend app and your database — receiving requests from Flutter, talking to PostgreSQL, and sending back results. It is a separate program running on a server.</p>
+
+  <div class="card accent">
+    <h4>In one sentence</h4>
+    <p style="margin:0;font-size:15px;">An API layer is a program that listens for requests from apps, applies business logic and security rules, asks the database for data, and sends the answer back — so apps never touch the database directly.</p>
+  </div>
+
+  <h2 id="api-analogy">The restaurant analogy — Khan Chacha itself</h2>
+  <div class="analogy-box">
+    <p><em class="analogy-tag">Real World Analogy</em></p>
+    <p>Think of a Khan Chacha outlet. Customers (Flutter app) don't walk into the kitchen and cook their own food. They give their order to a waiter (the API). The waiter goes to the kitchen (PostgreSQL), gets what's needed, and brings it back. The customer never sees the kitchen. They don't know the recipes. They definitely don't have keys to the pantry (database password).</p>
+    <p>The waiter also enforces rules the kitchen doesn't know about — "this table can only order vegetarian", "this customer is banned" — that's your business logic and authentication enforced in the API, not in the database.</p>
+  </div>
+
+  <h2 id="api-rest">REST and HTTP — how the API communicates</h2>
+  <p>Our API uses REST (Representational State Transfer) over HTTP — the same protocol that web browsers use. Flutter sends an HTTP request with a method and a URL. The API responds with JSON data.</p>
+  <table>
+    <tr><th>HTTP Method</th><th>What it means</th><th>Our use</th></tr>
+    <tr><td><code>GET</code></td><td>Read data</td><td>Fetch maintenance requests, dashboard counts</td></tr>
+    <tr><td><code>POST</code></td><td>Create new data</td><td>Submit a new maintenance request, login</td></tr>
+    <tr><td><code>PUT</code></td><td>Update existing data (full replace)</td><td>Edit all fields of a request</td></tr>
+    <tr><td><code>PATCH</code></td><td>Update part of existing data</td><td>Change just the status of a request</td></tr>
+    <tr><td><code>DELETE</code></td><td>Remove data</td><td>Delete a maintenance request</td></tr>
+  </table>
+
+  <h2 id="api-endpoints">The endpoints we'll build today</h2>
+  <table>
+    <tr><th>Method</th><th>URL</th><th>What it does</th><th>Who calls it</th></tr>
+    <tr><td><code>POST</code></td><td>/api/auth/login</td><td>Validates credentials, returns user info</td><td>LoginScreen on submit</td></tr>
+    <tr><td><code>GET</code></td><td>/api/requests</td><td>Returns all requests (with JOIN)</td><td>RequestListScreen (manager)</td></tr>
+    <tr><td><code>GET</code></td><td>/api/requests?outlet_id=OUT-01</td><td>Returns requests filtered by outlet</td><td>RequestListScreen (staff)</td></tr>
+    <tr><td><code>POST</code></td><td>/api/requests</td><td>Creates a new request</td><td>RequestFormScreen (create)</td></tr>
+    <tr><td><code>PUT</code></td><td>/api/requests/:id</td><td>Updates all fields of a request</td><td>RequestFormScreen (edit)</td></tr>
+    <tr><td><code>PATCH</code></td><td>/api/requests/:id/status</td><td>Updates status + appends history</td><td>DetailScreen Update Status</td></tr>
+    <tr><td><code>DELETE</code></td><td>/api/requests/:id</td><td>Deletes a request</td><td>DetailScreen Delete</td></tr>
+    <tr><td><code>GET</code></td><td>/api/dashboard/counts</td><td>Returns status counts (GROUP BY)</td><td>DashboardScreen stat cards</td></tr>
+  </table>
+
+  <div class="note-box">
+    <div class="note-label">📌 Reusability — the long-term value</div>
+    <p>These endpoints are not Flutter-specific. Any future Khan Chacha web dashboard, admin panel, WhatsApp bot, or reporting tool can call the same URLs and get the same data. You build the API once. Every app benefits forever.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ TAB 3 · WHY API LAYER ══════════════════════════════ -->
+<div class="tabpanel" id="tab-whyapi">
+  <div class="toc-strip">
+    <a href="#why-security">Security</a>
+    <a href="#why-reuse">Reusability</a>
+    <a href="#why-logic">Business logic</a>
+    <a href="#why-scale">Scalability</a>
+    <a href="#why-compare">With vs without</a>
+  </div>
+
+  <h2>Why add an API layer at all?</h2>
+  <p class="lead">The app already works. Data persists. CRUD is functional. So why change the architecture? Four reasons — each one worth understanding before we build.</p>
+
+  <h2 id="why-security">1 — Security: credentials never leave the server</h2>
+  <div class="grid2">
+    <div class="card danger">
+      <h4>Without API layer (Day 3)</h4>
+      <p style="font-size:13.5px;color:var(--text-dim);margin:0">The database password <code>kc_secure_2026</code> is a constant inside <code>database_service.dart</code>. When you compile the Flutter app into an APK, that constant is embedded in the binary. A motivated attacker can decompile the APK and extract it. Now they have direct access to your PostgreSQL database — read, write, delete, everything.</p>
+    </div>
+    <div class="card success">
+      <h4>With API layer (Day 4)</h4>
+      <p style="font-size:13.5px;color:var(--text-dim);margin:0">The password lives in a <code>.env</code> file on the Node.js server. Flutter only knows the API's URL — <code>https://api.khanchacha.com/api/requests</code>. No password. No direct database access. Even if someone decompiles the app, they get a URL — not credentials.</p>
+    </div>
+  </div>
+
+  <h2 id="why-reuse">2 — Reusability: one API, many apps</h2>
+  <p>Khan Chacha currently has a Flutter mobile app. In the future, they might want:</p>
+  <ul>
+    <li>A web dashboard for the head office manager to see all outlets</li>
+    <li>An admin panel for the maintenance team to manage staff accounts</li>
+    <li>An automated WhatsApp notification when a request changes status</li>
+    <li>A monthly PDF report generated by a scheduled script</li>
+  </ul>
+  <p>Without an API: each of these would need direct database access — and its own database credentials. With an API: they all call <code>GET /api/requests</code> or <code>GET /api/dashboard/counts</code>. One source of truth. One set of business rules. Build once, use everywhere.</p>
+
+  <h2 id="why-logic">3 — Business logic lives in one place</h2>
+  <p>Right now, the rule "staff can only see their own outlet's requests" is enforced in Flutter — inside <code>request_list_screen.dart</code>. A clever user could modify the app or call the database directly and bypass this rule.</p>
+  <p>With an API: the Flutter app sends a request with the user's ID. The API checks the role on the server. If staff, it adds <code>WHERE outlet_id = $user_outlet_id</code> automatically. The user has no way to bypass this — they cannot modify server-side code.</p>
+
+  <h2 id="why-scale">4 — Scalability and cloud migration</h2>
+  <p>Moving the database from localhost to Supabase or AWS RDS is a one-line change in the API's <code>.env</code> file. The Flutter app never needs an update. The API abstracts the database location completely. Tomorrow you could change from PostgreSQL to a different database — and as long as the API returns the same JSON, Flutter wouldn't know or care.</p>
+
+  <h2 id="why-compare">With vs without — the full picture</h2>
+  <table>
+    <tr><th>Concern</th><th>Without API (Day 3)</th><th>With API (Day 4)</th></tr>
+    <tr><td>DB credentials in app</td><td>⚠️ Yes — inside the APK binary</td><td>✅ No — server-side only</td></tr>
+    <tr><td>Role enforcement</td><td>⚠️ Client-side only — bypassable</td><td>✅ Server-side — enforced</td></tr>
+    <tr><td>Future web dashboard</td><td>⚠️ Needs separate DB connection</td><td>✅ Calls same API endpoints</td></tr>
+    <tr><td>Move DB to cloud</td><td>⚠️ Requires Flutter app update + redeploy</td><td>✅ Change one .env line on server</td></tr>
+    <tr><td>Business rule changes</td><td>⚠️ Requires a new app version</td><td>✅ Update API, no app update needed</td></tr>
+    <tr><td>Multiple client apps</td><td>⚠️ Each needs its own DB logic</td><td>✅ All call the same endpoints</td></tr>
+    <tr><td>Complexity today</td><td>✅ Simpler — less code</td><td>⚠️ One extra program to run (the API server)</td></tr>
+  </table>
+</div>
+
+<!-- ══════════════════════════════ TAB 4 · NODE.JS SETUP ══════════════════════════════ -->
+<div class="tabpanel" id="tab-setup">
+  <div class="toc-strip">
+    <a href="#setup-nodejs">Install Node.js</a>
+    <a href="#setup-structure">Project structure</a>
+    <a href="#setup-packages">npm packages</a>
+    <a href="#setup-env">.env file</a>
+  </div>
+
+  <h2 id="setup-nodejs">Installing Node.js</h2>
+  <p class="lead">The API is a Node.js application. Node.js lets you run JavaScript on the server — not just in the browser. Express is the framework we use to define API routes. Both take about 5 minutes to set up.</p>
+
+  <div class="terminal-box"><pre><span class="cmt"># Check if Node.js is already installed</span>
+node --version
+<span class="cmt"># If you see v18.x or v20.x or higher — you're done. Skip to the next section.</span>
+<span class="cmt"># If you get "command not found" — install it:</span>
+
+<span class="cmt"># Windows / Mac: download the LTS installer from nodejs.org</span>
+<span class="cmt"># Linux (Ubuntu/Debian):</span>
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+<span class="cmt"># Verify after installation</span>
+node --version    <span class="cmt"># should print v20.x.x</span>
+npm --version     <span class="cmt"># npm comes with Node.js</span></pre></div>
+
+  <h2 id="setup-structure">Project structure — a separate folder from Flutter</h2>
+  <p>The API lives in its own folder alongside the Flutter project — not inside it. If your Flutter project is at <code>khan_chacha_mrms/</code>, the API goes next to it at <code>khan_chacha_api/</code>.</p>
+
+  <div class="file-tree">
+    <span class="dir">khan_chacha_api/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">← this is a new separate folder</span><br/>
+    ├── <span class="file">server.js</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// entry point — starts the server</span><br/>
+    ├── <span class="file">package.json</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// npm dependencies list</span><br/>
+    ├── <span class="file">.env</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// DB password, port, JWT secret — never commit this</span><br/>
+    ├── <span class="file">.gitignore</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// includes .env and node_modules</span><br/>
+    ├── <span class="dir">db/</span><br/>
+    │&nbsp;&nbsp;&nbsp;└── <span class="file">connection.js</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// PostgreSQL connection pool</span><br/>
+    ├── <span class="dir">routes/</span><br/>
+    │&nbsp;&nbsp;&nbsp;├── <span class="file">requests.js</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// GET/POST/PUT/PATCH/DELETE /api/requests</span><br/>
+    │&nbsp;&nbsp;&nbsp;├── <span class="file">auth.js</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// POST /api/auth/login</span><br/>
+    │&nbsp;&nbsp;&nbsp;└── <span class="file">dashboard.js</span>&nbsp;&nbsp;&nbsp;<span class="note">// GET /api/dashboard/counts</span><br/>
+    └── <span class="dir">middleware/</span><br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;└── <span class="file">auth.js</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// JWT verification middleware (future)</span>
+  </div>
+
+  <h2 id="setup-packages">npm packages we'll install</h2>
+  <table>
+    <tr><th>Package</th><th>What it does</th><th>Why we need it</th></tr>
+    <tr><td><code>express</code></td><td>Web framework for Node.js</td><td>Defines our routes and handles HTTP requests/responses</td></tr>
+    <tr><td><code>pg</code></td><td>PostgreSQL client for Node.js</td><td>Talks to the database — the Node.js equivalent of the Dart postgres package</td></tr>
+    <tr><td><code>cors</code></td><td>Cross-Origin Resource Sharing</td><td>Allows the Flutter app (on a different port) to call the API</td></tr>
+    <tr><td><code>dotenv</code></td><td>Loads .env file into environment</td><td>Keeps DB passwords out of code — reads from the .env file</td></tr>
+    <tr><td><code>nodemon</code></td><td>Auto-restarts server on file changes</td><td>Dev convenience — like Flutter hot reload for Node.js</td></tr>
+  </table>
+
+  <h2 id="setup-env">The .env file — never commit this</h2>
+  <p>The <code>.env</code> file holds secrets. It is never pushed to GitHub. Claude Code will create a <code>.gitignore</code> that excludes it automatically.</p>
+  <div class="code-box">
+    <div class="code-label">.env — example contents</div>
+    <pre style="background:transparent;border:none;padding:0;margin:0;color:#a5f3fc;"><code>PORT=3000
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=khan_chacha
+DB_USER=kc_app
+DB_PASSWORD=kc_secure_2026
+JWT_SECRET=khan_chacha_jwt_secret_change_in_production</code></pre>
+  </div>
+  <p>When you move to Supabase or AWS, you only change the DB values in this file. The Node.js code never changes. The Flutter app never changes. That's the whole point.</p>
+</div>
+
+<!-- ══════════════════════════════ TAB 5 · CLAUDE AS API PAIR ══════════════════════════════ -->
+<div class="tabpanel" id="tab-claudepair">
+  <div class="toc-strip">
+    <a href="#cpair-mindset">The mindset</a>
+    <a href="#cpair-reads">What Claude reads first</a>
+    <a href="#cpair-patterns">API prompt patterns</a>
+    <a href="#cpair-debug">Debugging with Claude</a>
+    <a href="#cpair-test">Testing with Claude</a>
+  </div>
+
+  <h2 id="cpair-mindset">Claude as your API pair-programmer</h2>
+  <p class="lead">Building an API with Claude Code follows the same mindset as building Flutter screens with it. You describe the endpoint's behaviour. Claude writes the route. You read it, test it, and move to the next one. You never memorise Express syntax.</p>
+
+  <div class="card accent">
+    <h4>What stays the same from Day 3</h4>
+    <ul style="margin:0;padding-left:18px;">
+      <li>Start by letting Claude read existing files before asking it to generate anything</li>
+      <li>One prompt per feature — not everything at once (until the capstone)</li>
+      <li>Read every file Claude creates before running it</li>
+      <li>When something breaks, paste the error into Claude — don't guess</li>
+    </ul>
+  </div>
+
+  <h2 id="cpair-reads">What Claude reads first in Day 4</h2>
+  <p>Unlike Day 3 (where Claude read Dart files), today Claude reads the database schema to understand what columns exist before writing API routes.</p>
+  <div class="prompt-box">
+    <div class="prompt-label">Orientation prompt — run this before any build prompts<button class="copy-btn" onclick="copyPrompt(this,'cp-orient')">Copy</button></div>
+    <div class="prompt-text" id="cp-orient">I am about to build a Node.js REST API for the Khan Chacha Maintenance Request Management System.
+
+Before we start, read these files if they exist in the project:
+- db/schema.sql (the PostgreSQL table definitions)
+- db/seed.sql (sample data — tells you the column names and data format)
+- lib/models/maintenance_request.dart (the Dart model — tells you field names)
+
+Then tell me:
+1. The names and types of all columns in the maintenance_requests table
+2. What ENUM values exist for status and category
+3. Which columns reference which other tables (foreign keys)
+4. How many sample records are in the seed file
+
+Do not write any code yet. Just confirm you understand the data structure.</div>
+  </div>
+
+  <h2 id="cpair-patterns">API-specific prompt patterns</h2>
+
+  <h3>Pattern — always name the file and method</h3>
+  <div class="prompt-box">
+    <div class="prompt-label">Good API prompt structure<button class="copy-btn" onclick="copyPrompt(this,'cp-pat1')">Copy</button></div>
+    <div class="prompt-text" id="cp-pat1">In routes/requests.js, add a GET / route that:
+- Queries all rows from maintenance_requests with a JOIN to outlets and users
+- If a query parameter outlet_id is present, adds WHERE r.outlet_id = $1
+- Returns the result as a JSON array
+- On error, returns HTTP 500 with { error: error.message }
+
+Use the pg pool from db/connection.js.
+Use parameterized queries (never string interpolation in SQL).
+Do not change any other route that already exists in the file.</div>
+  </div>
+
+  <h3>Pattern — specify HTTP status codes</h3>
+  <p>Always tell Claude which HTTP status codes to return. This makes the Flutter side easier to handle.</p>
+  <div class="prompt-box">
+    <div class="prompt-label">Status code pattern<button class="copy-btn" onclick="copyPrompt(this,'cp-pat2')">Copy</button></div>
+    <div class="prompt-text" id="cp-pat2">In routes/auth.js, add a POST /login route that:
+- Reads username and password from req.body
+- Queries the users table for a matching username
+- If not found: return HTTP 404 with { error: 'User not found' }
+- If found but password doesn't match: return HTTP 401 with { error: 'Invalid password' }
+- If valid: return HTTP 200 with the user object (excluding password field)
+
+Use the pg pool from db/connection.js.</div>
+  </div>
+
+  <h2 id="cpair-debug">Debugging with Claude</h2>
+  <p>When an API route returns an error, the terminal shows the Node.js error and the HTTP client (Flutter or curl) shows the response. Paste both into Claude.</p>
+  <div class="prompt-box">
+    <div class="prompt-label">Debug prompt template<button class="copy-btn" onclick="copyPrompt(this,'cp-debug')">Copy</button></div>
+    <div class="prompt-text" id="cp-debug">My Node.js API returned an error when I called [METHOD] [URL].
+
+Terminal error (Node.js server output):
+[PASTE THE ERROR FROM YOUR TERMINAL HERE]
+
+HTTP response I received:
+[PASTE THE JSON ERROR RESPONSE HERE]
+
+The relevant route code is in routes/[filename].js.
+Read that file and tell me what is wrong and how to fix it.</div>
+  </div>
+
+  <h2 id="cpair-test">Testing the API with Claude Code</h2>
+  <p>Before updating Flutter to use the API, verify each endpoint using curl — a command-line HTTP client that comes pre-installed on Mac and Linux, and is available in Windows PowerShell.</p>
+  <div class="prompt-box">
+    <div class="prompt-label">Generate curl test commands<button class="copy-btn" onclick="copyPrompt(this,'cp-test')">Copy</button></div>
+    <div class="prompt-text" id="cp-test">My Node.js API server is running on http://localhost:3000.
+
+Generate curl commands to test each of these endpoints:
+1. POST /api/auth/login with body { "username": "manager", "password": "manager123" }
+2. GET /api/requests
+3. GET /api/requests?outlet_id=OUT-02
+4. POST /api/requests with a sample maintenance request body
+5. PATCH /api/requests/REQ-001/status with body { "status": "Pending" }
+6. DELETE /api/requests/REQ-001
+7. GET /api/dashboard/counts
+
+Show the curl command and the expected successful response for each.</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ TAB 6 · STEP-BY-STEP BUILD ══════════════════════════════ -->
+<div class="tabpanel" id="tab-stepbystep">
+  <div class="toc-strip">
+    <a href="#sb-before">Before you start</a>
+    <a href="#sb-p1">P1 · Init project</a>
+    <a href="#sb-p2">P2 · DB connection</a>
+    <a href="#sb-p3">P3 · GET requests</a>
+    <a href="#sb-p4">P4 · POST create</a>
+    <a href="#sb-p5">P5 · PUT/PATCH/DELETE</a>
+    <a href="#sb-p6">P6 · Auth login</a>
+    <a href="#sb-p7">P7 · Dashboard counts</a>
+    <a href="#sb-p8">P8 · Wire server.js</a>
+    <a href="#sb-p9">P9 · Test all endpoints</a>
+    <a href="#sb-p10">P10 · Update Flutter pubspec</a>
+    <a href="#sb-p11">P11 · Create ApiService</a>
+    <a href="#sb-p12">P12 · Wire all screens</a>
+  </div>
+
+  <h2 id="sb-before">Before you start — two terminals open</h2>
+  <p>You need two VS Code terminals running simultaneously:</p>
+  <div class="grid2">
+    <div class="terminal-box" style="margin:0;"><pre><span class="cmt"># Terminal 1 — inside khan_chacha_api/</span>
+<span class="cmt"># This runs the Node.js API server</span>
+cd khan_chacha_api
+<span class="cmt"># After P8: npm run dev</span></pre></div>
+    <div class="terminal-box" style="margin:0;"><pre><span class="cmt"># Terminal 2 — inside khan_chacha_mrms/</span>
+<span class="cmt"># This runs Claude Code and flutter run</span>
+cd khan_chacha_mrms
+claude</pre></div>
+  </div>
+
+  <!-- P1 -->
+  <h2 id="sb-p1">Prompt 1 — Initialize the Node.js API project</h2>
+  <div class="terminal-box"><pre><span class="cmt"># In Terminal 1: create the API folder and start Claude Code</span>
+mkdir khan_chacha_api
+cd khan_chacha_api
+claude</pre></div>
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code — P1 of 12<button class="copy-btn" onclick="copyPrompt(this,'p1')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-task">Creates project structure</span>
+      <span class="meta-pill meta-output">package.json, .env, .gitignore</span>
+    </div>
+    <div class="prompt-text" id="p1">Initialize a new Node.js project for the Khan Chacha MRMS REST API.
+
+Do the following in order:
+
+1. Run: npm init -y
+   Then update package.json to set "main": "server.js" and add these scripts:
+   "start": "node server.js"
+   "dev": "nodemon server.js"
+
+2. Install these packages:
+   npm install express pg cors dotenv
+   npm install --save-dev nodemon
+
+3. Create a .env file with these contents:
+   PORT=3000
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_NAME=khan_chacha
+   DB_USER=kc_app
+   DB_PASSWORD=kc_secure_2026
+   JWT_SECRET=kc_jwt_secret_2026
+
+4. Create a .gitignore file with these contents:
+   node_modules/
+   .env
+
+5. Create these empty folders: routes/ middleware/ db/
+
+Show me the contents of package.json after all changes.</div>
+  </div>
+  <div class="expect-box">
+    <div class="expect-label">What gets created</div>
+    <p><code>package.json</code> with all 5 packages listed, <code>.env</code> with DB credentials, <code>.gitignore</code> protecting secrets, and empty folders. Running <code>npm run dev</code> would fail now (no server.js yet) — that comes in P8.</p>
+  </div>
+
+  <!-- P2 -->
+  <h2 id="sb-p2">Prompt 2 — Database connection pool</h2>
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code — P2 of 12<button class="copy-btn" onclick="copyPrompt(this,'p2')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-task">Creates db/connection.js</span>
+      <span class="meta-pill meta-output">1 new file</span>
+    </div>
+    <div class="prompt-text" id="p2">Create db/connection.js.
+
+This file creates and exports a PostgreSQL connection pool using the pg package.
+The pool reads all connection values from environment variables (which dotenv loads from .env):
+  host: process.env.DB_HOST
+  port: process.env.DB_PORT
+  database: process.env.DB_NAME
+  user: process.env.DB_USER
+  password: process.env.DB_PASSWORD
+
+Use a pool (not a single client) so multiple concurrent API requests share connections efficiently.
+Add a small test: when the module loads, run a SELECT NOW() query to confirm the connection works.
+Log 'Database connected' on success, or log the error and exit the process on failure.
+
+Export the pool as module.exports = pool.
+Create db/connection.js only.</div>
+  </div>
+  <div class="verify-box">
+    <div class="verify-label">Quick test</div>
+    <p>Run <code>node db/connection.js</code> in Terminal 1. You should see "Database connected" if PostgreSQL is running. If you see a connection error, check that PostgreSQL is started and your .env values are correct.</p>
+  </div>
+
+  <!-- P3 -->
+  <h2 id="sb-p3">Prompt 3 — GET requests routes (read)</h2>
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code — P3 of 12<button class="copy-btn" onclick="copyPrompt(this,'p3')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-task">Creates routes/requests.js (GET routes)</span>
+      <span class="meta-pill meta-output">1 new file (partial)</span>
+    </div>
+    <div class="prompt-text" id="p3">Create routes/requests.js with only the GET routes for now.
+
+Import express, create a router, import the pool from db/connection.js.
+
+Route 1 — GET /
+  Query all rows from maintenance_requests with these JOINs:
+    JOIN outlets o ON r.outlet_id = o.id
+    JOIN users u ON r.raised_by = u.id
+  Select: r.*, o.name AS outlet_name, o.address AS outlet_address, u.name AS manager_name
+  If a query parameter outlet_id is present in req.query, add WHERE r.outlet_id = $1
+  ORDER BY r.request_date DESC
+  Return the rows as JSON.
+  On error: res.status(500).json({ error: error.message })
+
+Route 2 — GET /:id
+  Query a single request by id using the same JOINs as above.
+  If no row found: res.status(404).json({ error: 'Request not found' })
+  If found: return the single row as JSON.
+
+Use parameterized queries throughout (never string interpolation in SQL).
+Export the router as module.exports = router.
+Create routes/requests.js only.</div>
+  </div>
+
+  <!-- P4 -->
+  <h2 id="sb-p4">Prompt 4 — POST create route</h2>
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code — P4 of 12<button class="copy-btn" onclick="copyPrompt(this,'p4')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-task">Adds POST to routes/requests.js</span>
+      <span class="meta-pill meta-constraint">Do not change existing GET routes</span>
+    </div>
+    <div class="prompt-text" id="p4">In routes/requests.js, add a POST / route after the existing GET routes.
+
+Route — POST /
+  Read these fields from req.body:
+    id, product_name, product_id, category, status, request_date,
+    description, image_path, outlet_id, raised_by
+  Insert a new row into maintenance_requests with those values.
+  status_history defaults to an empty JSONB array '[]'.
+  After INSERT, query the new row with the same JOINs as the GET / route
+  and return it as JSON with HTTP 201 (Created).
+  Validate that required fields are present (id, product_name, category, outlet_id, raised_by).
+  If any required field is missing: return HTTP 400 with { error: 'Missing required field: [fieldname]' }
+  On database error: return HTTP 500 with { error: error.message }
+
+Use parameterized queries.
+Do not change the existing GET routes.</div>
+  </div>
+
+  <!-- P5 -->
+  <h2 id="sb-p5">Prompt 5 — PUT, PATCH, DELETE routes</h2>
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code — P5 of 12<button class="copy-btn" onclick="copyPrompt(this,'p5')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-task">Adds PUT/PATCH/DELETE to routes/requests.js</span>
+      <span class="meta-pill meta-constraint">Do not change existing routes</span>
+    </div>
+    <div class="prompt-text" id="p5">In routes/requests.js, add three more routes after the existing ones.
+
+Route 1 — PUT /:id (edit all fields)
+  Read the same fields as POST from req.body.
+  UPDATE maintenance_requests SET all editable fields WHERE id = $id.
+  Also set updated_at = NOW().
+  If no row updated (wrong id): return HTTP 404 with { error: 'Request not found' }
+  Return the updated row as JSON using the same JOIN query.
+
+Route 2 — PATCH /:id/status (update status only)
+  Read { status, history_entry } from req.body.
+  UPDATE maintenance_requests SET:
+    status = $status,
+    status_history = status_history || $history_entry::jsonb,
+    updated_at = NOW()
+  WHERE id = $id
+  The history_entry is a JSON string like: '{"from":"Open","to":"Pending","at":"2026-07-10T14:30:00"}'
+  If no row updated: HTTP 404.
+  Return the updated row as JSON.
+
+Route 3 — DELETE /:id
+  DELETE FROM maintenance_requests WHERE id = $id.
+  If no row deleted: HTTP 404 with { error: 'Request not found' }
+  On success: HTTP 200 with { message: 'Deleted successfully', id: $id }
+
+Do not change any existing routes. Use parameterized queries throughout.</div>
+  </div>
+
+  <!-- P6 -->
+  <h2 id="sb-p6">Prompt 6 — Auth login route</h2>
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code — P6 of 12<button class="copy-btn" onclick="copyPrompt(this,'p6')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-task">Creates routes/auth.js</span>
+      <span class="meta-pill meta-output">1 new file</span>
+    </div>
+    <div class="prompt-text" id="p6">Create routes/auth.js.
+
+Import express, create a router, import the pool from db/connection.js.
+
+Route — POST /login
+  Read { username, password } from req.body.
+  If either is missing: HTTP 400 with { error: 'Username and password required' }
+  Query the users table: SELECT id, name, username, role, outlet_id FROM users WHERE username = $1
+  Also query the outlet name: JOIN outlets o ON users.outlet_id = o.id
+  Return both user and outlet_name in the response.
+  If no user found: HTTP 404 with { error: 'User not found' }
+  Compare password with the stored password (plain text comparison for now — note in comment that bcrypt should be used in production).
+  If password doesn't match: HTTP 401 with { error: 'Invalid password' }
+  On success: HTTP 200 with this JSON:
+  {
+    "id": "U001",
+    "name": "Arjun Sharma",
+    "username": "manager",
+    "role": "manager",
+    "outletId": "OUT-01",
+    "outletName": "Khan Chacha Connaught Place"
+  }
+  Never include the password field in the response.
+
+Export the router. Create routes/auth.js only.</div>
+  </div>
+
+  <!-- P7 -->
+  <h2 id="sb-p7">Prompt 7 — Dashboard counts route</h2>
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code — P7 of 12<button class="copy-btn" onclick="copyPrompt(this,'p7')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-task">Creates routes/dashboard.js</span>
+      <span class="meta-pill meta-output">1 new file</span>
+    </div>
+    <div class="prompt-text" id="p7">Create routes/dashboard.js.
+
+Import express, create a router, import the pool from db/connection.js.
+
+Route — GET /counts
+  Run this SQL query:
+  SELECT status, COUNT(*)::int AS total FROM maintenance_requests GROUP BY status
+  Transform the result into a flat object: { "Open": 4, "Pending": 2, "Closed": 2 }
+  (All three statuses should always be present — if a status has 0 count, include it as 0)
+  Return as JSON.
+
+Route — GET /counts?outlet_id=OUT-01
+  Same query but add WHERE outlet_id = $1 to filter by outlet.
+  Used by the staff dashboard to show counts for their outlet only.
+
+On error: HTTP 500 with { error: error.message }
+Export the router. Create routes/dashboard.js only.</div>
+  </div>
+
+  <!-- P8 -->
+  <h2 id="sb-p8">Prompt 8 — Wire everything in server.js</h2>
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code — P8 of 12<button class="copy-btn" onclick="copyPrompt(this,'p8')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-task">Creates server.js — the entry point</span>
+      <span class="meta-pill meta-output">1 new file — API is now runnable</span>
+    </div>
+    <div class="prompt-text" id="p8">Create server.js — the main entry point for the Khan Chacha REST API.
+
+Contents:
+1. Load dotenv: require('dotenv').config() as the very first line
+2. Import express, cors, and the three routers from routes/
+3. Create the Express app
+4. Apply middleware:
+   app.use(cors())             — allows requests from any origin
+   app.use(express.json())     — parses JSON request bodies
+5. Mount the routers:
+   app.use('/api/requests',  require('./routes/requests'))
+   app.use('/api/auth',      require('./routes/auth'))
+   app.use('/api/dashboard', require('./routes/dashboard'))
+6. Add a root health check route:
+   GET / returns { status: 'Khan Chacha API running', version: '1.0.0' }
+7. Start the server:
+   const PORT = process.env.PORT || 3000
+   app.listen(PORT, () => console.log('API running on http://localhost:' + PORT))
+
+Create server.js only.</div>
+  </div>
+  <div class="terminal-box"><pre><span class="cmt"># After Claude creates server.js, start the API:</span>
+npm run dev
+
+<span class="cmt"># You should see:</span>
+<span class="cmt"># Database connected</span>
+<span class="cmt"># API running on http://localhost:3000</span></pre></div>
+  <div class="verify-box">
+    <div class="verify-label">Verify the API is running</div>
+    <p>Open a browser and go to <code>http://localhost:3000</code>. You should see <code>{"status":"Khan Chacha API running","version":"1.0.0"}</code>. If the terminal shows "Database connected" and the browser shows JSON — the API is alive.</p>
+  </div>
+
+  <!-- P9 -->
+  <h2 id="sb-p9">Prompt 9 — Test all endpoints with Claude Code</h2>
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code — P9 of 12<button class="copy-btn" onclick="copyPrompt(this,'p9')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-task">Generates and runs curl tests for all endpoints</span>
+    </div>
+    <div class="prompt-text" id="p9">My Khan Chacha REST API is running on http://localhost:3000.
+
+Run these curl commands one at a time and show me the response for each:
+
+1. curl http://localhost:3000/
+2. curl -X POST http://localhost:3000/api/auth/login \
+   -H "Content-Type: application/json" \
+   -d '{"username":"manager","password":"manager123"}'
+3. curl http://localhost:3000/api/requests
+4. curl "http://localhost:3000/api/requests?outlet_id=OUT-02"
+5. curl http://localhost:3000/api/dashboard/counts
+6. curl "http://localhost:3000/api/dashboard/counts?outlet_id=OUT-01"
+
+After running each, tell me:
+- Was the HTTP status code 200?
+- Did the JSON response look correct?
+- If any returned an error, show me what's wrong in the route code and fix it.</div>
+  </div>
+  <div class="expect-box">
+    <div class="expect-label">What success looks like</div>
+    <p>All 6 curl commands return HTTP 200 with valid JSON. The requests endpoint returns an array of 6–8 objects. The dashboard counts endpoint returns something like <code>{"Open":4,"Pending":2,"Closed":2}</code>. Fix any error before moving to P10.</p>
+  </div>
+
+  <!-- P10 -->
+  <h2 id="sb-p10">Prompt 10 — Update Flutter pubspec and switch to http package</h2>
+  <p>Now switch to Terminal 2 (the Flutter project). Claude Code here will update the Flutter app to talk to the API instead of the database directly.</p>
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code (Flutter project) — P10 of 12<button class="copy-btn" onclick="copyPrompt(this,'p10')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-context">Switch to Terminal 2 — flutter project</span>
+      <span class="meta-pill meta-task">Updates pubspec.yaml</span>
+    </div>
+    <div class="prompt-text" id="p10">In our Flutter Khan Chacha MRMS project, update pubspec.yaml:
+
+1. Remove this line (if present): postgres: ^3.3.3
+2. Add this line under dependencies: http: ^1.2.0
+
+Then run: flutter pub get
+
+Also read lib/services/database_service.dart and tell me:
+- How many public methods does it have?
+- What is the return type of each method?
+List them — we will replace this file in the next prompt.</div>
+  </div>
+
+  <!-- P11 -->
+  <h2 id="sb-p11">Prompt 11 — Create ApiService replacing DatabaseService</h2>
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code (Flutter project) — P11 of 12<button class="copy-btn" onclick="copyPrompt(this,'p11')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-task">Creates lib/services/api_service.dart</span>
+      <span class="meta-pill meta-constraint">Keep exact same method names as DatabaseService</span>
+      <span class="meta-pill meta-output">1 new file</span>
+    </div>
+    <div class="prompt-text" id="p11">Create lib/services/api_service.dart in our Flutter Khan Chacha MRMS project.
+
+This replaces DatabaseService with HTTP calls to our Node.js API.
+Use the same singleton pattern (factory constructor) as DatabaseService.
+Use the same public method names and return types as DatabaseService so screens need minimal changes.
+
+BASE_URL constant: 'http://10.0.2.2:3000/api' for Android emulator
+(10.0.2.2 is how the Android emulator reaches localhost on the host machine.
+For a real device on the same WiFi, change to the host machine's local IP like 192.168.1.x)
+Add a comment explaining this and how to change it for a real device.
+
+METHODS — implement each using the http package:
+
+Future<List<MaintenanceRequest>> fetchAll()
+  GET $BASE_URL/requests
+  Decode JSON array, map each item using MaintenanceRequest.fromJson(item)
+
+Future<List<MaintenanceRequest>> fetchByOutlet(String outletId)
+  GET $BASE_URL/requests?outlet_id=$outletId
+  Same decoding as fetchAll()
+
+Future<void> createRequest(MaintenanceRequest r)
+  POST $BASE_URL/requests
+  Body: jsonEncode(r.toInsertMap())
+  Headers: { 'Content-Type': 'application/json' }
+  If status != 201: throw Exception with the error from response body
+
+Future<void> updateStatus(String id, String newStatus, String historyEntry)
+  PATCH $BASE_URL/requests/$id/status
+  Body: jsonEncode({ 'status': newStatus, 'history_entry': historyEntry })
+
+Future<void> updateRequest(MaintenanceRequest r)
+  PUT $BASE_URL/requests/${r.id}
+  Body: jsonEncode(r.toInsertMap())
+
+Future<void> deleteRequest(String id)
+  DELETE $BASE_URL/requests/$id
+  If status != 200: throw Exception with error from response body
+
+Future<Map<String,int>> getStatusCounts({String? outletId})
+  GET $BASE_URL/dashboard/counts (add ?outlet_id=$outletId if provided)
+  Decode and return as Map<String,int>
+
+For all methods: if HTTP status >= 400, throw Exception('API Error $status: $body').
+Import dart:convert for jsonEncode/jsonDecode.
+Create lib/services/api_service.dart only. Do not modify any screen files yet.</div>
+  </div>
+
+  <!-- P12 -->
+  <h2 id="sb-p12">Prompt 12 — Wire all screens to use ApiService</h2>
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code (Flutter project) — P12 of 12<button class="copy-btn" onclick="copyPrompt(this,'p12')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-task">Replace DatabaseService with ApiService across all screens</span>
+      <span class="meta-pill meta-constraint">Do not change any UI code, animations, or navigation</span>
+      <span class="meta-pill meta-output">4–5 files updated</span>
+    </div>
+    <div class="prompt-text" id="p12">In our Flutter Khan Chacha MRMS project, replace all references to DatabaseService with ApiService across all files that import it.
+
+Read these files first to understand the current state:
+  lib/screens/request_list_screen.dart (or home_screen.dart)
+  lib/screens/detail_screen.dart
+  lib/screens/request_form_screen.dart
+  lib/screens/dashboard_screen.dart
+  lib/main.dart
+
+For each file:
+1. Replace: import 'database_service.dart' with import 'api_service.dart'
+2. Replace: DatabaseService() with ApiService()
+3. In main.dart: remove the DatabaseService().connect() call — ApiService uses HTTP, no persistent connection needed. Remove the loading screen too.
+4. In dashboard_screen.dart: update getStatusCounts() call to pass outletId when role is 'staff':
+   ApiService().getStatusCounts(outletId: user.role == 'staff' ? user.outletId : null)
+
+Do not change: UI layout, widget structure, animations, navigation, confirmation dialogs, AuthService, or NavigationService.
+Show me a summary of every line changed in each file.</div>
+  </div>
+  <div class="verify-box">
+    <div class="verify-label">Final test — run both servers and test end-to-end</div>
+    <p><strong>Terminal 1:</strong> <code>npm run dev</code> → API running on port 3000.<br/><strong>Terminal 2:</strong> <code>flutter run</code> → app launches. Log in as manager. Request list loads from the API. Create a request → check Terminal 1 logs (you'll see the POST request). Update status → check pgAdmin. Delete → gone from list and database. Dashboard counts update. <strong>The full stack is connected: Flutter → Node.js API → PostgreSQL.</strong></p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ TAB 7 · CAPSTONE PROMPT ══════════════════════════════ -->
+<div class="tabpanel" id="tab-capstone">
+  <h2>🚀 Capstone — Build the Entire API in One Prompt</h2>
+  <p class="lead">This single prompt instructs Claude Code to build the complete Node.js REST API from scratch — all routes, database connection, server setup, and the Flutter ApiService update — in one shot. Run it in a brand-new <code>khan_chacha_api/</code> folder.</p>
+
+  <div class="note-box">
+    <div class="note-label">⚠️ New folder — not the step-by-step folder</div>
+    <p>Create a fresh folder: <code>mkdir khan_chacha_api_capstone && cd khan_chacha_api_capstone && claude</code>. This is a separate project from the step-by-step build. The step-by-step taught you how. The capstone shows you what a single well-structured prompt can produce.</p>
+  </div>
+
+  <div class="capstone-box">
+<p>BUILD: Khan Chacha MRMS — Complete Node.js REST API
+
+═══════════════════════════════════════════════════
+CONTEXT
+═══════════════════════════════════════════════════
+We have a Flutter maintenance request management app for Khan Chacha restaurant chain.
+The Flutter app currently connects directly to a local PostgreSQL database (localhost:5432,
+database: khan_chacha, user: kc_app, password: kc_secure_2026).
+
+We are adding a Node.js REST API layer between Flutter and PostgreSQL so that:
+- Database credentials never travel with the Flutter app
+- The same API can serve a future web dashboard or admin panel
+- Business logic and access rules live on the server
+
+The PostgreSQL database already exists with these tables:
+- outlets (id, name, address, city, pincode, is_active, created_at)
+- users (id, name, username, password, role ENUM('manager','staff'), outlet_id FK, is_active, created_at)
+- maintenance_requests (id, product_name, product_id, category ENUM, status ENUM DEFAULT 'Open',
+  request_date, description, image_path, outlet_id FK, raised_by FK, status_history JSONB DEFAULT '[]',
+  created_at, updated_at)
+
+═══════════════════════════════════════════════════
+STEP 1 — BUILD THE NODE.JS API (in the current folder)
+═══════════════════════════════════════════════════
+
+Run: npm init -y
+Then install: npm install express pg cors dotenv && npm install --save-dev nodemon
+
+Update package.json scripts:
+  "start": "node server.js"
+  "dev": "nodemon server.js"
+
+Create these files:
+
+FILE: .env
+  PORT=3000
+  DB_HOST=localhost
+  DB_PORT=5432
+  DB_NAME=khan_chacha
+  DB_USER=kc_app
+  DB_PASSWORD=kc_secure_2026
+  JWT_SECRET=kc_jwt_secret_2026
+
+FILE: .gitignore
+  node_modules/
+  .env
+
+FILE: db/connection.js
+  PostgreSQL Pool using pg package, reads from env vars.
+  Test connection on load, log success or exit on failure.
+  Export the pool.
+
+FILE: routes/requests.js — all 5 HTTP methods:
+  GET /           — fetch all requests (JOIN outlets + users). Filter by outlet_id query param if present.
+  GET /:id        — fetch single request by id (same JOINs). 404 if not found.
+  POST /          — insert new request. Required: id, product_name, product_id, category, outlet_id, raised_by.
+                    Return 201 + the new row with JOINs.
+  PUT /:id        — update all editable fields. Set updated_at=NOW(). Return updated row. 404 if missing.
+  PATCH /:id/status — update status and append history_entry to status_history JSONB array.
+                      Body: { status, history_entry } where history_entry is a JSON string.
+  DELETE /:id     — delete by id. Return { message, id }. 404 if missing.
+  All: parameterized queries. Error handling: 500 + { error: message }.
+
+FILE: routes/auth.js — POST /login:
+  Read username + password from body.
+  Query users JOIN outlets. Return user data (no password). 
+  Responses: 400 missing fields, 404 not found, 401 wrong password, 200 success.
+  Return: { id, name, username, role, outletId, outletName }
+
+FILE: routes/dashboard.js — GET /counts:
+  SELECT status, COUNT(*)::int AS total FROM maintenance_requests GROUP BY status.
+  If outlet_id query param: add WHERE outlet_id = $1.
+  Always include all 3 statuses in response (default 0 for missing).
+  Return: { "Open": N, "Pending": N, "Closed": N }
+
+FILE: server.js:
+  require('dotenv').config() first.
+  app.use(cors()) + app.use(express.json())
+  Mount routes: /api/requests, /api/auth, /api/dashboard
+  Root GET / returns { status: 'Khan Chacha API running', version: '1.0.0' }
+  Listen on process.env.PORT || 3000
+
+After creating all files, run: npm run dev
+Confirm: "Database connected" and "API running on http://localhost:3000" appear.
+
+Then test these three endpoints and show results:
+  curl http://localhost:3000/
+  curl -X POST http://localhost:3000/api/auth/login -H "Content-Type: application/json" -d '{"username":"manager","password":"manager123"}'
+  curl http://localhost:3000/api/requests
+
+═══════════════════════════════════════════════════
+STEP 2 — UPDATE THE FLUTTER APP (separate terminal, Flutter project folder)
+═══════════════════════════════════════════════════
+In the khan_chacha_mrms Flutter project, after the API is confirmed working:
+
+1. pubspec.yaml: remove postgres: ^3.3.3, add http: ^1.2.0. Run flutter pub get.
+
+2. Create lib/services/api_service.dart — singleton class using http package.
+   Same method signatures as the old DatabaseService:
+   fetchAll(), fetchByOutlet(outletId), createRequest(r), updateStatus(id, newStatus, historyEntry),
+   updateRequest(r), deleteRequest(id), getStatusCounts({outletId})
+   BASE_URL = 'http://10.0.2.2:3000/api' (Android emulator localhost)
+   All methods: throw Exception on HTTP >= 400.
+
+3. Replace all DatabaseService() references with ApiService() across:
+   main.dart, request_list_screen.dart, detail_screen.dart, request_form_screen.dart, dashboard_screen.dart
+   In main.dart: remove the connect() call — no persistent connection needed with HTTP.
+
+═══════════════════════════════════════════════════
+EXPECTED RESULT
+═══════════════════════════════════════════════════
+Two programs running:
+  Terminal 1: Node.js API on http://localhost:3000 (or 10.0.2.2:3000 from emulator)
+  Terminal 2: Flutter app connecting to the API
+
+Proof it works:
+  1. Flutter list screen loads requests from GET /api/requests
+  2. Create a request → POST /api/requests → appears in pgAdmin
+  3. Update status → PATCH /api/requests/:id/status → status changes in DB
+  4. Delete → DELETE /api/requests/:id → row removed from DB
+  5. Dashboard counts come from GET /api/dashboard/counts (real GROUP BY SQL)
+  6. Login calls POST /api/auth/login → returns user object
+
+Create all files completely. No placeholders. No TODOs.</p>
+  </div>
+
+  <div class="confirm-box">
+    <h4>🎓 Teaching note — Step-by-Step vs Capstone</h4>
+    <p style="color:var(--text-dim);font-size:14.5px;margin:0;">The step-by-step build produced the exact same API and Flutter integration as this capstone prompt. The difference: the step-by-step taught students what each piece does and why. The capstone shows what a complete, production-quality prompt looks like. Both are valid ways to build. Both produce the same output. The skill being taught is knowing which approach to use — and knowing that both options exist.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ TAB 8 · ARCHITECTURE ══════════════════════════════ -->
+<div class="tabpanel" id="tab-architecture">
+  <div class="toc-strip">
+    <a href="#arch-full">Full stack diagram</a>
+    <a href="#arch-files">File responsibility map</a>
+    <a href="#arch-request-flow">A request's journey</a>
+    <a href="#arch-cloud">Moving to cloud</a>
+  </div>
+
+  <h2 id="arch-full">The complete Khan Chacha stack after Day 4</h2>
+  <div class="arch-box" style="line-height:2.5;">
+    <span style="color:#6b7480;font-size:12px;">FLUTTER APP (khan_chacha_mrms/)</span><br/>
+    <span class="layer">&nbsp;&nbsp;ApiService</span>&nbsp;&nbsp;&nbsp;<span style="color:#475569;font-size:12px;">← lib/services/api_service.dart</span><br/>
+    <span class="arrow">&nbsp;&nbsp;&nbsp;&nbsp;│ HTTP / JSON over port 3000</span><br/>
+    <span style="color:#6b7480;font-size:12px;">NODE.JS API (khan_chacha_api/)</span><br/>
+    <span class="layer">&nbsp;&nbsp;server.js</span>&nbsp;&nbsp;<span style="color:#475569;font-size:12px;">← entry point, middleware, route mounting</span><br/>
+    <span class="layer">&nbsp;&nbsp;routes/requests.js</span>&nbsp;&nbsp;<span style="color:#475569;font-size:12px;">← GET/POST/PUT/PATCH/DELETE /api/requests</span><br/>
+    <span class="layer">&nbsp;&nbsp;routes/auth.js</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#475569;font-size:12px;">← POST /api/auth/login</span><br/>
+    <span class="layer">&nbsp;&nbsp;routes/dashboard.js</span>&nbsp;<span style="color:#475569;font-size:12px;">← GET /api/dashboard/counts</span><br/>
+    <span class="layer">&nbsp;&nbsp;db/connection.js</span>&nbsp;&nbsp;&nbsp;<span style="color:#475569;font-size:12px;">← pg Pool, reads from .env</span><br/>
+    <span class="arrow">&nbsp;&nbsp;&nbsp;&nbsp;│ pg package / port 5432</span><br/>
+    <span style="color:#6b7480;font-size:12px;">POSTGRESQL DATABASE (local → Supabase → AWS/Azure)</span><br/>
+    <span class="layer">&nbsp;&nbsp;outlets&nbsp;&nbsp;</span><span class="arrow">←FK—</span><span class="layer">&nbsp;users&nbsp;&nbsp;</span><span class="arrow">←FK—</span><span class="layer">&nbsp;maintenance_requests</span>
+  </div>
+
+  <h2 id="arch-files">File responsibility — what each file owns</h2>
+  <table>
+    <tr><th>File</th><th>Owns</th><th>Talks to</th></tr>
+    <tr><td><code>server.js</code></td><td>App startup, middleware, route mounting</td><td>All route files</td></tr>
+    <tr><td><code>.env</code></td><td>All secrets — DB password, JWT secret, port</td><td>Read by dotenv into process.env</td></tr>
+    <tr><td><code>db/connection.js</code></td><td>The PostgreSQL connection pool — one pool shared across all routes</td><td>PostgreSQL on port 5432</td></tr>
+    <tr><td><code>routes/requests.js</code></td><td>All CRUD for maintenance_requests table</td><td>db/connection.js</td></tr>
+    <tr><td><code>routes/auth.js</code></td><td>Login validation, returning user data</td><td>db/connection.js → users + outlets tables</td></tr>
+    <tr><td><code>routes/dashboard.js</code></td><td>Aggregated query results for the dashboard</td><td>db/connection.js → GROUP BY query</td></tr>
+    <tr><td><code>lib/services/api_service.dart</code></td><td>All HTTP calls from Flutter to the API</td><td>Node.js API on port 3000</td></tr>
+  </table>
+
+  <h2 id="arch-request-flow">A request's complete journey — Create new request</h2>
+  <div class="step-flow">
+    <div class="step">
+      <div class="step-rail"><div class="step-dot now">1</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-title">User taps "Submit Request" in Flutter form</div><div class="step-desc">RequestFormScreen calls <code>ApiService().createRequest(newRequest)</code></div></div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot now">2</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-title">ApiService sends HTTP POST</div><div class="step-desc"><code>POST http://localhost:3000/api/requests</code> with JSON body containing all 12 fields. Headers include Content-Type: application/json.</div></div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot now">3</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-title">Node.js receives and validates</div><div class="step-desc">Express parses the JSON body. The route handler checks all required fields are present. If any missing: responds immediately with 400.</div></div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot now">4</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-title">Node.js executes the SQL INSERT</div><div class="step-desc">The pg pool runs the parameterized INSERT INTO maintenance_requests (...) VALUES ($1, $2, ...) query against PostgreSQL.</div></div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot now">5</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-title">PostgreSQL enforces rules and saves</div><div class="step-desc">ENUM constraints check category and status are valid. Foreign key constraints verify outlet_id and raised_by exist. Row is saved to disk. ACID guarantees it's durable.</div></div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot now">6</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-title">Node.js fetches and returns the new row</div><div class="step-desc">The route runs a SELECT with JOINs to get the full new request including outlet_name and manager_name. Returns HTTP 201 with JSON.</div></div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot now">7</div></div>
+      <div class="step-body"><div class="step-title">Flutter receives 201 and updates the UI</div><div class="step-desc">ApiService receives the JSON, creates a MaintenanceRequest object using fromJson(), pops the form screen returning the new request. The list screen adds it and calls setState(). User sees the new card appear.</div></div>
+    </div>
+  </div>
+
+  <h2 id="arch-cloud">Moving to cloud — what changes</h2>
+  <table>
+    <tr><th>Component</th><th>Change needed</th><th>How hard</th></tr>
+    <tr><td>PostgreSQL database</td><td>Update .env: DB_HOST, DB_NAME, DB_USER, DB_PASSWORD</td><td>⭐ Trivial — one file, 4 values</td></tr>
+    <tr><td>Node.js API server</td><td>Deploy to Azure App Service / AWS Elastic Beanstalk / Railway</td><td>⭐⭐ Moderate — covered in Day 6</td></tr>
+    <tr><td>Flutter app</td><td>Change BASE_URL in api_service.dart from localhost to the deployed API URL</td><td>⭐ Trivial — one constant</td></tr>
+    <tr><td>PostgreSQL schema</td><td>No change — same db/schema.sql runs on any PostgreSQL host</td><td>✅ Zero changes</td></tr>
+    <tr><td>SQL queries in routes</td><td>No change — queries are standard SQL</td><td>✅ Zero changes</td></tr>
+  </table>
+</div>
+
+<!-- ══════════════════════════════ TAB 9 · Q&A ══════════════════════════════ -->
+<div class="tabpanel" id="tab-qna">
+  <h2>Questions &amp; Discussion</h2>
+  <p class="lead">Common questions from Day 4 sessions.</p>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this.parentElement)">Do I need to run both the Flutter app AND the Node.js server at the same time? <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">Yes — both must be running simultaneously. Terminal 1 runs <code>npm run dev</code> (Node.js). Terminal 2 runs <code>flutter run</code>. If you close Terminal 1, Flutter loses the API and you'll see connection errors. In production, the API runs on a cloud server that's always on — you only run Flutter locally during development.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this.parentElement)">Why does Flutter use 10.0.2.2 instead of localhost to reach the API? <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">The Android emulator is a virtual machine inside your computer. From the emulator's perspective, "localhost" means the emulator itself — not your host machine. Android reserves the special IP <code>10.0.2.2</code> to mean "the host machine's localhost". So when Flutter (running in the emulator) calls <code>http://10.0.2.2:3000/api/requests</code>, it reaches your Node.js server. On a real physical Android device connected to the same WiFi, use your machine's local network IP (e.g. <code>192.168.1.5</code>).</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this.parentElement)">Can I test the API without Flutter running? <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">Yes — and you should. Use curl in the terminal, or install a GUI tool like Postman or Insomnia. Testing the API independently confirms it works before adding the Flutter layer. If the API test fails, fix the API. If the API test passes but Flutter fails, the issue is in ApiService. Separating these two helps you debug faster.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this.parentElement)">The API returns data but Flutter shows an empty list. What's wrong? <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">Three likely causes: (1) The JSON field names from the API don't match what <code>MaintenanceRequest.fromJson()</code> expects — check snake_case vs camelCase. (2) The Flutter screen is showing an empty list because <code>setState()</code> wasn't called after the data loaded — check the loading logic. (3) The BASE_URL in ApiService is wrong — log the URL and the raw response body to confirm what Flutter is actually receiving. Ask Claude: "My API returns correct JSON via curl, but Flutter shows an empty list. Read ApiService and the relevant screen and find the mismatch."</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this.parentElement)">Can other students' phones also connect to my Node.js API? <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">Yes, if they're on the same WiFi network. Find your machine's local IP: <code>ipconfig</code> on Windows, <code>ifconfig</code> on Mac/Linux. Share that IP with other students. They change their ApiService BASE_URL to <code>http://192.168.x.x:3000/api</code>. As long as both machines are on the same router and your firewall doesn't block port 3000 — it works. This is a great live demo: one student creates a request on their phone, another student's app pulls to refresh and sees it appear.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this.parentElement)">What happens to our direct DatabaseService — should we delete it? <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">Keep it for now — don't delete it. Once the API is confirmed fully working, you can remove it or keep it as a reference. Some teams keep both and use a feature flag to switch between them for testing. For this course, once P12 is complete and everything tests green, you can safely remove database_service.dart and the postgres package from pubspec.yaml.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this.parentElement)">Is this API secure enough for production? <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">Not yet — and that's intentional for Day 4. Three gaps to fix before production: (1) Passwords are compared in plain text — add bcrypt to hash them. (2) There's no JWT token — any caller can hit any endpoint without proving who they are. Day 5 adds JWT authentication. (3) Role enforcement happens in Flutter — it needs to move to the API (server-side). These are Day 5 topics. Day 4's job is to establish the API layer correctly so Day 5 can add security on top of it.</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ TAB 10 · REFERENCES ══════════════════════════════ -->
+<div class="tabpanel" id="tab-references">
+  <h2>References &amp; Resources</h2>
+
+  <h3>Node.js &amp; Express</h3>
+  <div class="ref-card">
+    <div class="ref-icon">⚡</div>
+    <div class="ref-body">
+      <h4>Node.js Official Docs</h4>
+      <p>Official documentation. The Guides section is especially useful for understanding the event loop and async patterns.</p>
+      <a href="https://nodejs.org/en/docs" target="_blank">nodejs.org/en/docs</a>
+    </div>
+  </div>
+  <div class="ref-card">
+    <div class="ref-icon">🚂</div>
+    <div class="ref-body">
+      <h4>Express.js Official Docs</h4>
+      <p>Routing, middleware, request/response objects. The routing guide is all you need for Day 4.</p>
+      <a href="https://expressjs.com/en/guide/routing.html" target="_blank">expressjs.com/en/guide/routing.html</a>
+    </div>
+  </div>
+  <div class="ref-card">
+    <div class="ref-icon">🐘</div>
+    <div class="ref-body">
+      <h4>node-postgres (pg) Documentation</h4>
+      <p>The Node.js PostgreSQL client. Pay special attention to the Pool and parameterized query sections.</p>
+      <a href="https://node-postgres.com" target="_blank">node-postgres.com</a>
+    </div>
+  </div>
+
+  <h3>Flutter HTTP</h3>
+  <div class="ref-card">
+    <div class="ref-icon">🎯</div>
+    <div class="ref-body">
+      <h4>http Dart package</h4>
+      <p>The package we use for all API calls from Flutter. Simple get(), post(), put(), patch(), delete() methods.</p>
+      <a href="https://pub.dev/packages/http" target="_blank">pub.dev/packages/http</a>
+    </div>
+  </div>
+  <div class="ref-card">
+    <div class="ref-icon">📖</div>
+    <div class="ref-body">
+      <h4>Flutter — Fetch data from the internet</h4>
+      <p>Official Flutter cookbook recipe for making HTTP requests. Directly relevant to what we built in ApiService.</p>
+      <a href="https://docs.flutter.dev/cookbook/networking/fetch-data" target="_blank">docs.flutter.dev/cookbook/networking/fetch-data</a>
+    </div>
+  </div>
+
+  <h3>API Testing</h3>
+  <div class="ref-card">
+    <div class="ref-icon">📬</div>
+    <div class="ref-body">
+      <h4>Postman</h4>
+      <p>GUI tool for testing REST APIs — easier than curl for beginners. Free tier is sufficient. Import the endpoint list and test each route visually.</p>
+      <a href="https://www.postman.com/downloads/" target="_blank">postman.com/downloads</a>
+    </div>
+  </div>
+
+  <div class="card orange" style="margin-top:32px;">
+    <h4>Quick reference — API endpoints</h4>
+    <pre style="margin:8px 0 0;font-size:13px;"><code><span class="cmt"># Health check</span>
+GET  http://localhost:3000/
+
+<span class="cmt"># Auth</span>
+POST http://localhost:3000/api/auth/login
+
+<span class="cmt"># Requests</span>
+GET    http://localhost:3000/api/requests
+GET    http://localhost:3000/api/requests?outlet_id=OUT-01
+GET    http://localhost:3000/api/requests/:id
+POST   http://localhost:3000/api/requests
+PUT    http://localhost:3000/api/requests/:id
+PATCH  http://localhost:3000/api/requests/:id/status
+DELETE http://localhost:3000/api/requests/:id
+
+<span class="cmt"># Dashboard</span>
+GET http://localhost:3000/api/dashboard/counts
+GET http://localhost:3000/api/dashboard/counts?outlet_id=OUT-01</code></pre>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      Powered by <strong>RR Skillverse (Raushan Ranjan)</strong> · Built for <strong>Koenig Solutions</strong> · Khan Chacha MRMS · Day 4
+    </div>
+    <div class="footer-links">
+      <a href="index.html">All Sessions</a>
+      <a href="day3.html">← Day 3</a>
+      <a href="https://rrskillverse.in" target="_blank">RR Skillverse</a>
+    </div>
+  </div>
+  <div class="footer-bottom">Beast AI Initiative · Khan Chacha MRMS Training Programme · 2026</div>
+</footer>
+
+<script>
+const tabs = document.querySelectorAll('.tabnav button');
+tabs.forEach(btn => {
+  btn.addEventListener('click', () => {
+    tabs.forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tabpanel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+
+function copyPrompt(btn, id) {
+  const text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1800);
+  });
+}
+
+function toggleFaq(el) { el.classList.toggle('open'); }
+</script>
+</body>
+</html>
