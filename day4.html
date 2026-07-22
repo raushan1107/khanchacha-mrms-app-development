@@ -188,6 +188,29 @@ footer{border-top:1px solid var(--border-soft);margin-top:40px;padding:36px 24px
 .footer-links a:hover{color:var(--teal);}
 .footer-bottom{text-align:center;font-size:12px;color:var(--text-faint);margin-top:20px;padding-top:20px;border-top:1px solid var(--border-soft);max-width:var(--maxw);margin-left:auto;margin-right:auto;}
 @media(max-width:600px){h1.page-title{font-size:22px;}.brand-title{font-size:13.5px;}main{padding:24px 16px 50px;}}
+
+/* ── PROJECT BANNERS ── */
+.proj-banner{display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:8px;margin:28px 0 14px;font-size:13.5px;font-weight:700;letter-spacing:.3px;}
+.proj-api{background:rgba(232,140,31,.1);border:2px solid rgba(232,140,31,.45);color:var(--orange);}
+.proj-flutter{background:rgba(0,194,224,.07);border:2px solid rgba(0,194,224,.35);color:var(--teal);}
+.proj-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.proj-api .proj-dot{background:var(--orange);}
+.proj-flutter .proj-dot{background:var(--teal);}
+
+.proj-switch{background:linear-gradient(135deg,rgba(232,140,31,.06),rgba(0,194,224,.06));border:2px dashed rgba(163,113,247,.45);border-radius:12px;padding:22px 24px;margin:36px 0;text-align:center;}
+.proj-switch h3{color:#c4b5fd;font-size:16px;margin:0 0 8px;}
+.proj-switch p{color:var(--text-dim);font-size:14px;margin:0;}
+
+.what-box{background:rgba(63,185,80,.06);border:1px solid rgba(63,185,80,.2);border-radius:8px;padding:10px 16px;margin:8px 0 14px;}
+.what-box .what-label{font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.what-box p{margin:0;font-size:13.5px;color:#b4d9ba;}
+
+.action-steps{background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:18px 20px;margin:14px 0;}
+.action-steps h4{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-faint);margin-bottom:14px;}
+.action-step{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;}
+.action-step:last-child{margin-bottom:0;}
+.action-num{width:22px;height:22px;border-radius:50%;background:var(--orange);color:#1a0800;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.action-body{font-size:14px;color:#c5ccd4;flex:1;}
 </style>
 </head>
 <body>
@@ -446,13 +469,182 @@ footer{border-top:1px solid var(--border-soft);margin-top:40px;padding:36px 24px
 <div class="tabpanel" id="tab-setup">
   <div class="toc-strip">
     <a href="#setup-nodejs">Install Node.js</a>
+    <a href="#setup-express">What is Express</a>
+    <a href="#setup-create">Create the API project</a>
+    <a href="#setup-vscode">Open in VS Code</a>
     <a href="#setup-structure">Project structure</a>
     <a href="#setup-packages">npm packages</a>
     <a href="#setup-env">.env file</a>
   </div>
 
-  <h2 id="setup-nodejs">Installing Node.js</h2>
-  <p class="lead">The API is a Node.js application. Node.js lets you run JavaScript on the server — not just in the browser. Express is the framework we use to define API routes. Both take about 5 minutes to set up.</p>
+  <h2 id="setup-nodejs">Step 1 — Install Node.js</h2>
+  <p class="lead">Node.js lets JavaScript run on a server — outside the browser. It is the engine that will power the Khan Chacha API. npm (Node Package Manager) comes bundled with Node.js and lets us install open-source libraries like Express and pg.</p>
+
+  <div class="terminal-box"><pre><span class="cmt"># Check if Node.js is already installed</span>
+node --version
+npm --version
+<span class="cmt"># If you see v18.x or v20.x → you already have it. Move to the next section.</span>
+<span class="cmt"># If you see "command not found" → install it:</span>
+
+<span class="cmt"># Windows / Mac: download the LTS installer at nodejs.org</span>
+<span class="cmt"># After installing, close and reopen your terminal, then verify:</span>
+node --version    <span class="cmt"># should print v20.x.x</span>
+npm --version     <span class="cmt"># should print v10.x.x</span>
+
+<span class="cmt"># Linux (Ubuntu/Debian):</span>
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs</pre></div>
+
+  <h2 id="setup-express">Step 2 — What is Express?</h2>
+  <p class="lead">We keep saying "Node.js + Express" but never explaining the difference. Here it is clearly.</p>
+
+  <div class="grid2">
+    <div class="card accent">
+      <h4>Node.js — the engine</h4>
+      <p style="margin:0;font-size:14px;color:var(--text-dim);">Node.js is a JavaScript runtime. It lets you run <code>.js</code> files on a server. Think of it as the engine of a car — it provides the power to run, but it doesn't tell you where to go or how to handle traffic.</p>
+    </div>
+    <div class="card orange">
+      <h4>Express — the framework on top</h4>
+      <p style="margin:0;font-size:14px;color:var(--text-dim);">Express is a library you install on top of Node.js. It gives you clean tools for defining API routes, handling HTTP requests, sending responses, and wiring middleware. Think of it as the GPS, steering wheel, and dashboard of the car.</p>
+    </div>
+  </div>
+
+  <div class="analogy-box">
+    <p><em class="analogy-tag">Analogy</em></p>
+    <p>Node.js alone can handle HTTP — but the code is verbose and repetitive. Without Express, every route would require you to manually parse URLs, read request bodies, set headers, and handle errors from scratch. Express wraps all of that into a clean, readable pattern that the whole industry uses. It is the most downloaded npm package in the world.</p>
+  </div>
+
+  <p>Here is what a simple Express route looks like — before any of our Claude Code prompts:</p>
+  <div class="code-box">
+    <div class="code-label">What Express code looks like</div>
+    <pre style="background:transparent;border:none;padding:0;margin:0;"><code><span class="kw">const</span> express = require(<span class="str">'express'</span>);
+<span class="kw">const</span> app = express();
+
+app.use(express.json()); <span class="cmt">// parses JSON body from incoming requests</span>
+
+<span class="cmt">// Define a route: GET /api/requests</span>
+app.get(<span class="str">'/api/requests'</span>, <span class="kw">async</span> (req, res) => {
+  <span class="cmt">// req = the incoming request (URL, headers, body, query params)</span>
+  <span class="cmt">// res = the response we send back</span>
+  res.json({ message: <span class="str">'Here are the requests'</span> });
+});
+
+app.listen(<span class="num">3000</span>, () => console.log(<span class="str">'API running on port 3000'</span>));</code></pre>
+  </div>
+  <p>That's the mental model — Express lets you define "when someone calls this URL with this method, do this, and send back this response." Claude Code writes all of this for us. But you need to recognise it when you read it.</p>
+
+  <h2 id="setup-create">Step 3 — Create the API project folder</h2>
+  <p>The API is a completely separate project from your Flutter app. It lives in its own folder. Do not put it inside the Flutter project. Here is exactly how to create it:</p>
+
+  <div class="action-steps">
+    <h4>Create the API project — choose your method</h4>
+    <div class="action-step">
+      <div class="action-num">A</div>
+      <div class="action-body"><strong>Using File Explorer (Windows) or Finder (Mac):</strong> Navigate to the same parent folder where <code>khan_chacha_mrms</code> lives. Right-click → New Folder. Name it <code>khan_chacha_api</code>.</div>
+    </div>
+    <div class="action-step">
+      <div class="action-num">B</div>
+      <div class="action-body"><strong>Using Terminal (any OS):</strong> Navigate to the parent folder first, then create it:
+      <pre style="margin:8px 0 0;"><code><span class="cmt"># Go to wherever your Flutter project is</span>
+cd ~/Documents   <span class="cmt">(or wherever khan_chacha_mrms lives)</span>
+
+<span class="cmt"># Create the API folder next to it</span>
+mkdir khan_chacha_api
+
+<span class="cmt"># Confirm both folders exist side by side</span>
+ls
+<span class="cmt"># You should see: khan_chacha_mrms/  khan_chacha_api/</span></code></pre></div>
+    </div>
+  </div>
+
+  <div class="card warn">
+    <h4>⚠️ Common mistake — don't nest the folders</h4>
+    <p style="margin:0;">Make sure <code>khan_chacha_api</code> is <strong>next to</strong> <code>khan_chacha_mrms</code>, not inside it. Both folders should share the same parent folder. If you put the API inside the Flutter project, Flutter's build system will try to include it and things will break.</p>
+    <pre style="margin:10px 0 0;"><code><span class="kw">✅ Correct structure:</span>
+Documents/
+├── khan_chacha_mrms/   ← Flutter project
+└── khan_chacha_api/    ← Node.js API (separate, same level)
+
+<span class="red">❌ Wrong structure:</span>
+khan_chacha_mrms/
+└── khan_chacha_api/    ← Never put it inside Flutter!</code></pre>
+  </div>
+
+  <h2 id="setup-vscode">Step 4 — Open the API folder in VS Code</h2>
+  <p>You will have <strong>two VS Code windows open</strong> during Day 4 — one for each project. Here is how to open the API project:</p>
+
+  <div class="action-steps">
+    <h4>Open khan_chacha_api in VS Code</h4>
+    <div class="action-step">
+      <div class="action-num">1</div>
+      <div class="action-body">Open VS Code. Go to <strong>File → Open Folder</strong> (or <strong>File → Open...</strong> on Mac).</div>
+    </div>
+    <div class="action-step">
+      <div class="action-num">2</div>
+      <div class="action-body">Navigate to and select the <code>khan_chacha_api</code> folder you just created. Click <strong>Open</strong>. VS Code opens a new window showing an empty folder — that's correct, nothing is in it yet.</div>
+    </div>
+    <div class="action-step">
+      <div class="action-num">3</div>
+      <div class="action-body">Open the integrated terminal: <strong>Terminal → New Terminal</strong> (or <code>Ctrl + `</code> on Windows/Linux, <code>Cmd + `</code> on Mac). The terminal prompt should show you are inside <code>khan_chacha_api/</code>.</div>
+    </div>
+    <div class="action-step">
+      <div class="action-num">4</div>
+      <div class="action-body">Start Claude Code by typing <code>claude</code> and pressing Enter. Wait for the Claude Code prompt to appear. You are now ready to run the API build prompts.</div>
+    </div>
+  </div>
+
+  <div class="terminal-box"><pre><span class="cmt"># After VS Code is open in khan_chacha_api/, your terminal should look like:</span>
+~/Documents/khan_chacha_api $ claude
+
+<span class="cmt"># Claude Code starts up and shows its prompt:</span>
+<span class="cmt"># ✓ Claude Code ready</span>
+<span class="cmt"># > (waiting for your prompt)</span></pre></div>
+
+  <h2 id="setup-structure">Project structure — what we're building toward</h2>
+  <p>Claude Code will create this structure for us step by step. Here's the full picture so you know where everything goes:</p>
+
+  <div class="file-tree">
+    <span class="dir">khan_chacha_api/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">← VS Code Window 1</span><br/>
+    ├── <span class="file">server.js</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// entry point — created in P8</span><br/>
+    ├── <span class="file">package.json</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// dependencies — created in P1</span><br/>
+    ├── <span class="file">.env</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// secrets — created in P1, NEVER commit</span><br/>
+    ├── <span class="file">.gitignore</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// excludes .env + node_modules — created in P1</span><br/>
+    ├── <span class="dir">db/</span><br/>
+    │&nbsp;&nbsp;&nbsp;└── <span class="file">connection.js</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// PostgreSQL pool — created in P2</span><br/>
+    ├── <span class="dir">routes/</span><br/>
+    │&nbsp;&nbsp;&nbsp;├── <span class="file">requests.js</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// all CRUD endpoints — created in P3–P5</span><br/>
+    │&nbsp;&nbsp;&nbsp;├── <span class="file">auth.js</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// login endpoint — created in P6</span><br/>
+    │&nbsp;&nbsp;&nbsp;└── <span class="file">dashboard.js</span>&nbsp;&nbsp;&nbsp;<span class="note">// counts endpoint — created in P7</span><br/>
+    └── <span class="dir">middleware/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// empty for now — JWT goes here in Day 5</span>
+  </div>
+
+  <h2 id="setup-packages">npm packages we'll install</h2>
+  <table>
+    <tr><th>Package</th><th>What it is</th><th>Why we need it</th></tr>
+    <tr><td><code>express</code></td><td>Web framework for Node.js — defines routes and handles HTTP</td><td>Core framework. Without it, building routes in plain Node.js is 10× more code.</td></tr>
+    <tr><td><code>pg</code></td><td>PostgreSQL client for Node.js</td><td>The Node.js equivalent of the Dart <code>postgres</code> package. Connects to our database.</td></tr>
+    <tr><td><code>cors</code></td><td>Cross-Origin Resource Sharing middleware</td><td>Without this, the Flutter app (on a different port) is blocked from calling the API by the browser's security policy.</td></tr>
+    <tr><td><code>dotenv</code></td><td>Loads variables from .env file into <code>process.env</code></td><td>Keeps the database password out of the code. The password lives in .env, code reads it via <code>process.env.DB_PASSWORD</code>.</td></tr>
+    <tr><td><code>nodemon</code></td><td>Restarts the server automatically when files change</td><td>Development convenience — the equivalent of Flutter's hot reload. Installed as a dev dependency only.</td></tr>
+  </table>
+
+  <h2 id="setup-env">The .env file — what it does and why it must never be committed</h2>
+  <p>The <code>.env</code> file stores secrets. <code>dotenv</code> reads this file when the server starts and makes each value available via <code>process.env.VARIABLE_NAME</code>. The code never contains the actual secret — only the variable name.</p>
+  <div class="code-box">
+    <div class="code-label">.env — contents Claude will create in P1</div>
+    <pre style="background:transparent;border:none;padding:0;margin:0;color:#a5f3fc;"><code>PORT=3000
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=khan_chacha
+DB_USER=kc_app
+DB_PASSWORD=kc_secure_2026
+JWT_SECRET=kc_jwt_secret_2026</code></pre>
+  </div>
+  <div class="card danger">
+    <h4>🚫 Never push .env to GitHub</h4>
+    <p style="margin:0;">Claude will create a <code>.gitignore</code> that excludes <code>.env</code> and <code>node_modules/</code> automatically in P1. If you ever accidentally push the .env file, change your database password immediately. GitHub scans public repos for exposed secrets.</p>
+  </div>
+</div>
 
   <div class="terminal-box"><pre><span class="cmt"># Check if Node.js is already installed</span>
 node --version
@@ -623,60 +815,75 @@ Show the curl command and the expected successful response for each.</div>
 <!-- ══════════════════════════════ TAB 6 · STEP-BY-STEP BUILD ══════════════════════════════ -->
 <div class="tabpanel" id="tab-stepbystep">
   <div class="toc-strip">
-    <a href="#sb-before">Before you start</a>
+    <a href="#sb-setup">Two windows setup</a>
     <a href="#sb-p1">P1 · Init project</a>
     <a href="#sb-p2">P2 · DB connection</a>
-    <a href="#sb-p3">P3 · GET requests</a>
+    <a href="#sb-p3">P3 · GET routes</a>
     <a href="#sb-p4">P4 · POST create</a>
     <a href="#sb-p5">P5 · PUT/PATCH/DELETE</a>
     <a href="#sb-p6">P6 · Auth login</a>
-    <a href="#sb-p7">P7 · Dashboard counts</a>
+    <a href="#sb-p7">P7 · Dashboard</a>
     <a href="#sb-p8">P8 · Wire server.js</a>
-    <a href="#sb-p9">P9 · Test all endpoints</a>
-    <a href="#sb-p10">P10 · Update Flutter pubspec</a>
-    <a href="#sb-p11">P11 · Create ApiService</a>
-    <a href="#sb-p12">P12 · Wire all screens</a>
+    <a href="#sb-p9">P9 · Test endpoints</a>
+    <a href="#sb-switch">&#8596; Switch projects</a>
+    <a href="#sb-p10">P10 · Flutter pubspec</a>
+    <a href="#sb-p11">P11 · ApiService</a>
+    <a href="#sb-p12">P12 · Wire screens</a>
+    <a href="#sb-run-both">&#9654; Run both apps</a>
   </div>
 
-  <h2 id="sb-before">Before you start — two terminals open</h2>
-  <p>You need two VS Code terminals running simultaneously:</p>
+  <h2 id="sb-setup">Before Prompt 1 — Two VS Code windows, two projects</h2>
+  <p>Day 4 involves two completely separate programs running at the same time. Open them both now before running any prompt.</p>
+
   <div class="grid2">
-    <div class="terminal-box" style="margin:0;"><pre><span class="cmt"># Terminal 1 — inside khan_chacha_api/</span>
-<span class="cmt"># This runs the Node.js API server</span>
-cd khan_chacha_api
-<span class="cmt"># After P8: npm run dev</span></pre></div>
-    <div class="terminal-box" style="margin:0;"><pre><span class="cmt"># Terminal 2 — inside khan_chacha_mrms/</span>
-<span class="cmt"># This runs Claude Code and flutter run</span>
-cd khan_chacha_mrms
-claude</pre></div>
+    <div class="card orange">
+      <h4>&#128308; Window 1 — API Project (NEW)</h4>
+      <p style="font-size:13.5px;color:var(--text-dim);margin-bottom:12px;">This is the Node.js server you are about to build from scratch in <code>khan_chacha_api/</code></p>
+      <div class="action-steps" style="margin:0;">
+        <div class="action-step"><div class="action-num">1</div><div class="action-body">VS Code &#8594; <strong>File &#8594; Open Folder</strong> &#8594; select <code>khan_chacha_api/</code> (the empty folder you created)</div></div>
+        <div class="action-step"><div class="action-num">2</div><div class="action-body">Open terminal: <strong>Terminal &#8594; New Terminal</strong> (or <code>Ctrl+`</code>)</div></div>
+        <div class="action-step" style="margin-bottom:0;"><div class="action-num">3</div><div class="action-body">Type <code>claude</code> and press Enter. Wait for the Claude Code prompt to appear.</div></div>
+      </div>
+    </div>
+    <div class="card accent">
+      <h4>&#128309; Window 2 — Flutter MRMS (EXISTING)</h4>
+      <p style="font-size:13.5px;color:var(--text-dim);margin-bottom:12px;">Your Flutter app from Days 1&#8211;3 in <code>khan_chacha_mrms/</code>. Keep it open but do not touch it until P10.</p>
+      <div class="action-steps" style="margin:0;">
+        <div class="action-step"><div class="action-num">1</div><div class="action-body">VS Code &#8594; <strong>File &#8594; New Window</strong> &#8594; <strong>File &#8594; Open Folder</strong> &#8594; select <code>khan_chacha_mrms/</code></div></div>
+        <div class="action-step"><div class="action-num">2</div><div class="action-body">Leave this window idle. You come back to it at P10.</div></div>
+        <div class="action-step" style="margin-bottom:0;"><div class="action-num">3</div><div class="action-body">At P10: open terminal here and type <code>claude</code></div></div>
+      </div>
+    </div>
   </div>
 
-  <!-- P1 -->
-  <h2 id="sb-p1">Prompt 1 — Initialize the Node.js API project</h2>
-  <div class="terminal-box"><pre><span class="cmt"># In Terminal 1: create the API folder and start Claude Code</span>
-mkdir khan_chacha_api
-cd khan_chacha_api
-claude</pre></div>
+  <div class="note-box">
+    <div class="note-label">How to read this tab</div>
+    <p>Every prompt below has a coloured banner showing which window it belongs to. An orange banner means run it in Window 1 (API project). A teal banner means run it in Window 2 (Flutter project). Prompts 1&#8211;9 are all orange. The switch happens before P10.</p>
+  </div>
+
+  <!-- ══ P1 ══ -->
+  <div class="proj-banner proj-api"><div class="proj-dot"></div>&#128308; API PROJECT &#8212; Window 1 (khan_chacha_api/) &#8212; Claude Code running</div>
+  <h2 id="sb-p1">Prompt 1 &#8212; Initialize the project from scratch</h2>
+  <div class="what-box"><div class="what-label">What this prompt does</div><p>Runs <code>npm init</code>, installs all 5 packages (express, pg, cors, dotenv, nodemon), creates the <code>.env</code> file with your database credentials, creates <code>.gitignore</code> to protect secrets, and creates the empty <code>routes/</code>, <code>db/</code>, <code>middleware/</code> folders. The project goes from an empty folder to a properly scaffolded Node.js app.</p></div>
   <div class="prompt-box">
-    <div class="prompt-label">Claude Code — P1 of 12<button class="copy-btn" onclick="copyPrompt(this,'p1')">Copy</button></div>
+    <div class="prompt-label">Claude Code &#8212; P1 of 12 &#8212; Paste in Window 1 (API project)<button class="copy-btn" onclick="copyPrompt(this,'p1')">Copy</button></div>
     <div class="prompt-meta">
-      <span class="meta-pill meta-task">Creates project structure</span>
-      <span class="meta-pill meta-output">package.json, .env, .gitignore</span>
+      <span class="meta-pill meta-task">Initializes Node.js project from scratch</span>
+      <span class="meta-pill meta-output">package.json &#183; .env &#183; .gitignore &#183; empty folders</span>
     </div>
     <div class="prompt-text" id="p1">Initialize a new Node.js project for the Khan Chacha MRMS REST API.
-
-Do the following in order:
+Do the following steps in order:
 
 1. Run: npm init -y
-   Then update package.json to set "main": "server.js" and add these scripts:
+   Then update package.json: set "main": "server.js" and add these scripts:
    "start": "node server.js"
    "dev": "nodemon server.js"
 
-2. Install these packages:
+2. Install packages:
    npm install express pg cors dotenv
    npm install --save-dev nodemon
 
-3. Create a .env file with these contents:
+3. Create .env file:
    PORT=3000
    DB_HOST=localhost
    DB_PORT=5432
@@ -685,387 +892,489 @@ Do the following in order:
    DB_PASSWORD=kc_secure_2026
    JWT_SECRET=kc_jwt_secret_2026
 
-4. Create a .gitignore file with these contents:
+4. Create .gitignore:
    node_modules/
    .env
 
-5. Create these empty folders: routes/ middleware/ db/
+5. Create these empty folders: routes/  db/  middleware/
 
-Show me the contents of package.json after all changes.</div>
+Show me the final contents of package.json to confirm.</div>
   </div>
-  <div class="expect-box">
-    <div class="expect-label">What gets created</div>
-    <p><code>package.json</code> with all 5 packages listed, <code>.env</code> with DB credentials, <code>.gitignore</code> protecting secrets, and empty folders. Running <code>npm run dev</code> would fail now (no server.js yet) — that comes in P8.</p>
-  </div>
+  <div class="expect-box"><div class="expect-label">After P1 you should see in VS Code</div><p>A large <code>node_modules/</code> folder (thousands of files &#8212; that is normal). <code>package.json</code>, <code>.env</code>, <code>.gitignore</code> all visible. Three empty folders: <code>routes/</code>, <code>db/</code>, <code>middleware/</code>.</p></div>
 
-  <!-- P2 -->
-  <h2 id="sb-p2">Prompt 2 — Database connection pool</h2>
+  <!-- ══ P2 ══ -->
+  <div class="proj-banner proj-api"><div class="proj-dot"></div>&#128308; API PROJECT &#8212; Window 1 &#8212; Continue in Claude Code</div>
+  <h2 id="sb-p2">Prompt 2 &#8212; Database connection pool</h2>
+  <div class="what-box"><div class="what-label">What this prompt does</div><p>Creates <code>db/connection.js</code> &#8212; a PostgreSQL connection pool shared by all route files. A pool means 10 simultaneous API requests share database connections instead of opening a new one each time. The pool reads credentials from <code>.env</code> via <code>process.env</code> so no password appears in code. It tests the connection when the server starts and logs success or failure immediately.</p></div>
   <div class="prompt-box">
-    <div class="prompt-label">Claude Code — P2 of 12<button class="copy-btn" onclick="copyPrompt(this,'p2')">Copy</button></div>
+    <div class="prompt-label">Claude Code &#8212; P2 of 12 &#8212; Paste in Window 1<button class="copy-btn" onclick="copyPrompt(this,'p2')">Copy</button></div>
     <div class="prompt-meta">
       <span class="meta-pill meta-task">Creates db/connection.js</span>
       <span class="meta-pill meta-output">1 new file</span>
     </div>
     <div class="prompt-text" id="p2">Create db/connection.js.
 
-This file creates and exports a PostgreSQL connection pool using the pg package.
-The pool reads all connection values from environment variables (which dotenv loads from .env):
+Create and export a PostgreSQL connection Pool using the pg package.
+Read all values from environment variables (dotenv loads these from .env):
   host: process.env.DB_HOST
   port: process.env.DB_PORT
   database: process.env.DB_NAME
   user: process.env.DB_USER
   password: process.env.DB_PASSWORD
 
-Use a pool (not a single client) so multiple concurrent API requests share connections efficiently.
-Add a small test: when the module loads, run a SELECT NOW() query to confirm the connection works.
-Log 'Database connected' on success, or log the error and exit the process on failure.
+Use Pool, not a single client. This allows multiple concurrent requests to share connections.
 
-Export the pool as module.exports = pool.
+When the module loads, run a test query: SELECT NOW()
+  Success: console.log('Database connected to khan_chacha')
+  Failure: console.error(error) then process.exit(1)
+
+Export: module.exports = pool
+
 Create db/connection.js only.</div>
   </div>
-  <div class="verify-box">
-    <div class="verify-label">Quick test</div>
-    <p>Run <code>node db/connection.js</code> in Terminal 1. You should see "Database connected" if PostgreSQL is running. If you see a connection error, check that PostgreSQL is started and your .env values are correct.</p>
-  </div>
+  <div class="verify-box"><div class="verify-label">Test before continuing</div><p>Open a new terminal tab in Window 1 (click the + icon in the terminal panel). Run: <code>node db/connection.js</code>. You should see: <code>Database connected to khan_chacha</code>. If you see an error: check that PostgreSQL is running and the .env values match your setup from Day 3.</p></div>
 
-  <!-- P3 -->
-  <h2 id="sb-p3">Prompt 3 — GET requests routes (read)</h2>
+  <!-- ══ P3 ══ -->
+  <div class="proj-banner proj-api"><div class="proj-dot"></div>&#128308; API PROJECT &#8212; Window 1 &#8212; Continue in Claude Code</div>
+  <h2 id="sb-p3">Prompt 3 &#8212; GET routes (read all requests + read one)</h2>
+  <div class="what-box"><div class="what-label">What this prompt does</div><p>Creates <code>routes/requests.js</code> with the two read endpoints. <code>GET /</code> returns all requests with a JOIN to outlets and users so each row includes <code>outlet_name</code> and <code>manager_name</code>. If a <code>?outlet_id=OUT-01</code> query parameter is present, it filters to that outlet only &#8212; this is how staff see only their outlet's requests. <code>GET /:id</code> returns a single request by ID.</p></div>
   <div class="prompt-box">
-    <div class="prompt-label">Claude Code — P3 of 12<button class="copy-btn" onclick="copyPrompt(this,'p3')">Copy</button></div>
+    <div class="prompt-label">Claude Code &#8212; P3 of 12 &#8212; Paste in Window 1<button class="copy-btn" onclick="copyPrompt(this,'p3')">Copy</button></div>
     <div class="prompt-meta">
-      <span class="meta-pill meta-task">Creates routes/requests.js (GET routes)</span>
-      <span class="meta-pill meta-output">1 new file (partial)</span>
+      <span class="meta-pill meta-task">Creates routes/requests.js (GET routes only for now)</span>
+      <span class="meta-pill meta-output">1 new file &#8212; more routes added in P4 and P5</span>
     </div>
     <div class="prompt-text" id="p3">Create routes/requests.js with only the GET routes for now.
 
-Import express, create a router, import the pool from db/connection.js.
+Import express, create router with express.Router(), import pool from ../db/connection.js.
 
-Route 1 — GET /
-  Query all rows from maintenance_requests with these JOINs:
-    JOIN outlets o ON r.outlet_id = o.id
-    JOIN users u ON r.raised_by = u.id
-  Select: r.*, o.name AS outlet_name, o.address AS outlet_address, u.name AS manager_name
-  If a query parameter outlet_id is present in req.query, add WHERE r.outlet_id = $1
-  ORDER BY r.request_date DESC
-  Return the rows as JSON.
+GET / route:
+  SQL: SELECT r.*, o.name AS outlet_name, o.address AS outlet_address,
+       u.name AS manager_name
+  FROM maintenance_requests r
+  JOIN outlets o ON r.outlet_id = o.id
+  JOIN users   u ON r.raised_by = u.id
+  If req.query.outlet_id is present: add WHERE r.outlet_id = $1 (parameterized)
+  Always add: ORDER BY r.request_date DESC
+  Return: res.json(result.rows)
   On error: res.status(500).json({ error: error.message })
 
-Route 2 — GET /:id
-  Query a single request by id using the same JOINs as above.
-  If no row found: res.status(404).json({ error: 'Request not found' })
-  If found: return the single row as JSON.
+GET /:id route:
+  Same JOIN query as GET / but add WHERE r.id = $1
+  If result.rows.length === 0: res.status(404).json({ error: 'Request not found' })
+  Else: res.json(result.rows[0])
 
-Use parameterized queries throughout (never string interpolation in SQL).
-Export the router as module.exports = router.
+Use parameterized queries throughout. Never concatenate user input into SQL strings.
+End with: module.exports = router;
 Create routes/requests.js only.</div>
   </div>
 
-  <!-- P4 -->
-  <h2 id="sb-p4">Prompt 4 — POST create route</h2>
+  <!-- ══ P4 ══ -->
+  <div class="proj-banner proj-api"><div class="proj-dot"></div>&#128308; API PROJECT &#8212; Window 1 &#8212; Continue in Claude Code</div>
+  <h2 id="sb-p4">Prompt 4 &#8212; POST route (create new request)</h2>
+  <div class="what-box"><div class="what-label">What this prompt does</div><p>Adds the <code>POST /</code> endpoint to <code>routes/requests.js</code>. When a manager submits the new request form in Flutter, this endpoint receives the JSON body, validates required fields, runs the INSERT into <code>maintenance_requests</code>, then fetches the newly created row with JOINs and returns it as HTTP 201. Flutter uses the returned object to immediately show the new card in the list.</p></div>
   <div class="prompt-box">
-    <div class="prompt-label">Claude Code — P4 of 12<button class="copy-btn" onclick="copyPrompt(this,'p4')">Copy</button></div>
+    <div class="prompt-label">Claude Code &#8212; P4 of 12 &#8212; Paste in Window 1<button class="copy-btn" onclick="copyPrompt(this,'p4')">Copy</button></div>
     <div class="prompt-meta">
-      <span class="meta-pill meta-task">Adds POST to routes/requests.js</span>
-      <span class="meta-pill meta-constraint">Do not change existing GET routes</span>
+      <span class="meta-pill meta-task">Adds POST / to routes/requests.js</span>
+      <span class="meta-pill meta-constraint">Do not change the existing GET routes</span>
     </div>
     <div class="prompt-text" id="p4">In routes/requests.js, add a POST / route after the existing GET routes.
 
-Route — POST /
-  Read these fields from req.body:
-    id, product_name, product_id, category, status, request_date,
-    description, image_path, outlet_id, raised_by
-  Insert a new row into maintenance_requests with those values.
-  status_history defaults to an empty JSONB array '[]'.
-  After INSERT, query the new row with the same JOINs as the GET / route
-  and return it as JSON with HTTP 201 (Created).
-  Validate that required fields are present (id, product_name, category, outlet_id, raised_by).
-  If any required field is missing: return HTTP 400 with { error: 'Missing required field: [fieldname]' }
-  On database error: return HTTP 500 with { error: error.message }
+Read from req.body:
+  id, product_name, product_id, category, status, request_date,
+  description, image_path, outlet_id, raised_by
 
-Use parameterized queries.
-Do not change the existing GET routes.</div>
+Validate required fields first (id, product_name, product_id, category, outlet_id, raised_by).
+If any are missing: res.status(400).json({ error: 'Missing required field: [fieldname]' })
+
+INSERT INTO maintenance_requests with all fields using parameterized values.
+The status_history column defaults to '[]'::jsonb via the DB DEFAULT constraint.
+
+After INSERT, fetch the new row using the same SELECT + JOINs as GET /:id.
+Return: res.status(201).json(newRow)
+On DB error: res.status(500).json({ error: error.message })
+
+Do not change the existing GET routes. Parameterized queries throughout.</div>
   </div>
 
-  <!-- P5 -->
-  <h2 id="sb-p5">Prompt 5 — PUT, PATCH, DELETE routes</h2>
+  <!-- ══ P5 ══ -->
+  <div class="proj-banner proj-api"><div class="proj-dot"></div>&#128308; API PROJECT &#8212; Window 1 &#8212; Continue in Claude Code</div>
+  <h2 id="sb-p5">Prompt 5 &#8212; PUT, PATCH, DELETE routes</h2>
+  <div class="what-box"><div class="what-label">What this prompt does</div><p>Completes <code>routes/requests.js</code> with the remaining three write operations. <strong>PUT</strong> replaces all editable fields (used when editing a request). <strong>PATCH</strong> updates only the status column and appends a timestamped entry to the <code>status_history</code> JSONB array &#8212; the <code>||</code> operator in PostgreSQL appends to a JSONB array. <strong>DELETE</strong> removes the row and returns confirmation.</p></div>
   <div class="prompt-box">
-    <div class="prompt-label">Claude Code — P5 of 12<button class="copy-btn" onclick="copyPrompt(this,'p5')">Copy</button></div>
+    <div class="prompt-label">Claude Code &#8212; P5 of 12 &#8212; Paste in Window 1<button class="copy-btn" onclick="copyPrompt(this,'p5')">Copy</button></div>
     <div class="prompt-meta">
-      <span class="meta-pill meta-task">Adds PUT/PATCH/DELETE to routes/requests.js</span>
-      <span class="meta-pill meta-constraint">Do not change existing routes</span>
+      <span class="meta-pill meta-task">Adds PUT /:id &#183; PATCH /:id/status &#183; DELETE /:id to routes/requests.js</span>
+      <span class="meta-pill meta-constraint">Do not change existing GET and POST routes</span>
     </div>
-    <div class="prompt-text" id="p5">In routes/requests.js, add three more routes after the existing ones.
+    <div class="prompt-text" id="p5">In routes/requests.js, add three routes after the existing ones.
 
-Route 1 — PUT /:id (edit all fields)
-  Read the same fields as POST from req.body.
-  UPDATE maintenance_requests SET all editable fields WHERE id = $id.
-  Also set updated_at = NOW().
-  If no row updated (wrong id): return HTTP 404 with { error: 'Request not found' }
-  Return the updated row as JSON using the same JOIN query.
+PUT /:id &#8212; edit all fields
+  Read same fields as POST from req.body.
+  UPDATE maintenance_requests SET product_name=$1, product_id=$2, category=$3,
+  status=$4, request_date=$5, description=$6, image_path=$7, updated_at=NOW()
+  WHERE id = $8
+  If rowCount === 0: res.status(404).json({ error: 'Request not found' })
+  Else: fetch and return updated row with JOINs
 
-Route 2 — PATCH /:id/status (update status only)
+PATCH /:id/status &#8212; update status and append history entry
   Read { status, history_entry } from req.body.
-  UPDATE maintenance_requests SET:
-    status = $status,
-    status_history = status_history || $history_entry::jsonb,
-    updated_at = NOW()
-  WHERE id = $id
-  The history_entry is a JSON string like: '{"from":"Open","to":"Pending","at":"2026-07-10T14:30:00"}'
-  If no row updated: HTTP 404.
-  Return the updated row as JSON.
+  history_entry is a JSON string like: '{"from":"Open","to":"Pending","at":"2026-07-10T14:30:00"}'
+  SQL: UPDATE maintenance_requests
+    SET status = $1,
+        status_history = status_history || $2::jsonb,
+        updated_at = NOW()
+  WHERE id = $3
+  If rowCount === 0: res.status(404).json({ error: 'Request not found' })
+  Else: fetch and return updated row with JOINs
 
-Route 3 — DELETE /:id
-  DELETE FROM maintenance_requests WHERE id = $id.
-  If no row deleted: HTTP 404 with { error: 'Request not found' }
-  On success: HTTP 200 with { message: 'Deleted successfully', id: $id }
+DELETE /:id &#8212; remove a request
+  DELETE FROM maintenance_requests WHERE id = $1
+  If rowCount === 0: res.status(404).json({ error: 'Request not found' })
+  On success: res.status(200).json({ message: 'Deleted successfully', id: req.params.id })
 
-Do not change any existing routes. Use parameterized queries throughout.</div>
+Do not change any existing routes. Parameterized queries only.</div>
   </div>
 
-  <!-- P6 -->
-  <h2 id="sb-p6">Prompt 6 — Auth login route</h2>
+  <!-- ══ P6 ══ -->
+  <div class="proj-banner proj-api"><div class="proj-dot"></div>&#128308; API PROJECT &#8212; Window 1 &#8212; Continue in Claude Code</div>
+  <h2 id="sb-p6">Prompt 6 &#8212; Auth login route</h2>
+  <div class="what-box"><div class="what-label">What this prompt does</div><p>Creates <code>routes/auth.js</code> with a <code>POST /login</code> endpoint. The Flutter LoginScreen will call this instead of the hardcoded dummy AuthService. The route looks up the username in the database, checks the password, and returns the user's complete profile including outlet name &#8212; everything the LoginScreen needs to navigate to the Dashboard with the right role and outlet.</p></div>
   <div class="prompt-box">
-    <div class="prompt-label">Claude Code — P6 of 12<button class="copy-btn" onclick="copyPrompt(this,'p6')">Copy</button></div>
+    <div class="prompt-label">Claude Code &#8212; P6 of 12 &#8212; Paste in Window 1<button class="copy-btn" onclick="copyPrompt(this,'p6')">Copy</button></div>
     <div class="prompt-meta">
       <span class="meta-pill meta-task">Creates routes/auth.js</span>
       <span class="meta-pill meta-output">1 new file</span>
     </div>
     <div class="prompt-text" id="p6">Create routes/auth.js.
 
-Import express, create a router, import the pool from db/connection.js.
+Import express, create router, import pool from ../db/connection.js.
 
-Route — POST /login
+POST /login route:
   Read { username, password } from req.body.
-  If either is missing: HTTP 400 with { error: 'Username and password required' }
-  Query the users table: SELECT id, name, username, role, outlet_id FROM users WHERE username = $1
-  Also query the outlet name: JOIN outlets o ON users.outlet_id = o.id
-  Return both user and outlet_name in the response.
-  If no user found: HTTP 404 with { error: 'User not found' }
-  Compare password with the stored password (plain text comparison for now — note in comment that bcrypt should be used in production).
-  If password doesn't match: HTTP 401 with { error: 'Invalid password' }
-  On success: HTTP 200 with this JSON:
-  {
-    "id": "U001",
-    "name": "Arjun Sharma",
-    "username": "manager",
-    "role": "manager",
-    "outletId": "OUT-01",
-    "outletName": "Khan Chacha Connaught Place"
-  }
-  Never include the password field in the response.
+  If either missing: res.status(400).json({ error: 'Username and password required' })
 
-Export the router. Create routes/auth.js only.</div>
+  Query:
+  SELECT u.id, u.name, u.username, u.password, u.role, u.outlet_id, o.name AS outlet_name
+  FROM users u
+  JOIN outlets o ON u.outlet_id = o.id
+  WHERE u.username = $1
+
+  If no row found: res.status(404).json({ error: 'User not found' })
+  If row.password !== password: res.status(401).json({ error: 'Invalid password' })
+  Add comment: // TODO: replace plain text comparison with bcrypt.compare() in production
+
+  On success return HTTP 200 (NEVER include the password field in the response):
+  {
+    "id": row.id,
+    "name": row.name,
+    "username": row.username,
+    "role": row.role,
+    "outletId": row.outlet_id,
+    "outletName": row.outlet_name
+  }
+
+On DB error: res.status(500).json({ error: error.message })
+End with: module.exports = router;
+Create routes/auth.js only.</div>
   </div>
 
-  <!-- P7 -->
-  <h2 id="sb-p7">Prompt 7 — Dashboard counts route</h2>
+  <!-- ══ P7 ══ -->
+  <div class="proj-banner proj-api"><div class="proj-dot"></div>&#128308; API PROJECT &#8212; Window 1 &#8212; Continue in Claude Code</div>
+  <h2 id="sb-p7">Prompt 7 &#8212; Dashboard counts route</h2>
+  <div class="what-box"><div class="what-label">What this prompt does</div><p>Creates <code>routes/dashboard.js</code> with a <code>GET /counts</code> endpoint that runs the GROUP BY SQL query. The response is a flat object: <code>{"Open":4,"Pending":2,"Closed":2}</code>. The optional <code>?outlet_id</code> parameter lets staff see counts for their outlet only. This is the server-side version of the query that previously ran inside Flutter's DatabaseService.</p></div>
   <div class="prompt-box">
-    <div class="prompt-label">Claude Code — P7 of 12<button class="copy-btn" onclick="copyPrompt(this,'p7')">Copy</button></div>
+    <div class="prompt-label">Claude Code &#8212; P7 of 12 &#8212; Paste in Window 1<button class="copy-btn" onclick="copyPrompt(this,'p7')">Copy</button></div>
     <div class="prompt-meta">
       <span class="meta-pill meta-task">Creates routes/dashboard.js</span>
       <span class="meta-pill meta-output">1 new file</span>
     </div>
     <div class="prompt-text" id="p7">Create routes/dashboard.js.
 
-Import express, create a router, import the pool from db/connection.js.
+Import express, create router, import pool from ../db/connection.js.
 
-Route — GET /counts
-  Run this SQL query:
-  SELECT status, COUNT(*)::int AS total FROM maintenance_requests GROUP BY status
-  Transform the result into a flat object: { "Open": 4, "Pending": 2, "Closed": 2 }
-  (All three statuses should always be present — if a status has 0 count, include it as 0)
-  Return as JSON.
+GET /counts route:
+  If req.query.outlet_id present:
+    SQL: SELECT status, COUNT(*)::int AS total FROM maintenance_requests
+         WHERE outlet_id = $1 GROUP BY status
+  Else:
+    SQL: SELECT status, COUNT(*)::int AS total FROM maintenance_requests GROUP BY status
 
-Route — GET /counts?outlet_id=OUT-01
-  Same query but add WHERE outlet_id = $1 to filter by outlet.
-  Used by the staff dashboard to show counts for their outlet only.
+  Transform rows into a flat object &#8212; always include all 3 statuses, defaulting to 0:
+    const counts = { Open: 0, Pending: 0, Closed: 0 };
+    result.rows.forEach(row => { counts[row.status] = row.total; });
+    res.json(counts);
 
-On error: HTTP 500 with { error: error.message }
-Export the router. Create routes/dashboard.js only.</div>
+On error: res.status(500).json({ error: error.message })
+End with: module.exports = router;
+Create routes/dashboard.js only.</div>
   </div>
 
-  <!-- P8 -->
-  <h2 id="sb-p8">Prompt 8 — Wire everything in server.js</h2>
+  <!-- ══ P8 ══ -->
+  <div class="proj-banner proj-api"><div class="proj-dot"></div>&#128308; API PROJECT &#8212; Window 1 &#8212; Continue in Claude Code</div>
+  <h2 id="sb-p8">Prompt 8 &#8212; Wire everything in server.js, then start the server</h2>
+  <div class="what-box"><div class="what-label">What this prompt does</div><p>Creates <code>server.js</code> &#8212; the entry point that assembles all the pieces. It loads dotenv (so .env values are available), sets up the two Express middleware layers (CORS so Flutter can reach the API, and JSON parsing so <code>req.body</code> works), mounts all three router files at their correct URL prefixes, adds a root health-check route, and starts listening. After this prompt, your API is a live running server.</p></div>
   <div class="prompt-box">
-    <div class="prompt-label">Claude Code — P8 of 12<button class="copy-btn" onclick="copyPrompt(this,'p8')">Copy</button></div>
+    <div class="prompt-label">Claude Code &#8212; P8 of 12 &#8212; Paste in Window 1<button class="copy-btn" onclick="copyPrompt(this,'p8')">Copy</button></div>
     <div class="prompt-meta">
-      <span class="meta-pill meta-task">Creates server.js — the entry point</span>
-      <span class="meta-pill meta-output">1 new file — API is now runnable</span>
+      <span class="meta-pill meta-task">Creates server.js &#8212; the API is live after this runs</span>
+      <span class="meta-pill meta-output">1 new file &#183; API starts running on port 3000</span>
     </div>
-    <div class="prompt-text" id="p8">Create server.js — the main entry point for the Khan Chacha REST API.
+    <div class="prompt-text" id="p8">Create server.js.
 
-Contents:
-1. Load dotenv: require('dotenv').config() as the very first line
-2. Import express, cors, and the three routers from routes/
-3. Create the Express app
-4. Apply middleware:
-   app.use(cors())             — allows requests from any origin
-   app.use(express.json())     — parses JSON request bodies
-5. Mount the routers:
-   app.use('/api/requests',  require('./routes/requests'))
-   app.use('/api/auth',      require('./routes/auth'))
-   app.use('/api/dashboard', require('./routes/dashboard'))
-6. Add a root health check route:
-   GET / returns { status: 'Khan Chacha API running', version: '1.0.0' }
-7. Start the server:
-   const PORT = process.env.PORT || 3000
-   app.listen(PORT, () => console.log('API running on http://localhost:' + PORT))
+First line must be: require('dotenv').config()
+
+Then:
+  const express = require('express');
+  const cors = require('cors');
+  const app = express();
+
+Middleware:
+  app.use(cors())           // allows Flutter/browser to call API from any origin
+  app.use(express.json())   // parses JSON request body into req.body
+
+Mount routes:
+  app.use('/api/requests',  require('./routes/requests'));
+  app.use('/api/auth',      require('./routes/auth'));
+  app.use('/api/dashboard', require('./routes/dashboard'));
+
+Health check:
+  app.get('/', (req, res) => res.json({ status: 'Khan Chacha API running', version: '1.0.0' }));
+
+Start server:
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => console.log('API running on http://localhost:' + PORT));
+
+After creating server.js, run: npm run dev
+
+Both of these must appear in the terminal output:
+  Database connected to khan_chacha
+  API running on http://localhost:3000
 
 Create server.js only.</div>
   </div>
-  <div class="terminal-box"><pre><span class="cmt"># After Claude creates server.js, start the API:</span>
-npm run dev
-
-<span class="cmt"># You should see:</span>
-<span class="cmt"># Database connected</span>
-<span class="cmt"># API running on http://localhost:3000</span></pre></div>
-  <div class="verify-box">
-    <div class="verify-label">Verify the API is running</div>
-    <p>Open a browser and go to <code>http://localhost:3000</code>. You should see <code>{"status":"Khan Chacha API running","version":"1.0.0"}</code>. If the terminal shows "Database connected" and the browser shows JSON — the API is alive.</p>
+  <div class="note-box">
+    <div class="note-label">After P8 &#8212; Terminal tab 1 is now occupied by the running server</div>
+    <p>The API server is live. Do not close Window 1 or stop the server. To run commands, open a new terminal tab inside Window 1: click the <strong>+</strong> icon in VS Code's terminal panel. Use this new tab for P9.</p>
   </div>
+  <div class="verify-box"><div class="verify-label">Verify the API is running</div><p>Open a browser and go to <code>http://localhost:3000</code>. You should see: <code>{"status":"Khan Chacha API running","version":"1.0.0"}</code>. If the browser loads this &#8212; the API is alive and accepting connections.</p></div>
 
-  <!-- P9 -->
-  <h2 id="sb-p9">Prompt 9 — Test all endpoints with Claude Code</h2>
+  <!-- ══ P9 ══ -->
+  <div class="proj-banner proj-api"><div class="proj-dot"></div>&#128308; API PROJECT &#8212; Window 1 &#8212; Open a NEW terminal tab (server is running in Tab 1)</div>
+  <h2 id="sb-p9">Prompt 9 &#8212; Test all endpoints before touching Flutter</h2>
+  <div class="what-box"><div class="what-label">What this prompt does</div><p>Runs curl commands &#8212; a built-in command-line HTTP client &#8212; to test every endpoint. This confirms each route works correctly before the Flutter layer is added. If anything fails here, fixing it in the API is fast. Fixing the same issue after the Flutter layer is involved takes much longer. Do not proceed to P10 until all 6 tests pass.</p></div>
   <div class="prompt-box">
-    <div class="prompt-label">Claude Code — P9 of 12<button class="copy-btn" onclick="copyPrompt(this,'p9')">Copy</button></div>
+    <div class="prompt-label">Claude Code &#8212; P9 of 12 &#8212; Paste in NEW terminal tab in Window 1<button class="copy-btn" onclick="copyPrompt(this,'p9')">Copy</button></div>
     <div class="prompt-meta">
-      <span class="meta-pill meta-task">Generates and runs curl tests for all endpoints</span>
+      <span class="meta-pill meta-task">Tests all 6 API endpoints with curl</span>
+      <span class="meta-pill meta-constraint">Fix any failing test before moving to P10</span>
     </div>
-    <div class="prompt-text" id="p9">My Khan Chacha REST API is running on http://localhost:3000.
-
-Run these curl commands one at a time and show me the response for each:
+    <div class="prompt-text" id="p9">My API is running on http://localhost:3000 in another terminal tab.
+Run these curl commands one at a time and show me the full response for each:
 
 1. curl http://localhost:3000/
+   Expected: {"status":"Khan Chacha API running","version":"1.0.0"}
+
 2. curl -X POST http://localhost:3000/api/auth/login \
    -H "Content-Type: application/json" \
    -d '{"username":"manager","password":"manager123"}'
+   Expected: JSON with id, name, role, outletId, outletName. NO password field.
+
 3. curl http://localhost:3000/api/requests
+   Expected: JSON array with all requests. Each object must include outlet_name and manager_name.
+
 4. curl "http://localhost:3000/api/requests?outlet_id=OUT-02"
+   Expected: Filtered array &#8212; only requests from OUT-02.
+
 5. curl http://localhost:3000/api/dashboard/counts
+   Expected: {"Open":N,"Pending":N,"Closed":N}
+
 6. curl "http://localhost:3000/api/dashboard/counts?outlet_id=OUT-01"
+   Expected: Counts for OUT-01 only.
 
-After running each, tell me:
-- Was the HTTP status code 200?
-- Did the JSON response look correct?
-- If any returned an error, show me what's wrong in the route code and fix it.</div>
+After each test: confirm HTTP 200 and correct JSON.
+If any test fails: read the relevant route file, identify the bug, fix it, re-test.
+Do not move to the Flutter prompts until all 6 pass.</div>
   </div>
-  <div class="expect-box">
-    <div class="expect-label">What success looks like</div>
-    <p>All 6 curl commands return HTTP 200 with valid JSON. The requests endpoint returns an array of 6–8 objects. The dashboard counts endpoint returns something like <code>{"Open":4,"Pending":2,"Closed":2}</code>. Fix any error before moving to P10.</p>
-  </div>
+  <div class="expect-box"><div class="expect-label">All 6 tests must pass</div><p>If any curl returns an error or wrong data &#8212; fix it now. The API is your source of truth. Ask Claude: "Test 3 failed with this output: [paste]. Read routes/requests.js and fix the issue."</p></div>
 
-  <!-- P10 -->
-  <h2 id="sb-p10">Prompt 10 — Update Flutter pubspec and switch to http package</h2>
-  <p>Now switch to Terminal 2 (the Flutter project). Claude Code here will update the Flutter app to talk to the API instead of the database directly.</p>
-  <div class="prompt-box">
-    <div class="prompt-label">Claude Code (Flutter project) — P10 of 12<button class="copy-btn" onclick="copyPrompt(this,'p10')">Copy</button></div>
-    <div class="prompt-meta">
-      <span class="meta-pill meta-context">Switch to Terminal 2 — flutter project</span>
-      <span class="meta-pill meta-task">Updates pubspec.yaml</span>
+  <!-- ══ SWITCH ══ -->
+  <div class="proj-switch" id="sb-switch">
+    <h3>&#8596; Now switch to Window 2 &#8212; Flutter Project</h3>
+    <p>The API is fully built, running, and tested. Click over to VS Code Window 2 (<code>khan_chacha_mrms/</code>). Leave Window 1 running &#8212; do not stop the server. Open a terminal in Window 2, type <code>claude</code>, and press Enter. Prompts 10&#8211;12 run here.</p>
+    <div style="margin-top:14px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+      <div style="background:rgba(232,140,31,.12);border:1px solid rgba(232,140,31,.3);padding:8px 16px;border-radius:8px;font-size:13px;color:var(--orange);">&#128308; Window 1: API server running &#8212; leave it</div>
+      <div style="background:rgba(0,194,224,.08);border:1px solid rgba(0,194,224,.25);padding:8px 16px;border-radius:8px;font-size:13px;color:var(--teal);">&#128309; Window 2: terminal &#8594; type claude &#8594; Enter</div>
     </div>
-    <div class="prompt-text" id="p10">In our Flutter Khan Chacha MRMS project, update pubspec.yaml:
-
-1. Remove this line (if present): postgres: ^3.3.3
-2. Add this line under dependencies: http: ^1.2.0
-
-Then run: flutter pub get
-
-Also read lib/services/database_service.dart and tell me:
-- How many public methods does it have?
-- What is the return type of each method?
-List them — we will replace this file in the next prompt.</div>
   </div>
 
-  <!-- P11 -->
-  <h2 id="sb-p11">Prompt 11 — Create ApiService replacing DatabaseService</h2>
+  <!-- ══ P10 ══ -->
+  <div class="proj-banner proj-flutter"><div class="proj-dot"></div>&#128309; FLUTTER PROJECT &#8212; Window 2 (khan_chacha_mrms/) &#8212; Claude Code running here now</div>
+  <h2 id="sb-p10">Prompt 10 &#8212; Update pubspec and read current DatabaseService</h2>
+  <div class="what-box"><div class="what-label">What this prompt does</div><p>Switches the Flutter project from the <code>postgres</code> Dart package (direct DB connection) to the <code>http</code> package (HTTP calls to the API). Runs <code>flutter pub get</code> to install. Then reads <code>database_service.dart</code> to note every method name and return type &#8212; Claude uses this information in P11 to write <code>ApiService</code> with exactly matching signatures so the screens need minimal edits.</p></div>
   <div class="prompt-box">
-    <div class="prompt-label">Claude Code (Flutter project) — P11 of 12<button class="copy-btn" onclick="copyPrompt(this,'p11')">Copy</button></div>
+    <div class="prompt-label">Claude Code &#8212; P10 of 12 &#8212; Paste in Window 2 (Flutter project)<button class="copy-btn" onclick="copyPrompt(this,'p10')">Copy</button></div>
     <div class="prompt-meta">
+      <span class="meta-pill meta-context">&#128309; Window 2 &#8212; khan_chacha_mrms Flutter project</span>
+      <span class="meta-pill meta-task">Updates pubspec.yaml, reads DatabaseService</span>
+    </div>
+    <div class="prompt-text" id="p10">In our Flutter Khan Chacha MRMS project, do two things:
+
+1. Update pubspec.yaml:
+   - Remove if present: postgres: ^3.3.3
+   - Add under dependencies: http: ^1.2.0
+   - Run: flutter pub get
+   - Confirm "Got dependencies!" appears
+
+2. Read lib/services/database_service.dart and report:
+   - Every public method name and its exact Dart return type
+   - The singleton pattern used (factory constructor? private instance?)
+   - Does a connect() method exist that main.dart calls?
+
+Do not change any Dart files yet. Just update pubspec.yaml and report.</div>
+  </div>
+  <div class="expect-box"><div class="expect-label">After P10</div><p>pubspec.yaml has <code>http: ^1.2.0</code>. Claude has listed all DatabaseService methods with their return types. This is the information used in P11 to write ApiService with matching signatures.</p></div>
+
+  <!-- ══ P11 ══ -->
+  <div class="proj-banner proj-flutter"><div class="proj-dot"></div>&#128309; FLUTTER PROJECT &#8212; Window 2 &#8212; Continue in Claude Code</div>
+  <h2 id="sb-p11">Prompt 11 &#8212; Create ApiService (replaces DatabaseService)</h2>
+  <div class="what-box"><div class="what-label">What this prompt does</div><p>Creates <code>lib/services/api_service.dart</code> &#8212; a singleton service using the <code>http</code> package instead of the <code>postgres</code> package. Every method has the same name and return type as DatabaseService so the screens need minimal changes. The <code>BASE_URL</code> points to the Node.js API. The comment inside the file explains how to change the URL for a real device vs the emulator.</p></div>
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code &#8212; P11 of 12 &#8212; Paste in Window 2 (Flutter project)<button class="copy-btn" onclick="copyPrompt(this,'p11')">Copy</button></div>
+    <div class="prompt-meta">
+      <span class="meta-pill meta-context">&#128309; Window 2 &#8212; http package installed</span>
       <span class="meta-pill meta-task">Creates lib/services/api_service.dart</span>
-      <span class="meta-pill meta-constraint">Keep exact same method names as DatabaseService</span>
-      <span class="meta-pill meta-output">1 new file</span>
+      <span class="meta-pill meta-constraint">Same method names and return types as DatabaseService</span>
+      <span class="meta-pill meta-output">1 new file only &#8212; no screen files changed yet</span>
     </div>
-    <div class="prompt-text" id="p11">Create lib/services/api_service.dart in our Flutter Khan Chacha MRMS project.
+    <div class="prompt-text" id="p11">Create lib/services/api_service.dart in the Flutter project.
 
-This replaces DatabaseService with HTTP calls to our Node.js API.
-Use the same singleton pattern (factory constructor) as DatabaseService.
-Use the same public method names and return types as DatabaseService so screens need minimal changes.
+Use the same singleton factory constructor pattern as DatabaseService.
+Use the EXACT same public method names and return types as DatabaseService (you listed them in P10).
 
-BASE_URL constant: 'http://10.0.2.2:3000/api' for Android emulator
-(10.0.2.2 is how the Android emulator reaches localhost on the host machine.
-For a real device on the same WiFi, change to the host machine's local IP like 192.168.1.x)
-Add a comment explaining this and how to change it for a real device.
+BASE URL constant:
+  static const String _baseUrl = 'http://10.0.2.2:3000/api';
+  // 10.0.2.2 is the Android emulator's alias for the host machine's localhost.
+  // For a real Android phone on the same WiFi, replace with your machine's local IP,
+  // e.g. 'http://192.168.1.105:3000/api'
+  // Find your local IP: ipconfig (Windows) / ifconfig (Mac/Linux)
 
-METHODS — implement each using the http package:
+IMPLEMENT these methods using package:http/http.dart as http + dart:convert:
 
-Future<List<MaintenanceRequest>> fetchAll()
-  GET $BASE_URL/requests
-  Decode JSON array, map each item using MaintenanceRequest.fromJson(item)
+Future&#60;List&#60;MaintenanceRequest&#62;&#62; fetchAll()
+  GET $_baseUrl/requests &#8594; jsonDecode &#8594; map each item using MaintenanceRequest.fromJson()
 
-Future<List<MaintenanceRequest>> fetchByOutlet(String outletId)
-  GET $BASE_URL/requests?outlet_id=$outletId
-  Same decoding as fetchAll()
+Future&#60;List&#60;MaintenanceRequest&#62;&#62; fetchByOutlet(String outletId)
+  GET $_baseUrl/requests?outlet_id=$outletId &#8594; same mapping as fetchAll()
 
-Future<void> createRequest(MaintenanceRequest r)
-  POST $BASE_URL/requests
-  Body: jsonEncode(r.toInsertMap())
-  Headers: { 'Content-Type': 'application/json' }
-  If status != 201: throw Exception with the error from response body
+Future&#60;void&#62; createRequest(MaintenanceRequest r)
+  POST $_baseUrl/requests, body: jsonEncode(r.toInsertMap()), Content-Type: application/json
+  If response.statusCode != 201: throw Exception('Create failed: ${response.body}')
 
-Future<void> updateStatus(String id, String newStatus, String historyEntry)
-  PATCH $BASE_URL/requests/$id/status
-  Body: jsonEncode({ 'status': newStatus, 'history_entry': historyEntry })
+Future&#60;void&#62; updateStatus(String id, String newStatus, String historyEntry)
+  PATCH $_baseUrl/requests/$id/status
+  body: jsonEncode({'status': newStatus, 'history_entry': historyEntry})
+  Content-Type: application/json
 
-Future<void> updateRequest(MaintenanceRequest r)
-  PUT $BASE_URL/requests/${r.id}
-  Body: jsonEncode(r.toInsertMap())
+Future&#60;void&#62; updateRequest(MaintenanceRequest r)
+  PUT $_baseUrl/requests/${r.id}, body: jsonEncode(r.toInsertMap()), Content-Type: application/json
 
-Future<void> deleteRequest(String id)
-  DELETE $BASE_URL/requests/$id
-  If status != 200: throw Exception with error from response body
+Future&#60;void&#62; deleteRequest(String id)
+  DELETE $_baseUrl/requests/$id
+  If statusCode != 200: throw Exception('Delete failed: ${response.body}')
 
-Future<Map<String,int>> getStatusCounts({String? outletId})
-  GET $BASE_URL/dashboard/counts (add ?outlet_id=$outletId if provided)
-  Decode and return as Map<String,int>
+Future&#60;Map&#60;String, int&#62;&#62; getStatusCounts({String? outletId})
+  final url = outletId != null ? '$_baseUrl/dashboard/counts?outlet_id=$outletId'
+                               : '$_baseUrl/dashboard/counts'
+  GET url &#8594; jsonDecode &#8594; Map&#60;String, int&#62;
 
-For all methods: if HTTP status >= 400, throw Exception('API Error $status: $body').
-Import dart:convert for jsonEncode/jsonDecode.
+For ALL methods: if statusCode &#62;= 400: throw Exception('API Error ${response.statusCode}: ${response.body}')
+
 Create lib/services/api_service.dart only. Do not modify any screen files yet.</div>
   </div>
 
-  <!-- P12 -->
-  <h2 id="sb-p12">Prompt 12 — Wire all screens to use ApiService</h2>
+  <!-- ══ P12 ══ -->
+  <div class="proj-banner proj-flutter"><div class="proj-dot"></div>&#128309; FLUTTER PROJECT &#8212; Window 2 &#8212; Continue in Claude Code</div>
+  <h2 id="sb-p12">Prompt 12 &#8212; Replace DatabaseService with ApiService across all screens</h2>
+  <div class="what-box"><div class="what-label">What this prompt does</div><p>Reads every screen file that imports DatabaseService and replaces each reference with ApiService. The UI, animations, navigation, forms, and confirmation dialogs stay completely untouched. In <code>main.dart</code>, the old <code>DatabaseService().connect()</code> call and its loading screen are removed because HTTP connections need no initialization &#8212; the first API call either succeeds or throws an exception that the screen handles.</p></div>
   <div class="prompt-box">
-    <div class="prompt-label">Claude Code (Flutter project) — P12 of 12<button class="copy-btn" onclick="copyPrompt(this,'p12')">Copy</button></div>
+    <div class="prompt-label">Claude Code &#8212; P12 of 12 &#8212; Paste in Window 2 (Flutter project)<button class="copy-btn" onclick="copyPrompt(this,'p12')">Copy</button></div>
     <div class="prompt-meta">
-      <span class="meta-pill meta-task">Replace DatabaseService with ApiService across all screens</span>
-      <span class="meta-pill meta-constraint">Do not change any UI code, animations, or navigation</span>
-      <span class="meta-pill meta-output">4–5 files updated</span>
+      <span class="meta-pill meta-context">&#128309; Window 2 &#8212; ApiService created</span>
+      <span class="meta-pill meta-task">Replace DatabaseService() with ApiService() across all affected files</span>
+      <span class="meta-pill meta-constraint">Do NOT change any UI widget, animation, navigation call, or dialog</span>
+      <span class="meta-pill meta-output">4&#8211;5 files updated</span>
     </div>
-    <div class="prompt-text" id="p12">In our Flutter Khan Chacha MRMS project, replace all references to DatabaseService with ApiService across all files that import it.
-
-Read these files first to understand the current state:
-  lib/screens/request_list_screen.dart (or home_screen.dart)
+    <div class="prompt-text" id="p12">Read all five of these files before making any changes:
+  lib/main.dart
+  lib/screens/request_list_screen.dart (or home_screen.dart &#8212; check which exists)
   lib/screens/detail_screen.dart
   lib/screens/request_form_screen.dart
   lib/screens/dashboard_screen.dart
-  lib/main.dart
 
-For each file:
-1. Replace: import 'database_service.dart' with import 'api_service.dart'
-2. Replace: DatabaseService() with ApiService()
-3. In main.dart: remove the DatabaseService().connect() call — ApiService uses HTTP, no persistent connection needed. Remove the loading screen too.
-4. In dashboard_screen.dart: update getStatusCounts() call to pass outletId when role is 'staff':
-   ApiService().getStatusCounts(outletId: user.role == 'staff' ? user.outletId : null)
+Then make these changes:
 
-Do not change: UI layout, widget structure, animations, navigation, confirmation dialogs, AuthService, or NavigationService.
-Show me a summary of every line changed in each file.</div>
+1. In every file that imports database_service.dart:
+   Change to: import '../services/api_service.dart' (adjust relative path per file)
+
+2. In every file: replace DatabaseService() with ApiService()
+
+3. In main.dart specifically:
+   Remove: await DatabaseService().connect()
+   Remove: the try/catch block around it and its loading/error screen widget
+   Reason: ApiService uses HTTP &#8212; no persistent connection is needed at startup.
+   The app should start directly: runApp(MaterialApp(home: LoginScreen()))
+
+4. In dashboard_screen.dart:
+   When calling getStatusCounts, pass outletId for staff users:
+   ApiService().getStatusCounts(outletId: currentUser.role == 'staff' ? currentUser.outletId : null)
+
+Do NOT change: any widget layout, any ListView, any Card, any animation code,
+any Navigator.push/pop, any AlertDialog, any SnackBar text, AuthService, or NavigationService.
+
+Show me a summary of every file changed and every specific line that was modified.</div>
   </div>
-  <div class="verify-box">
-    <div class="verify-label">Final test — run both servers and test end-to-end</div>
-    <p><strong>Terminal 1:</strong> <code>npm run dev</code> → API running on port 3000.<br/><strong>Terminal 2:</strong> <code>flutter run</code> → app launches. Log in as manager. Request list loads from the API. Create a request → check Terminal 1 logs (you'll see the POST request). Update status → check pgAdmin. Delete → gone from list and database. Dashboard counts update. <strong>The full stack is connected: Flutter → Node.js API → PostgreSQL.</strong></p>
+
+  <!-- ══ RUN BOTH ══ -->
+  <h2 id="sb-run-both" style="margin-top:40px;">&#9654; Running both apps together &#8212; the final test</h2>
+  <p>Both programs are ready. Here is exactly how to run them and confirm the full stack works end-to-end.</p>
+
+  <div class="grid2">
+    <div class="card orange">
+      <h4>&#128308; Window 1 &#8212; Start the API</h4>
+      <div class="action-steps" style="margin:0;">
+        <div class="action-step"><div class="action-num">1</div><div class="action-body">Confirm PostgreSQL is running (<code>psql --version</code> to check)</div></div>
+        <div class="action-step"><div class="action-num">2</div><div class="action-body">In the <code>khan_chacha_api/</code> terminal: <code>npm run dev</code></div></div>
+        <div class="action-step" style="margin-bottom:0;"><div class="action-num">3</div><div class="action-body">Confirm both appear: <code>Database connected</code> and <code>API running on http://localhost:3000</code></div></div>
+      </div>
+    </div>
+    <div class="card accent">
+      <h4>&#128309; Window 2 &#8212; Run Flutter</h4>
+      <div class="action-steps" style="margin:0;">
+        <div class="action-step"><div class="action-num">1</div><div class="action-body">Confirm emulator is running (or phone connected via USB)</div></div>
+        <div class="action-step"><div class="action-num">2</div><div class="action-body">Open a terminal in Window 2 (not Claude Code &#8212; a regular terminal): <code>flutter run</code></div></div>
+        <div class="action-step" style="margin-bottom:0;"><div class="action-num">3</div><div class="action-body">Wait for build to complete and app to appear on emulator</div></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>5 proof tests &#8212; run these in order</h3>
+  <table>
+    <tr><th>#</th><th>Action in Flutter</th><th>Where to confirm</th><th>What it proves</th></tr>
+    <tr><td>1</td><td>Log in as manager (manager / manager123)</td><td>Window 1 terminal: see a POST /api/auth/login log line</td><td>Flutter &#8594; API auth route &#8594; database users table</td></tr>
+    <tr><td>2</td><td>Request list loads</td><td>Window 1 terminal: see GET /api/requests log</td><td>Flutter &#8594; API GET route &#8594; JOIN query &#8594; real data</td></tr>
+    <tr><td>3</td><td>Tap + FAB, fill form, submit</td><td>pgAdmin/DBeaver: refresh maintenance_requests &#8212; new row appears</td><td>Flutter &#8594; POST /api/requests &#8594; INSERT into database</td></tr>
+    <tr><td>4</td><td>Open request, tap Update Status, change it</td><td>pgAdmin: refresh that row &#8212; status column changed</td><td>Flutter &#8594; PATCH /api/requests/:id/status &#8594; database UPDATE</td></tr>
+    <tr><td>5</td><td>Open request as manager, tap Delete, confirm</td><td>pgAdmin: refresh &#8212; row is gone from table</td><td>Flutter &#8594; DELETE /api/requests/:id &#8594; database DELETE</td></tr>
+  </table>
+
+  <div class="confirm-box">
+    <h4>&#127919; When all 5 tests pass &#8212; what you have built</h4>
+    <p style="color:var(--text-dim);font-size:14.5px;margin:0;">Flutter app &#8594; HTTP request &#8594; Node.js Express API &#8594; SQL query &#8594; PostgreSQL &#8594; JSON response &#8594; Flutter UI update. The database password is on the server. The Flutter APK contains only a URL. Any future Khan Chacha web dashboard or admin panel calls the same API. This is production-ready architecture built in one session using Claude Code.</p>
   </div>
 </div>
+
 
 <!-- ══════════════════════════════ TAB 7 · CAPSTONE PROMPT ══════════════════════════════ -->
 <div class="tabpanel" id="tab-capstone">
