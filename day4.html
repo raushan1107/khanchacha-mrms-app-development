@@ -646,64 +646,6 @@ JWT_SECRET=kc_jwt_secret_2026</code></pre>
   </div>
 </div>
 
-  <div class="terminal-box"><pre><span class="cmt"># Check if Node.js is already installed</span>
-node --version
-<span class="cmt"># If you see v18.x or v20.x or higher — you're done. Skip to the next section.</span>
-<span class="cmt"># If you get "command not found" — install it:</span>
-
-<span class="cmt"># Windows / Mac: download the LTS installer from nodejs.org</span>
-<span class="cmt"># Linux (Ubuntu/Debian):</span>
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt-get install -y nodejs
-
-<span class="cmt"># Verify after installation</span>
-node --version    <span class="cmt"># should print v20.x.x</span>
-npm --version     <span class="cmt"># npm comes with Node.js</span></pre></div>
-
-  <h2 id="setup-structure">Project structure — a separate folder from Flutter</h2>
-  <p>The API lives in its own folder alongside the Flutter project — not inside it. If your Flutter project is at <code>khan_chacha_mrms/</code>, the API goes next to it at <code>khan_chacha_api/</code>.</p>
-
-  <div class="file-tree">
-    <span class="dir">khan_chacha_api/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">← this is a new separate folder</span><br/>
-    ├── <span class="file">server.js</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// entry point — starts the server</span><br/>
-    ├── <span class="file">package.json</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// npm dependencies list</span><br/>
-    ├── <span class="file">.env</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// DB password, port, JWT secret — never commit this</span><br/>
-    ├── <span class="file">.gitignore</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// includes .env and node_modules</span><br/>
-    ├── <span class="dir">db/</span><br/>
-    │&nbsp;&nbsp;&nbsp;└── <span class="file">connection.js</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// PostgreSQL connection pool</span><br/>
-    ├── <span class="dir">routes/</span><br/>
-    │&nbsp;&nbsp;&nbsp;├── <span class="file">requests.js</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// GET/POST/PUT/PATCH/DELETE /api/requests</span><br/>
-    │&nbsp;&nbsp;&nbsp;├── <span class="file">auth.js</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// POST /api/auth/login</span><br/>
-    │&nbsp;&nbsp;&nbsp;└── <span class="file">dashboard.js</span>&nbsp;&nbsp;&nbsp;<span class="note">// GET /api/dashboard/counts</span><br/>
-    └── <span class="dir">middleware/</span><br/>
-    &nbsp;&nbsp;&nbsp;&nbsp;└── <span class="file">auth.js</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="note">// JWT verification middleware (future)</span>
-  </div>
-
-  <h2 id="setup-packages">npm packages we'll install</h2>
-  <table>
-    <tr><th>Package</th><th>What it does</th><th>Why we need it</th></tr>
-    <tr><td><code>express</code></td><td>Web framework for Node.js</td><td>Defines our routes and handles HTTP requests/responses</td></tr>
-    <tr><td><code>pg</code></td><td>PostgreSQL client for Node.js</td><td>Talks to the database — the Node.js equivalent of the Dart postgres package</td></tr>
-    <tr><td><code>cors</code></td><td>Cross-Origin Resource Sharing</td><td>Allows the Flutter app (on a different port) to call the API</td></tr>
-    <tr><td><code>dotenv</code></td><td>Loads .env file into environment</td><td>Keeps DB passwords out of code — reads from the .env file</td></tr>
-    <tr><td><code>nodemon</code></td><td>Auto-restarts server on file changes</td><td>Dev convenience — like Flutter hot reload for Node.js</td></tr>
-  </table>
-
-  <h2 id="setup-env">The .env file — never commit this</h2>
-  <p>The <code>.env</code> file holds secrets. It is never pushed to GitHub. Claude Code will create a <code>.gitignore</code> that excludes it automatically.</p>
-  <div class="code-box">
-    <div class="code-label">.env — example contents</div>
-    <pre style="background:transparent;border:none;padding:0;margin:0;color:#a5f3fc;"><code>PORT=3000
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=khan_chacha
-DB_USER=kc_app
-DB_PASSWORD=kc_secure_2026
-JWT_SECRET=khan_chacha_jwt_secret_change_in_production</code></pre>
-  </div>
-  <p>When you move to Supabase or AWS, you only change the DB values in this file. The Node.js code never changes. The Flutter app never changes. That's the whole point.</p>
-</div>
-
 <!-- ══════════════════════════════ TAB 5 · CLAUDE AS API PAIR ══════════════════════════════ -->
 <div class="tabpanel" id="tab-claudepair">
   <div class="toc-strip">
