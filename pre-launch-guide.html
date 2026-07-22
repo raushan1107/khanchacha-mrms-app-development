@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pre-Launch Field Guide | Khan Chacha MRMS | RR Skillverse × Koenig Solutions</title>
+<style>
+:root{
+  --bg:#0d1117;--bg2:#11161d;--card:#161b22;--border:#26303d;--border-soft:#1d2530;
+  --text:#e6edf3;--text-dim:#9da7b3;--text-faint:#6b7480;
+  --teal:#00c2e0;--teal-deep:#0082A0;--teal-glow:rgba(0,194,224,0.12);
+  --green:#3fb950;--amber:#d29922;--red:#f85149;--purple:#a371f7;--orange:#e88c1f;
+  --radius:10px;--maxw:1000px;--code-bg:#0a0e14;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px;}
+a{color:var(--teal);text-decoration:none;}a:hover{text-decoration:underline;}
+code{font-family:"SF Mono",Consolas,"Courier New",monospace;background:var(--code-bg);color:#7ee787;padding:2px 6px;border-radius:4px;font-size:.88em;}
+pre{background:var(--code-bg);border:1px solid var(--border-soft);border-radius:var(--radius);padding:14px 16px;overflow-x:auto;font-family:"SF Mono",Consolas,"Courier New",monospace;font-size:13.5px;line-height:1.6;margin:14px 0;}
+pre code{background:none;padding:0;color:#c9d1d9;}
+.kw{color:#ff7b72;}.str{color:#a5d6ff;}.cmt{color:#6e7681;}.num{color:#f2cc60;}
+
+header{background:linear-gradient(180deg,#0f141b 0%,var(--bg) 100%);border-bottom:1px solid var(--border-soft);padding:28px 24px 0;position:sticky;top:0;z-index:100;}
+.header-inner{max-width:var(--maxw);margin:0 auto;}
+.brand-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px;}
+.brand-left{display:flex;align-items:center;gap:12px;}
+.logo-mark{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--green) 0%,var(--teal) 100%);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#001a0a;flex-shrink:0;}
+.brand-title{font-size:15px;font-weight:600;color:var(--text);}
+.brand-sub{font-size:12.5px;color:var(--text-faint);}
+.home-btn{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--text-dim);background:rgba(255,255,255,0.05);border:1px solid var(--border);padding:5px 14px;border-radius:20px;text-decoration:none;transition:color .15s,border-color .15s;}
+.home-btn:hover{color:var(--green);border-color:var(--green);text-decoration:none;}
+h1.page-title{font-size:28px;font-weight:700;margin-bottom:6px;letter-spacing:-.3px;}
+.page-subtitle{font-size:15px;color:var(--text-dim);margin-bottom:22px;max-width:700px;}
+.tabnav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;}
+.tabnav::-webkit-scrollbar{display:none;}
+.tabnav button{background:none;border:none;color:var(--text-dim);font-size:13.5px;font-weight:500;padding:12px 16px;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;font-family:inherit;}
+.tabnav button:hover{color:var(--text);}
+.tabnav button.active{color:var(--green);border-bottom-color:var(--green);}
+
+main{max-width:var(--maxw);margin:0 auto;padding:36px 24px 60px;}
+.tabpanel{display:none;}.tabpanel.active{display:block;animation:fadein .25s ease;}
+@keyframes fadein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+h2{font-size:22px;font-weight:700;margin:38px 0 14px;letter-spacing:-.2px;}h2:first-child{margin-top:0;}
+h3{font-size:17px;font-weight:600;margin:24px 0 10px;}
+p{margin-bottom:14px;color:#c5ccd4;}p.lead{font-size:17px;color:var(--text);margin-bottom:20px;}
+ul,ol{margin:10px 0 16px 22px;color:#c5ccd4;}li{margin-bottom:8px;}
+strong{color:var(--text);font-weight:600;}
+em.tag{color:var(--green);font-style:normal;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.5px;}
+
+.card{background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:18px 20px;margin:16px 0;}
+.card.accent{border-left:3px solid var(--teal);}
+.card.warn{border-left:3px solid var(--amber);}
+.card.danger{border-left:3px solid var(--red);}
+.card.success{border-left:3px solid var(--green);}
+.card.purple{border-left:3px solid var(--purple);}
+.card h4{font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-faint);margin-bottom:8px;font-weight:600;}
+
+.analogy-box{background:rgba(63,185,80,.07);border:1px solid rgba(63,185,80,.25);border-radius:var(--radius);padding:16px 18px;margin:18px 0;}
+.analogy-box p{color:var(--text);margin-bottom:0;}
+.analogy-box p:not(:last-child){margin-bottom:10px;}
+
+.raushan-note{background:linear-gradient(135deg,rgba(0,194,224,.06),rgba(63,185,80,.06));border:2px solid rgba(0,194,224,.3);border-radius:12px;padding:22px 24px;margin:24px 0;}
+.raushan-note .note-from{font-size:11.5px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;}
+.raushan-note p{color:#d0eef4;margin-bottom:0;}
+.raushan-note p:not(:last-child){margin-bottom:10px;}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:16px 0;}
+@media(max-width:720px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;}
+th{text-align:left;color:var(--text-faint);font-size:12px;text-transform:uppercase;letter-spacing:.4px;padding:9px 12px;border-bottom:1px solid var(--border);}
+td{padding:10px 12px;border-bottom:1px solid var(--border-soft);color:#c5ccd4;vertical-align:top;}
+td:first-child{color:var(--text);font-weight:600;}
+
+.pill{display:inline-block;font-size:11.5px;padding:3px 10px;border-radius:20px;font-weight:600;margin:2px 4px 2px 0;}
+.pill-green{background:rgba(63,185,80,.15);color:var(--green);}
+.pill-amber{background:rgba(210,153,34,.15);color:var(--amber);}
+.pill-red{background:rgba(248,81,73,.15);color:var(--red);}
+.pill-teal{background:rgba(0,194,224,.12);color:var(--teal);}
+
+.prompt-box{background:#15101f;border:1px solid rgba(163,113,247,.3);border-radius:var(--radius);padding:16px 18px;margin:14px 0;}
+.prompt-label{font-size:11.5px;color:var(--purple);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+.prompt-text{font-size:14px;color:#e8e0f7;line-height:1.7;white-space:pre-wrap;}
+.copy-btn{background:rgba(163,113,247,.15);border:1px solid rgba(163,113,247,.4);color:var(--purple);font-size:12px;padding:5px 12px;border-radius:6px;cursor:pointer;font-weight:600;font-family:inherit;transition:background .15s;flex-shrink:0;}
+.copy-btn:hover{background:rgba(163,113,247,.28);}
+.copy-btn.copied{background:rgba(63,185,80,.2);color:var(--green);border-color:rgba(63,185,80,.4);}
+
+.terminal-box{background:#050d18;border:1px solid rgba(0,194,224,.3);border-radius:var(--radius);padding:14px 18px;margin:12px 0;}
+.terminal-box::before{content:'TERMINAL';font-size:11px;font-weight:700;color:var(--teal);letter-spacing:1px;display:block;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid rgba(0,194,224,.2);}
+.terminal-box pre{background:transparent;border:none;padding:0;margin:0;color:#a5f3fc;font-size:13.5px;}
+
+.check-item{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--border-soft);}
+.check-item:last-child{border-bottom:none;}
+.check-circle{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.check-circle.pass{background:rgba(63,185,80,.12);border-color:var(--green);color:var(--green);}
+.check-circle.warn{background:rgba(210,153,34,.12);border-color:var(--amber);color:var(--amber);}
+.check-circle.fail{background:rgba(248,81,73,.12);border-color:var(--red);color:var(--red);}
+.check-body h4{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.check-body p{font-size:13.5px;color:var(--text-dim);margin-bottom:0;}
+.check-body .fix{font-size:13px;color:#bcd9ba;margin-top:6px;background:rgba(63,185,80,.06);padding:8px 12px;border-radius:6px;border-left:2px solid var(--green);}
+
+.env-box{border-radius:var(--radius);padding:16px 18px;margin:10px 0;}
+.env-dev{background:rgba(0,194,224,.06);border:1px solid rgba(0,194,224,.25);}
+.env-test{background:rgba(210,153,34,.06);border:1px solid rgba(210,153,34,.25);}
+.env-prod{background:rgba(248,81,73,.06);border:1px solid rgba(248,81,73,.25);}
+.env-label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;}
+.env-dev .env-label{color:var(--teal);}
+.env-test .env-label{color:var(--amber);}
+.env-prod .env-label{color:var(--red);}
+
+.toc-strip{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 28px;padding:14px;background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);}
+.toc-strip a{font-size:12.5px;color:var(--text-dim);padding:5px 11px;border:1px solid var(--border);border-radius:16px;}
+.toc-strip a:hover{color:var(--green);border-color:var(--green);text-decoration:none;}
+
+.step-flow{margin:20px 0;}
+.step{display:flex;gap:16px;margin-bottom:4px;}
+.step-rail{display:flex;flex-direction:column;align-items:center;flex-shrink:0;}
+.step-dot{width:30px;height:30px;border-radius:50%;background:var(--card);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--green);flex-shrink:0;}
+.step-line{width:2px;flex:1;background:var(--border);margin:4px 0;min-height:20px;}
+.step-body{padding-bottom:28px;flex:1;}
+.step-title{font-size:15.5px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.step-desc{font-size:14px;color:var(--text-dim);}
+
+.size-bar-wrap{margin:16px 0;}
+.size-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.size-label{font-size:13px;color:var(--text-dim);width:180px;flex-shrink:0;}
+.size-bar-bg{flex:1;background:var(--card);border-radius:4px;height:10px;overflow:hidden;}
+.size-bar{height:100%;border-radius:4px;background:var(--green);}
+.size-val{font-size:12px;color:var(--text-faint);width:70px;text-align:right;}
+
+footer{border-top:1px solid var(--border-soft);margin-top:40px;padding:36px 24px;background:var(--bg2);}
+.footer-inner{max-width:var(--maxw);margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+.footer-brand{font-size:13.5px;color:var(--text-dim);}
+.footer-brand strong{color:var(--text);}
+.footer-links{display:flex;gap:18px;font-size:13px;}
+.footer-links a{color:var(--text-faint);}
+.footer-links a:hover{color:var(--teal);}
+.footer-bottom{text-align:center;font-size:12px;color:var(--text-faint);margin-top:20px;padding-top:20px;border-top:1px solid var(--border-soft);max-width:var(--maxw);margin-left:auto;margin-right:auto;}
+@media(max-width:600px){h1.page-title{font-size:22px;}main{padding:24px 16px 50px;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand-row">
+      <div class="brand-left">
+        <div class="logo-mark">🚀</div>
+        <div>
+          <div class="brand-title">Khan Chacha MRMS — Pre-Launch Field Guide</div>
+          <div class="brand-sub">Koenig Solutions Trainer Series · Beast AI Initiative · From Raushan's Desk</div>
+        </div>
+      </div>
+      <div class="brand-right">
+        <a href="index.html" class="home-btn">← All Sessions</a>
+      </div>
+    </div>
+    <h1 class="page-title">Before You Go Live — The Field Guide</h1>
+    <p class="page-subtitle">Four things every team must handle before a real app reaches real users. Migrate real data from Google Sheets, protect production with environments, export your Flutter app for every platform, and check security before trusting AI-generated code.</p>
+    <nav class="tabnav" id="tabnav">
+      <button data-tab="sheets" class="active">📊 Sheets Migration</button>
+      <button data-tab="envs">🌍 Environments</button>
+      <button data-tab="export">📦 App Export</button>
+      <button data-tab="security">🔐 Security Checklist</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ══════════════════════════════ TAB 1 · SHEETS MIGRATION ══════════════════════════════ -->
+<div class="tabpanel active" id="tab-sheets">
+  <div class="toc-strip">
+    <a href="#sh-context">The real situation</a>
+    <a href="#sh-problem">The schema gap</a>
+    <a href="#sh-approach">Migration approach</a>
+    <a href="#sh-export">Export from Sheets</a>
+    <a href="#sh-audit">Audit the CSV</a>
+    <a href="#sh-prompts">Claude Code prompts</a>
+    <a href="#sh-verify">Verify before prod</a>
+  </div>
+
+  <h2 id="sh-context">The real situation — Khan Chacha's data lives in Google Sheets</h2>
+  <p class="lead">Khan Chacha currently manages maintenance requests through Google Forms. Every form submission lands as a row in a Google Spreadsheet. This is real operational data — outlet names, equipment types, request dates, status updates, who raised each request. Before the MRMS app can be useful to actual staff, this data needs to move to PostgreSQL.</p>
+
+  <div class="raushan-note">
+    <div class="note-from">From Raushan — Why this matters</div>
+    <p>You have built a beautiful app with dummy data. The managers and staff at Khan Chacha will open it and ask: "Where are our 400 requests from the last two years?" If the answer is "they're still in the spreadsheet," the app is not production-ready. Data migration is not a technical afterthought — it is a requirement, and it is the difference between a demo and a real product.</p>
+  </div>
+
+  <h2 id="sh-problem">The schema gap — why you cannot just import the CSV directly</h2>
+  <p>The Google Sheets export will have columns that look roughly like this:</p>
+  <div class="card warn">
+    <h4>Typical Google Forms / Sheets columns for a maintenance log</h4>
+    <table style="margin:0;">
+      <tr><th>Sheets column</th><th>What it actually contains</th></tr>
+      <tr><td>Timestamp</td><td>Date and time of form submission — format: "7/10/2026 14:32:05"</td></tr>
+      <tr><td>Your Name</td><td>Staff member's name — free text</td></tr>
+      <tr><td>Outlet / Branch</td><td>Outlet name — free text, may have spelling variations</td></tr>
+      <tr><td>Equipment Type</td><td>Dropdown: "AC", "Electrical", "Kitchen" — may not match our ENUM exactly</td></tr>
+      <tr><td>Equipment Name</td><td>Free text: "AC Unit - Meeting Room", "Grill #2"</td></tr>
+      <tr><td>Description of Issue</td><td>Free text, multi-line</td></tr>
+      <tr><td>Current Status</td><td>May say "Done", "Pending", "In Progress" — not matching our ENUM</td></tr>
+      <tr><td>Assigned To</td><td>Free text — not a user ID</td></tr>
+    </table>
+  </div>
+
+  <p>Your PostgreSQL schema has: <code>id</code>, <code>product_name</code>, <code>product_id</code>, <code>category</code> (ENUM), <code>status</code> (ENUM: Open/Pending/Closed), <code>outlet_id</code> (FK), <code>raised_by</code> (FK to users), <code>request_date</code> (timestamp). The two structures do not match. You cannot paste the CSV into pgAdmin and expect it to work.</p>
+
+  <h3>What "schema gap" means in practice</h3>
+  <ul>
+    <li><strong>Missing IDs</strong> — Sheets has no <code>product_id</code> or <code>id</code> columns. You must generate these.</li>
+    <li><strong>ENUM mismatch</strong> — Sheets says "Done", your DB requires "Closed". Every value must be mapped.</li>
+    <li><strong>FK references instead of names</strong> — Sheets says "Khan Chacha Connaught Place". Your DB needs <code>outlet_id = 'OUT-01'</code>.</li>
+    <li><strong>Date format</strong> — Sheets: "7/10/2026 14:32:05". PostgreSQL wants: "2026-07-10T14:32:05".</li>
+    <li><strong>No user FK</strong> — Sheets has a name, not a user ID from your <code>users</code> table.</li>
+  </ul>
+
+  <h2 id="sh-approach">The correct approach — schema first, migration second</h2>
+
+  <div class="step-flow">
+    <div class="step">
+      <div class="step-rail"><div class="step-dot">1</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-title">Export the Sheets data as CSV</div><div class="step-desc">File → Download → Comma-separated values. Save it as <code>sheets_export.csv</code>.</div></div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot">2</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-title">Audit the CSV with Claude Code</div><div class="step-desc">Let Claude read the CSV and list every column, every unique value in dropdown columns, date formats, and row count. This is your gap analysis.</div></div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot">3</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-title">Redesign your schema to match the real data</div><div class="step-desc">If the Sheets has 12 columns of data you need, your DB schema must accommodate all 12. Add columns, adjust ENUMs, or add free-text columns where needed. Update <code>db/schema.sql</code> first.</div></div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot">4</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-title">Build and populate lookup tables first</div><div class="step-desc">Insert all outlets and users into the DB before inserting maintenance requests. Requests have foreign keys to both — they cannot exist without their parent rows.</div></div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot">5</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-title">Generate the migration script with Claude Code</div><div class="step-desc">Ask Claude to read the CSV and write a SQL INSERT script that maps every Sheets column to the correct DB column, converts dates, maps status values, and generates IDs.</div></div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot">6</div><div class="step-line"></div></div>
+      <div class="step-body"><div class="step-title">Run on the development database first</div><div class="step-desc">Run the migration script on <code>khan_chacha_dev</code>, not production. Count rows, spot-check records, verify foreign keys. Fix the script until it's clean.</div></div>
+    </div>
+    <div class="step">
+      <div class="step-rail"><div class="step-dot">7</div></div>
+      <div class="step-body"><div class="step-title">Run on production</div><div class="step-desc">Only after the development run is verified. Take a backup first. Run in a transaction so you can rollback if anything fails.</div></div>
+    </div>
+  </div>
+
+  <h2 id="sh-export">Step 1 — Export from Google Sheets</h2>
+  <ol>
+    <li>Open the Google Spreadsheet containing the maintenance request data.</li>
+    <li>Go to <strong>File → Download → Comma-separated values (.csv)</strong>.</li>
+    <li>Save the file as <code>sheets_export.csv</code> in your project folder (e.g., inside <code>khan_chacha_api/db/</code>).</li>
+    <li>Open the CSV in VS Code or Excel and count the rows — note this number. You'll verify the same count in PostgreSQL after migration.</li>
+  </ol>
+
+  <h2 id="sh-audit">Step 2 — Audit with Claude Code</h2>
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code — Audit Prompt (run in khan_chacha_api/)<button class="copy-btn" onclick="copyPrompt(this,'audit')">Copy</button></div>
+    <div class="prompt-text" id="audit">Read the file db/sheets_export.csv and give me a complete audit:
+
+1. List every column name exactly as it appears in the header row
+2. For each column, show: data type observed, sample values (first 3 rows), and any blank cells count
+3. For any column that looks like a dropdown/category, list every unique value that appears
+4. Show the date format used in any date/time columns
+5. Count total rows (excluding header)
+6. Identify any columns that clearly map to our DB schema:
+   - outlets table: id, name, address
+   - users table: id, name, role, outlet_id
+   - maintenance_requests table: id, product_name, product_id, category, status, request_date, description, outlet_id, raised_by
+
+Do not write any migration code yet. Just report the audit findings.</div>
+  </div>
+
+  <h2 id="sh-prompts">Step 3 — Generate the migration with Claude Code</h2>
+  <p>After the audit, you will know the mapping. Now ask Claude to write the migration script. The prompt must be specific about every transformation required.</p>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code — Migration Script Prompt<button class="copy-btn" onclick="copyPrompt(this,'migrate')">Copy</button></div>
+    <div class="prompt-text" id="migrate">Read db/sheets_export.csv and generate a SQL migration script: db/migrate_from_sheets.sql
+
+The script must:
+
+1. Use a transaction: BEGIN; ... COMMIT; so it can be rolled back if anything fails
+
+2. Map columns from CSV to DB as follows (fill in after your audit):
+   - [Sheets column "Outlet Name"] → look up outlet_id from outlets table by name
+   - [Sheets column "Staff Name"] → look up raised_by from users table by name
+   - [Sheets column "Equipment Type"] → category field, map values:
+     "AC" or "Air Conditioning" → 'AC'
+     "Electrical" or "Electric" → 'Electrical'
+     "Kitchen" or "Kitchen Equipment" → 'Kitchen'
+   - [Sheets column "Status"] → status field, map values:
+     "Done" or "Completed" or "Resolved" → 'Closed'
+     "Pending" or "In Progress" or "Open" → 'Open'
+     anything else → 'Open'
+   - [Sheets column "Timestamp"] → request_date, convert to ISO 8601 format
+
+3. Generate unique IDs: 'REQ-' || LPAD(ROW_NUMBER()::text, 4, '0')
+   (e.g. REQ-0001, REQ-0002, ...)
+
+4. Set product_id = 'EQ-' || LPAD(ROW_NUMBER()::text, 3, '0') for each row
+
+5. Skip any row where outlet or staff name cannot be matched — log skipped rows as a SQL comment
+
+6. After the INSERT, run verification queries:
+   SELECT COUNT(*) FROM maintenance_requests; -- should match CSV row count
+   SELECT status, COUNT(*) FROM maintenance_requests GROUP BY status; -- distribution check
+
+Generate the complete db/migrate_from_sheets.sql file.</div>
+  </div>
+
+  <h2 id="sh-verify">Step 4 — Verify before touching production</h2>
+  <div class="terminal-box"><pre><span class="cmt"># Run on dev database ONLY first</span>
+psql -U kc_app -d khan_chacha_dev -f db/migrate_from_sheets.sql
+
+<span class="cmt"># Check row count matches your CSV count</span>
+psql -U kc_app -d khan_chacha_dev -c "SELECT COUNT(*) FROM maintenance_requests;"
+
+<span class="cmt"># Spot-check: pick 5 random rows and verify they match the spreadsheet</span>
+psql -U kc_app -d khan_chacha_dev -c "SELECT * FROM maintenance_requests ORDER BY RANDOM() LIMIT 5;"
+
+<span class="cmt"># Check for orphaned records (rows with no matching outlet)</span>
+psql -U kc_app -d khan_chacha_dev -c "
+  SELECT r.id FROM maintenance_requests r
+  LEFT JOIN outlets o ON r.outlet_id = o.id
+  WHERE o.id IS NULL;"</pre></div>
+
+  <div class="card success">
+    <h4>✅ Only proceed to production when</h4>
+    <ul style="margin:6px 0 0 18px;">
+      <li>Row count in PostgreSQL matches row count in the CSV</li>
+      <li>5 spot-checked records match the original spreadsheet exactly</li>
+      <li>Zero orphaned records (no missing FK references)</li>
+      <li>The Flutter app shows the real data correctly on the dev environment</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ TAB 2 · ENVIRONMENTS ══════════════════════════════ -->
+<div class="tabpanel" id="tab-envs">
+  <div class="toc-strip">
+    <a href="#env-why">Why environments</a>
+    <a href="#env-three">The three environments</a>
+    <a href="#env-database">Database per environment</a>
+    <a href="#env-dotenv">Managing .env files</a>
+    <a href="#env-rules">The golden rules</a>
+  </div>
+
+  <h2 id="env-why">Why environments exist</h2>
+  <p class="lead">Every real software project runs in at least three parallel copies of itself. One copy is where you develop and experiment. One copy is where you test and validate. One copy is what actual users see. These are called environments — and keeping them separate is one of the most important habits in professional software development.</p>
+
+  <div class="analogy-box">
+    <p><em class="tag">Khan Chacha analogy</em></p>
+    <p>Khan Chacha tests new menu items in one outlet before rolling them out across all 20 outlets. They don't add an untested dish to every outlet simultaneously. Software environments work the same way. You develop and test a new feature in isolated copies of the system. Only when it's validated does it go to production — where real users and real data live.</p>
+  </div>
+
+  <div class="card danger">
+    <h4>🚫 What happens without environments</h4>
+    <p style="margin:0;">Without environments, every change you make during development goes directly to production. A bug in a migration script wipes production data. A half-finished feature breaks the app for actual users. A typo in an SQL UPDATE corrupts thousands of real records. This is not hypothetical — it has happened to real companies with real consequences.</p>
+  </div>
+
+  <h2 id="env-three">The three environments — what each one is for</h2>
+
+  <div class="env-box env-dev">
+    <div class="env-label">🔵 Development (DEV) — Your local machine</div>
+    <p style="color:#a8dde8;font-size:14px;margin-bottom:8px;">Where you build, experiment, and break things safely.</p>
+    <table style="margin:0;font-size:13px;">
+      <tr><td>Database</td><td><code>khan_chacha_dev</code> on localhost</td></tr>
+      <tr><td>API</td><td><code>npm run dev</code> on your machine, port 3000</td></tr>
+      <tr><td>Flutter</td><td><code>flutter run -d windows</code> — debug mode, hot reload</td></tr>
+      <tr><td>Data</td><td>Dummy data + migrated test copies of real data</td></tr>
+      <tr><td>Who uses it</td><td>Only you (the developer)</td></tr>
+    </table>
+  </div>
+
+  <div class="env-box env-test">
+    <div class="env-label">🟡 Testing / Staging (TEST) — Shared or cloud server</div>
+    <p style="color:#d4c08a;font-size:14px;margin-bottom:8px;">Where the app is verified before going live. Looks like production, but with test data.</p>
+    <table style="margin:0;font-size:13px;">
+      <tr><td>Database</td><td><code>khan_chacha_test</code> on AWS RDS (separate from production)</td></tr>
+      <tr><td>API</td><td>Deployed to AWS but on a separate URL (e.g. api-staging.khanchacha.com)</td></tr>
+      <tr><td>Flutter</td><td>Release build pointing to staging API URL</td></tr>
+      <tr><td>Data</td><td>A copy of real production data (anonymised if needed), or realistic test data</td></tr>
+      <tr><td>Who uses it</td><td>The team, the client, QA testers — not end users</td></tr>
+    </table>
+  </div>
+
+  <div class="env-box env-prod">
+    <div class="env-label">🔴 Production (PROD) — AWS, real users, real data</div>
+    <p style="color:#f4b8b5;font-size:14px;margin-bottom:8px;">The live system. Treat it like it's made of glass.</p>
+    <table style="margin:0;font-size:13px;">
+      <tr><td>Database</td><td><code>khan_chacha</code> on AWS RDS</td></tr>
+      <tr><td>API</td><td>Deployed to AWS EC2 — api.khanchacha.com</td></tr>
+      <tr><td>Flutter</td><td>Release APK on Play Store, IPA on App Store</td></tr>
+      <tr><td>Data</td><td>Real maintenance requests from real outlets, real staff accounts</td></tr>
+      <tr><td>Who uses it</td><td>Khan Chacha managers and staff across all outlets</td></tr>
+    </table>
+  </div>
+
+  <h2 id="env-database">Managing databases per environment</h2>
+  <p>Each environment gets its own database. They use the same schema — but they hold different data and must never share connections.</p>
+
+  <div class="terminal-box"><pre><span class="cmt"># Create the three databases on your local PostgreSQL</span>
+psql -U postgres -c "CREATE DATABASE khan_chacha_dev;"
+psql -U postgres -c "CREATE DATABASE khan_chacha_test;"
+<span class="cmt"># Production is on AWS RDS — created via the AWS console</span>
+
+<span class="cmt"># Apply the same schema to all three</span>
+psql -U kc_app -d khan_chacha_dev  -f db/schema.sql
+psql -U kc_app -d khan_chacha_test -f db/schema.sql
+
+<span class="cmt"># Seed dev with dummy data</span>
+psql -U kc_app -d khan_chacha_dev  -f db/seed.sql
+
+<span class="cmt"># Test gets a copy of real data (after migration is verified)</span>
+<span class="cmt"># Production gets the real migration — last, after everything is validated</span></pre></div>
+
+  <h2 id="env-dotenv">Managing .env files for each environment</h2>
+  <p>Each environment needs its own set of credentials. The pattern is simple: one <code>.env</code> file per environment, never committed to Git.</p>
+
+  <div class="grid3">
+    <div class="card accent">
+      <h4>.env.development</h4>
+      <pre style="margin:6px 0 0;font-size:12px;"><code>DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=khan_chacha_dev
+DB_USER=kc_app
+DB_PASSWORD=kc_secure_2026
+PORT=3000</code></pre>
+    </div>
+    <div class="card warn">
+      <h4>.env.test</h4>
+      <pre style="margin:6px 0 0;font-size:12px;"><code>DB_HOST=staging.rds.aws.com
+DB_PORT=5432
+DB_NAME=khan_chacha_test
+DB_USER=kc_app_test
+DB_PASSWORD=[different]
+PORT=3000</code></pre>
+    </div>
+    <div class="card danger">
+      <h4>.env.production</h4>
+      <pre style="margin:6px 0 0;font-size:12px;"><code>DB_HOST=prod.rds.aws.com
+DB_PORT=5432
+DB_NAME=khan_chacha
+DB_USER=kc_app_prod
+DB_PASSWORD=[strong unique]
+PORT=3000</code></pre>
+    </div>
+  </div>
+
+  <p>In <code>server.js</code>, load the right file based on the environment:</p>
+  <pre><code><span class="cmt">// server.js — first line</span>
+<span class="kw">const</span> envFile = process.env.NODE_ENV === <span class="str">'production'</span>
+  ? <span class="str">'.env.production'</span>
+  : process.env.NODE_ENV === <span class="str">'test'</span>
+  ? <span class="str">'.env.test'</span>
+  : <span class="str">'.env.development'</span>;
+
+require(<span class="str">'dotenv'</span>).config({ path: envFile });</code></pre>
+
+  <p>Add all three env files to <code>.gitignore</code>. Commit a <code>.env.example</code> with blank values so the team knows what variables are needed — but never the actual values.</p>
+
+  <h2 id="env-rules">The golden rules of environment management</h2>
+  <table>
+    <tr><th>Rule</th><th>Why</th></tr>
+    <tr><td>Never run migration scripts directly on production</td><td>Always run on dev → test → verify → production</td></tr>
+    <tr><td>Never use the production database for development testing</td><td>A bug in your WHERE clause could wipe real data</td></tr>
+    <tr><td>Take a backup before every production migration</td><td><code>pg_dump</code> the production DB before running anything that changes data</td></tr>
+    <tr><td>Every schema change must be backward-compatible until old code is removed</td><td>Adding a column is safe. Removing or renaming one is not — do it in two steps.</td></tr>
+    <tr><td>Production credentials belong to no one person</td><td>Use AWS IAM roles or a secrets manager, not a password in someone's email</td></tr>
+    <tr><td>If something breaks in production — roll back, do not fix forward under pressure</td><td>Rushed fixes under stress cause more damage than the original bug</td></tr>
+  </table>
+
+  <div class="raushan-note">
+    <div class="note-from">From Raushan — A real story</div>
+    <p>In one of my enterprise engagements, a developer ran a test migration script that used <code>DELETE FROM maintenance_requests</code> — intending to clear the test table — but had connected to the production database by mistake. Six months of data, gone. The backup was three days old. They recovered 95% of it, but 5% was permanently lost. This is why environment discipline is not optional. It is the difference between an incident and a disaster.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ TAB 3 · APP EXPORT ══════════════════════════════ -->
+<div class="tabpanel" id="tab-export">
+  <div class="toc-strip">
+    <a href="#exp-concept">Flutter is not a website</a>
+    <a href="#exp-before">Before you build</a>
+    <a href="#exp-android">Android APK/AAB</a>
+    <a href="#exp-ios">iOS IPA</a>
+    <a href="#exp-windows">Windows EXE</a>
+    <a href="#exp-size">APK size management</a>
+    <a href="#exp-distribute">Distribution</a>
+  </div>
+
+  <h2 id="exp-concept">Understanding what "deploying" a Flutter app actually means</h2>
+  <p class="lead">A Node.js API is deployed to a server — it runs on that server and waits for incoming requests. A Flutter app works completely differently. Flutter compiles your Dart code into a native binary for the target platform. That binary is distributed to devices as an installable file. The server never runs Flutter — it runs on the user's device.</p>
+
+  <div class="grid2">
+    <div class="card danger">
+      <h4>❌ What Flutter apps do NOT do</h4>
+      <ul style="margin:6px 0 0 18px;font-size:13.5px;">
+        <li>Run on a web server</li>
+        <li>Need a server to "serve" them to users</li>
+        <li>Get updated by restarting a server</li>
+        <li>Live at a URL that users visit in a browser (unless using Flutter Web separately)</li>
+      </ul>
+    </div>
+    <div class="card success">
+      <h4>✅ What Flutter apps DO</h4>
+      <ul style="margin:6px 0 0 18px;font-size:13.5px;">
+        <li>Compile into a platform-native binary file</li>
+        <li>Get installed on a device like any other app</li>
+        <li>Run entirely on the user's device</li>
+        <li>Call the API over the internet for data</li>
+        <li>Update via Play Store / App Store / direct file replacement</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 id="exp-before">Before you build — change the BASE_URL</h2>
+  <p>When you build a release APK, the API server is no longer on localhost. It is on AWS. The only change needed in the Flutter code before building:</p>
+  <pre><code><span class="cmt">// lib/services/api_service.dart — change this one line</span>
+<span class="cmt">// From:</span>
+<span class="kw">static const</span> <span class="kw">String</span> _baseUrl = <span class="str">'http://localhost:3000/api'</span>;
+
+<span class="cmt">// To:</span>
+<span class="kw">static const</span> <span class="kw">String</span> _baseUrl = <span class="str">'https://api.khanchacha.com/api'</span>;</code></pre>
+  <p>Also update <code>pubspec.yaml</code> to set the correct app version number and build number before each release.</p>
+
+  <h2 id="exp-android">Android — APK and App Bundle</h2>
+  <p>There are two Android output formats. Use <code>.apk</code> for direct distribution (side-loading). Use <code>.aab</code> (App Bundle) for Google Play Store — it is smaller and lets Play Store generate optimised APKs for each device.</p>
+
+  <div class="terminal-box"><pre><span class="cmt"># Build a release APK (for direct installation)</span>
+flutter build apk --release
+
+<span class="cmt"># Output: build/app/outputs/flutter-apk/app-release.apk</span>
+<span class="cmt"># Share this .apk file to install directly on Android phones</span>
+
+<span class="cmt"># Build split APKs — one per CPU architecture (smaller file per device)</span>
+flutter build apk --release --split-per-abi
+<span class="cmt"># Output: app-arm64-v8a-release.apk (for most modern phones)</span>
+<span class="cmt">#         app-armeabi-v7a-release.apk (for older phones)</span>
+<span class="cmt">#         app-x86_64-release.apk (for emulators)</span>
+
+<span class="cmt"># Build App Bundle for Play Store submission</span>
+flutter build appbundle --release
+<span class="cmt"># Output: build/app/outputs/bundle/release/app-release.aab</span>
+<span class="cmt"># Upload this .aab file to Google Play Console</span></pre></div>
+
+  <h2 id="exp-ios">iOS — IPA</h2>
+  <div class="card warn">
+    <h4>⚠️ iOS builds require a Mac with Xcode</h4>
+    <p style="margin:4px 0 0;">You cannot build an iOS app on Windows. You need a Mac with Xcode installed and an Apple Developer account ($99/year). If you don't have a Mac, you can use a Mac build service or a cloud Mac service like MacStadium.</p>
+  </div>
+  <div class="terminal-box"><pre><span class="cmt"># On Mac — build IPA for App Store</span>
+flutter build ipa
+
+<span class="cmt"># Output: build/ios/ipa/Khan Chacha.ipa</span>
+<span class="cmt"># Upload to App Store Connect using Xcode or Transporter app</span></pre></div>
+
+  <h2 id="exp-windows">Windows — EXE Installer</h2>
+  <div class="terminal-box"><pre><span class="cmt"># Build a Windows release executable</span>
+flutter build windows --release
+
+<span class="cmt"># Output: build/windows/x64/runner/Release/</span>
+<span class="cmt"># The entire Release/ folder is needed — not just the .exe</span>
+<span class="cmt"># Distribute as a zip file or use a tool like Inno Setup to create an installer</span></pre></div>
+
+  <h2 id="exp-size">APK size management — what makes it big and how to keep it lean</h2>
+  <p>Students often ask why some apps are 5 MB and others are 500 MB. Here is what contributes to APK size and what you can do about each factor.</p>
+
+  <h3>What contributes to APK size</h3>
+  <div class="size-bar-wrap">
+    <div class="size-row">
+      <div class="size-label">Images &amp; assets</div>
+      <div class="size-bar-bg"><div class="size-bar" style="width:85%;background:var(--red);"></div></div>
+      <div class="size-val">Biggest factor</div>
+    </div>
+    <div class="size-row">
+      <div class="size-label">Native libraries (.so)</div>
+      <div class="size-bar-bg"><div class="size-bar" style="width:65%;background:var(--amber);"></div></div>
+      <div class="size-val">Large</div>
+    </div>
+    <div class="size-row">
+      <div class="size-label">Flutter engine</div>
+      <div class="size-bar-bg"><div class="size-bar" style="width:50%;background:var(--amber);"></div></div>
+      <div class="size-val">~6-8 MB fixed</div>
+    </div>
+    <div class="size-row">
+      <div class="size-label">Your Dart code</div>
+      <div class="size-bar-bg"><div class="size-bar" style="width:15%;background:var(--green);"></div></div>
+      <div class="size-val">Small</div>
+    </div>
+    <div class="size-row">
+      <div class="size-label">Packages (http, etc.)</div>
+      <div class="size-bar-bg"><div class="size-bar" style="width:20%;background:var(--green);"></div></div>
+      <div class="size-val">Varies</div>
+    </div>
+  </div>
+
+  <h3>How to reduce APK size</h3>
+  <table>
+    <tr><th>Technique</th><th>Impact</th><th>How</th></tr>
+    <tr><td>Use <code>--split-per-abi</code></td><td>40-60% reduction per file</td><td>Each APK only contains native code for one CPU type. Users download only what their phone needs.</td></tr>
+    <tr><td>Use App Bundle (<code>.aab</code>) for Play Store</td><td>30-50% smaller download</td><td>Play Store generates the optimal APK for each device from your bundle.</td></tr>
+    <tr><td>Compress images</td><td>Up to 70% size reduction</td><td>Use tools like TinyPNG or Squoosh before adding images to <code>assets/</code>. WebP format is smaller than PNG/JPG.</td></tr>
+    <tr><td>Remove unused packages</td><td>Variable</td><td>Run <code>flutter pub outdated</code> and remove any package you're not actually using in code.</td></tr>
+    <tr><td>Enable ProGuard / R8</td><td>10-20% reduction</td><td>In <code>android/app/build.gradle</code>, set <code>minifyEnabled true</code> for release builds. Removes unused code.</td></tr>
+    <tr><td>Use vector icons not PNG icon sets</td><td>Significant</td><td>Flutter's built-in Icons class uses a single font file. PNG icon packs add one file per icon.</td></tr>
+  </table>
+
+  <h3>Typical size ranges for a Flutter MRMS-style app</h3>
+  <table>
+    <tr><th>App type</th><th>APK size</th><th>After split-per-abi</th></tr>
+    <tr><td>Minimal app, few assets</td><td>8–12 MB</td><td>5–7 MB</td></tr>
+    <tr><td>Our MRMS app (medium, few images)</td><td>15–25 MB</td><td>9–15 MB</td></tr>
+    <tr><td>App with embedded images/PDFs</td><td>30–80 MB</td><td>20–50 MB</td></tr>
+    <tr><td>App with ML models or maps SDK</td><td>80–200 MB</td><td>40–100 MB</td></tr>
+  </table>
+  <p>For most enterprise internal tools like MRMS, the final APK should be under 30 MB. If it exceeds that, audit your <code>assets/</code> folder first — that is almost always the cause.</p>
+
+  <h2 id="exp-distribute">Distribution options</h2>
+  <table>
+    <tr><th>Method</th><th>Best for</th><th>How</th></tr>
+    <tr><td>Google Play Store</td><td>Wide Android distribution</td><td>Upload .aab to Google Play Console. Review takes 1–3 days for new apps.</td></tr>
+    <tr><td>Direct APK (side-loading)</td><td>Internal enterprise use</td><td>Share the .apk file via email, WhatsApp, or internal portal. Users enable "Install from unknown sources" in Settings.</td></tr>
+    <tr><td>Firebase App Distribution</td><td>Beta testing with select users</td><td>Upload APK to Firebase Console. Testers get a download link. No Play Store review.</td></tr>
+    <tr><td>Microsoft Store</td><td>Windows enterprise distribution</td><td>Package the <code>Release/</code> folder as an MSIX package. Submit to Microsoft Partner Center.</td></tr>
+    <tr><td>Apple App Store</td><td>iOS distribution</td><td>Upload IPA via Xcode or Transporter. Review takes 1–3 days.</td></tr>
+  </table>
+</div>
+
+<!-- ══════════════════════════════ TAB 4 · SECURITY CHECKLIST ══════════════════════════════ -->
+<div class="tabpanel" id="tab-security">
+  <div class="toc-strip">
+    <a href="#sec-note">Raushan's note</a>
+    <a href="#sec-list">The checklist</a>
+    <a href="#sec-fix">How to fix each item</a>
+    <a href="#sec-audit">Audit with Claude</a>
+  </div>
+
+  <h2 id="sec-note">A note from Raushan before we start</h2>
+
+  <div class="raushan-note">
+    <div class="note-from">From Raushan — To every student in this batch</div>
+    <p>We built this application using Claude as our co-programmer. Claude is an extremely capable tool — it accelerated our development by weeks. But I need you to understand something clearly: <strong>AI does not automatically make your code secure.</strong></p>
+    <p>Claude generates code that works. But "it works" and "it is secure" are two completely different things. Claude builds what you ask for. If you ask it to build a login route, it will build one that logs users in. It will not automatically add bcrypt, JWT validation, rate limiting, input sanitisation, audit logging, and role enforcement unless you specifically ask for each one.</p>
+    <p>The purpose of this checklist is to make sure that before you hand this application to Khan Chacha — or any client — you have reviewed every security dimension yourself. Not delegated it to Claude. Not assumed it was handled. Reviewed it personally, line by line. Use Claude to fix what you find. But you must be the one who looks.</p>
+    <p>AI is your co-pilot, not your co-pilot who also does the pre-flight safety check. That part is yours.</p>
+  </div>
+
+  <h2 id="sec-list">Security checklist — review every item before going live</h2>
+
+  <div class="check-item">
+    <div class="check-circle fail">✗</div>
+    <div class="check-body">
+      <h4>Passwords stored as plain text</h4>
+      <p>In our current system, the users table stores passwords as plain text strings. If the database is breached, every password is exposed immediately.</p>
+      <div class="fix"><strong>Fix:</strong> Install bcrypt (<code>npm install bcryptjs</code>). Hash passwords when users are created: <code>bcrypt.hash(password, 10)</code>. Verify with <code>bcrypt.compare(input, hash)</code> instead of direct string comparison in routes/auth.js.</div>
+    </div>
+  </div>
+
+  <div class="check-item">
+    <div class="check-circle fail">✗</div>
+    <div class="check-body">
+      <h4>No authentication tokens (JWT)</h4>
+      <p>After login, the app calls API endpoints without any proof of identity. Anyone who knows the API URL can call GET /api/requests and read all Khan Chacha maintenance data without logging in first.</p>
+      <div class="fix"><strong>Fix:</strong> Install jsonwebtoken (<code>npm install jsonwebtoken</code>). After successful login, return a signed JWT token. Add a middleware function to every protected route that verifies the token. Without a valid token, return HTTP 401. In Flutter, store the token in memory and send it as a header: <code>Authorization: Bearer [token]</code>.</div>
+    </div>
+  </div>
+
+  <div class="check-item">
+    <div class="check-circle warn">!</div>
+    <div class="check-body">
+      <h4>Role enforcement only in Flutter (client-side)</h4>
+      <p>Staff users should only see their outlet's requests. This rule is currently enforced in Flutter — the app decides what to fetch based on the user's role. A technical user could call the API directly and bypass this completely.</p>
+      <div class="fix"><strong>Fix:</strong> Add role enforcement in the API routes. When a request arrives with a JWT token, extract the user's role from the token payload. If role is 'staff', automatically add a WHERE outlet_id = $user_outlet_id to every query — regardless of what the client requested.</div>
+    </div>
+  </div>
+
+  <div class="check-item">
+    <div class="check-circle pass">✓</div>
+    <div class="check-body">
+      <h4>SQL injection — parameterized queries</h4>
+      <p>All our API routes use parameterized queries (<code>$1, $2</code> placeholders) throughout. User input is never concatenated directly into SQL strings.</p>
+      <div class="fix"><strong>Status: Already handled correctly.</strong> Verify by searching all route files for any SQL string that includes <code>req.body</code> or <code>req.params</code> directly — there should be none. Every value from the user must go through a <code>$N</code> parameter.</div>
+    </div>
+  </div>
+
+  <div class="check-item">
+    <div class="check-circle fail">✗</div>
+    <div class="check-body">
+      <h4>No HTTPS in production</h4>
+      <p>The app currently calls <code>http://</code> URLs. HTTP means all data travels unencrypted — credentials, request details, outlet information — visible to anyone who can intercept the network traffic.</p>
+      <div class="fix"><strong>Fix:</strong> When deploying the Node.js API to AWS, attach a domain and use AWS Certificate Manager to provision a free SSL certificate. Configure your load balancer or Nginx to terminate HTTPS and forward to the Node.js app. Change the Flutter BASE_URL to <code>https://</code>.</div>
+    </div>
+  </div>
+
+  <div class="check-item">
+    <div class="check-circle warn">!</div>
+    <div class="check-body">
+      <h4>CORS open to all origins</h4>
+      <p>The API currently uses <code>app.use(cors())</code> which allows any website on the internet to call the API from a browser. This is acceptable during development but not in production.</p>
+      <div class="fix"><strong>Fix:</strong> In production server.js, restrict CORS to known origins:
+<code>app.use(cors({ origin: ['https://admin.khanchacha.com'], methods: ['GET','POST','PUT','PATCH','DELETE'] }))</code>
+Note: CORS only applies to browser clients. The Flutter mobile/desktop app is not a browser — it is not affected by CORS restrictions.</div>
+    </div>
+  </div>
+
+  <div class="check-item">
+    <div class="check-circle fail">✗</div>
+    <div class="check-body">
+      <h4>Detailed error messages exposed to clients</h4>
+      <p>Our routes return <code>res.status(500).json({ error: error.message })</code>. In production, this can expose database table names, column names, internal IP addresses, and stack traces to anyone who triggers an error.</p>
+      <div class="fix"><strong>Fix:</strong> In production, return a generic message: <code>{ error: 'Internal server error' }</code>. Log the full error server-side using a logging library like Winston or Morgan. Set <code>NODE_ENV=production</code> and use it to switch between verbose (dev) and generic (prod) error responses.</div>
+    </div>
+  </div>
+
+  <div class="check-item">
+    <div class="check-circle warn">!</div>
+    <div class="check-body">
+      <h4>No rate limiting</h4>
+      <p>The API has no limit on how many requests can be made per second from one IP address. A simple script could make 10,000 login attempts per minute — a brute-force password attack.</p>
+      <div class="fix"><strong>Fix:</strong> Install express-rate-limit (<code>npm install express-rate-limit</code>). Apply a stricter limit to the login route specifically:
+<code>const loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 10 })</code>
+<code>app.use('/api/auth/login', loginLimiter)</code>
+10 login attempts per 15 minutes per IP is reasonable for a staff app.</div>
+    </div>
+  </div>
+
+  <div class="check-item">
+    <div class="check-circle warn">!</div>
+    <div class="check-body">
+      <h4>No input validation on the server</h4>
+      <p>The API checks if required fields are present but does not validate their content. A request with <code>category: "DROP TABLE users"</code> would be accepted and stored (the parameterized query prevents SQL injection, but the invalid value still enters the database).</p>
+      <div class="fix"><strong>Fix:</strong> Add server-side validation using a library like Joi or express-validator. Validate that <code>category</code> is one of the allowed ENUM values, that <code>request_date</code> is a valid date, that string fields are within reasonable length limits. Return 400 for any request that fails validation.</div>
+    </div>
+  </div>
+
+  <div class="check-item">
+    <div class="check-circle pass">✓</div>
+    <div class="check-body">
+      <h4>Secrets in .gitignore</h4>
+      <p>The <code>.env</code> file containing database credentials is excluded from Git via <code>.gitignore</code>.</p>
+      <div class="fix"><strong>Status: Handled.</strong> Verify by running <code>git status</code> and confirming <code>.env</code> does not appear. Also check your Git history: <code>git log --all --full-history -- .env</code> — if it was ever committed, rotate the password immediately.</div>
+    </div>
+  </div>
+
+  <div class="check-item">
+    <div class="check-circle warn">!</div>
+    <div class="check-body">
+      <h4>Dependencies with known vulnerabilities</h4>
+      <p>npm packages can have published security vulnerabilities. Using an outdated package version means you may be running code with known, documented exploits.</p>
+      <div class="fix"><strong>Fix:</strong> Run <code>npm audit</code> in the API project. Fix critical and high severity issues with <code>npm audit fix</code>. Run <code>flutter pub outdated</code> in the Flutter project and update packages with known issues. Make dependency auditing part of your pre-release routine.</div>
+    </div>
+  </div>
+
+  <h2 id="sec-fix">Summary — current status and priority</h2>
+  <table>
+    <tr><th>Item</th><th>Status</th><th>Priority before production</th></tr>
+    <tr><td>Plain text passwords</td><td><span class="pill pill-red">Not fixed</span></td><td>🔴 Critical — fix before any real user data</td></tr>
+    <tr><td>No JWT authentication</td><td><span class="pill pill-red">Not fixed</span></td><td>🔴 Critical — API is open to anyone</td></tr>
+    <tr><td>No HTTPS</td><td><span class="pill pill-red">Not fixed</span></td><td>🔴 Critical — credentials sent in plaintext</td></tr>
+    <tr><td>Client-side role enforcement</td><td><span class="pill pill-amber">Partial</span></td><td>🟡 High — bypassable by technical users</td></tr>
+    <tr><td>Verbose error messages</td><td><span class="pill pill-amber">Partial</span></td><td>🟡 High — exposes internals</td></tr>
+    <tr><td>No rate limiting</td><td><span class="pill pill-amber">Not fixed</span></td><td>🟡 High — brute force risk</td></tr>
+    <tr><td>Open CORS</td><td><span class="pill pill-amber">Partial</span></td><td>🟡 Medium — restrict in production</td></tr>
+    <tr><td>No input validation</td><td><span class="pill pill-amber">Partial</span></td><td>🟡 Medium — add before production</td></tr>
+    <tr><td>SQL injection</td><td><span class="pill pill-green">Protected</span></td><td>✅ Already handled via parameterized queries</td></tr>
+    <tr><td>Secrets in Git</td><td><span class="pill pill-green">Protected</span></td><td>✅ .gitignore is correct</td></tr>
+  </table>
+
+  <h2 id="sec-audit">Using Claude Code for the security audit</h2>
+  <p>Use this prompt in the API project to get Claude to audit the codebase for the most critical issues:</p>
+
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code — Security Audit Prompt<button class="copy-btn" onclick="copyPrompt(this,'secaudit')">Copy</button></div>
+    <div class="prompt-text" id="secaudit">Perform a security audit of the Khan Chacha MRMS Node.js API.
+
+Read all files in: server.js, routes/, db/, and .env (if accessible)
+
+Check for and report on each of these:
+
+1. PASSWORD STORAGE
+   Are passwords stored as plain text? Are they hashed with bcrypt?
+   If plain text: show me how to add bcrypt.hash() on user creation
+   and bcrypt.compare() on login in routes/auth.js
+
+2. AUTHENTICATION
+   Is there a JWT token system? Do protected routes verify a token before responding?
+   If not: show me how to add JWT signing on login and a verifyToken middleware
+   that I can apply to all routes except POST /api/auth/login
+
+3. SQL INJECTION
+   Scan every SQL query in every route file.
+   Confirm that user input values only appear as $N parameters, never concatenated.
+   List any query that directly includes req.body or req.params in the SQL string.
+
+4. ERROR MESSAGES
+   Do routes return error.message directly to the client?
+   Show me how to add a NODE_ENV check that returns generic messages in production
+   and detailed messages only in development.
+
+5. RATE LIMITING
+   Is express-rate-limit installed and applied to the login route?
+   If not: show me how to add it with a limit of 10 attempts per 15 minutes.
+
+For each issue found: show the current vulnerable code AND the fixed version side by side.
+Prioritise critical issues (passwords, JWT) over medium issues (CORS, rate limiting).</div>
+  </div>
+
+  <div class="raushan-note">
+    <div class="note-from">Final word from Raushan</div>
+    <p>Security is not a feature you add at the end. It is a discipline you maintain throughout. The checklist above covers the basics — what I would check before handing any app to a client. There is more beyond this (penetration testing, OWASP Top 10, dependency CVEs), and as you grow as a developer you will go deeper.</p>
+    <p>For now: run this checklist. Fix the three critical items (passwords, JWT, HTTPS) before any real data touches the system. Use Claude to implement the fixes — but read every line of code it produces. Because ultimately, you are the one who signs off on this. Not the AI.</p>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">Powered by <strong>RR Skillverse (Raushan Ranjan)</strong> · Built for <strong>Koenig Solutions</strong> · Khan Chacha MRMS · Pre-Launch Guide</div>
+    <div class="footer-links">
+      <a href="index.html">All Sessions</a>
+      <a href="day4.html">← Day 4</a>
+      <a href="https://rrskillverse.in" target="_blank">RR Skillverse</a>
+    </div>
+  </div>
+  <div class="footer-bottom">Beast AI Initiative · Khan Chacha MRMS Training Programme · 2026</div>
+</footer>
+
+<script>
+const tabs = document.querySelectorAll('.tabnav button');
+tabs.forEach(btn => {
+  btn.addEventListener('click', () => {
+    tabs.forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tabpanel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+function copyPrompt(btn, id) {
+  const text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1800);
+  });
+}
+</script>
+</body>
+</html>
