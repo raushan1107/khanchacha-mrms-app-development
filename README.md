@@ -1,6 +1,6 @@
 # 🦁 Beast AI Initiative — Khan Chacha MRMS
 
-### Non-Technical Students → Production-Ready Full Stack App Using AI as a Co-Programmer
+### Non-Technical/ Non-Programmer Students → Production-Ready Full Stack App Using AI as a Co-Programmer
 
 <br/>
 
