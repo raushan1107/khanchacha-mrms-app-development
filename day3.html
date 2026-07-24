@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Day 3 — PostgreSQL for Khan Chacha | RR Skillverse × Koenig Solutions</title>
+<title>Day 3 — PostgreSQL for Khan Chacha | Koenig Solutions × Koenig Solutions</title>
 <style>
 :root{
   --bg:#0d1117; --bg2:#11161d; --card:#161b22; --border:#26303d; --border-soft:#1d2530;
@@ -172,22 +172,87 @@ footer{border-top:1px solid var(--border-soft); margin-top:40px; padding:36px 24
 .footer-links a:hover{color:var(--teal);}
 .footer-bottom{text-align:center; font-size:12px; color:var(--text-faint); margin-top:20px; padding-top:20px; border-top:1px solid var(--border-soft); max-width:var(--maxw); margin-left:auto; margin-right:auto;}
 @media(max-width:600px){h1.page-title{font-size:22px;} .brand-title{font-size:13.5px;} main{padding:24px 16px 50px;}}
+
+/* ───────────── BEAST AI GLOBAL NAV ───────────── */
+.beast-nav{position:fixed;top:0;left:0;right:0;z-index:9999;
+  background:rgba(13,17,23,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid #1d2530;height:54px;display:flex;align-items:center;padding:0 24px;}
+.beast-nav-inner{max-width:1080px;margin:0 auto;width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.beast-nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none!important;flex-shrink:0;}
+.beast-nav-mark{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,#00c2e0,#0082A0);
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#001318;flex-shrink:0;}
+.beast-nav-brand{font-size:13px;font-weight:700;color:#e6edf3;white-space:nowrap;}
+.beast-nav-brand em{color:#00c2e0;font-style:normal;}
+.beast-nav-right{display:flex;align-items:center;gap:7px;flex-wrap:nowrap;}
+.beast-nav-pill{font-size:12px;color:#9da7b3;padding:5px 12px;border:1px solid #26303d;border-radius:16px;
+  text-decoration:none!important;transition:color .15s,border-color .15s;white-space:nowrap;}
+.beast-nav-pill:hover{color:#00c2e0!important;border-color:#00c2e0;}
+.beast-nav-btn{font-size:12px;font-weight:700;background:#00c2e0;color:#001318!important;padding:5px 14px;
+  border-radius:8px;text-decoration:none!important;transition:opacity .15s;white-space:nowrap;}
+.beast-nav-btn:hover{opacity:.88;}
+@media(max-width:580px){.beast-nav-pill{display:none;}}
+/* body offset for fixed nav */
+body{padding-top:54px!important;}
+/* ───────────── FOOTER NAV STRIP ───────────── */
+.beast-footer-nav{display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px;background:#11161d;border-top:2px solid #1d2530;flex-wrap:wrap;gap:12px;margin-top:0;}
+.beast-footer-nav a{font-size:13.5px;font-weight:600;color:#9da7b3;text-decoration:none!important;
+  padding:9px 20px;border:1px solid #26303d;border-radius:8px;transition:color .15s,border-color .15s;white-space:nowrap;}
+.beast-footer-nav a:hover{color:#00c2e0;border-color:#00c2e0;}
+.beast-footer-nav .fn-next{background:#00c2e0;color:#001318!important;border-color:#00c2e0;}
+.beast-footer-nav .fn-next:hover{opacity:.88;color:#001318!important;}
+/* ───────────── SITE-HEADER OVERRIDES (day2/full-app) ───────────── */
+header.site-header{background:#161b22;border-bottom:1px solid #1d2530;
+  padding:22px 24px 18px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:14px;}
+header.site-header h1{font-size:20px;font-weight:700;color:#e6edf3;margin-bottom:4px;letter-spacing:-.2px;}
+header.site-header p{font-size:13.5px;color:#9da7b3;margin:0;}
+header.site-header .badge-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+header.site-header .home-link{font-size:12.5px;font-weight:600;color:#9da7b3;padding:5px 14px;
+  border:1px solid #26303d;border-radius:16px;text-decoration:none!important;transition:color .15s,border-color .15s;}
+header.site-header .home-link:hover{color:#00c2e0;border-color:#00c2e0;}
+header.site-header .badge{font-size:11.5px;padding:4px 10px;border-radius:14px;font-weight:600;}
+nav.tab-nav-wrap{background:#11161d;border-bottom:1px solid #1d2530;
+  padding:0 24px;position:sticky;top:54px;z-index:100;}
+nav.tab-nav-wrap .tab-nav{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;max-width:1080px;margin:0 auto;}
+nav.tab-nav-wrap .tab-nav::-webkit-scrollbar{display:none;}
+nav.tab-nav-wrap .tab-btn{background:none;border:none;color:#9da7b3;font-size:13px;font-weight:500;
+  padding:12px 15px;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;
+  transition:color .15s,border-color .15s;font-family:inherit;}
+nav.tab-nav-wrap .tab-btn:hover{color:#e6edf3;}
+nav.tab-nav-wrap .tab-btn.active{color:#00c2e0;border-bottom-color:#00c2e0;}
+/* ───────────── GROUP-A HEADER REFINEMENTS ───────────── */
+header:not(.site-header){position:sticky;top:54px;z-index:100;background:#0d1117!important;}
+
 </style>
 </head>
 <body>
+<nav class="beast-nav">
+  <div class="beast-nav-inner">
+    <a href="index.html" class="beast-nav-logo">
+      <div class="beast-nav-mark">B</div>
+      <div class="beast-nav-brand">Beast <em>AI Initiative</em></div>
+    </a>
+    <div class="beast-nav-right">
+      <a href="home.html" class="beast-nav-pill">&#128218; All Sessions</a>
+      <a href="full-app-guide.html" class="beast-nav-pill">&larr; Full App Guide</a>
+      <a href="day4.html" class="beast-nav-btn">Phase 4 &rarr;</a>
+    </div>
+  </div>
+</nav>
+
 
 <header>
   <div class="header-inner">
     <div class="brand-row">
       <div class="brand-left">
-        <a href="index.html" style="text-decoration:none;"><div class="logo-mark">KO</div></a>
+        <a href="index.html" style="text-decoration:none;"><div class="logo-mark">RR</div></a>
         <div>
           <div class="brand-title">Khan Chacha MRMS — Day 3 · PostgreSQL</div>
           <div class="brand-sub">Koenig Solutions Trainer Series · Beast AI Initiative</div>
         </div>
       </div>
       <div class="brand-right">
-        <div class="koenig-badge">Koenig Solutions × RR Skillverse</div>
+        <div class="koenig-badge">Koenig Solutions</div>
         <a href="home.html" class="home-btn">← All Sessions</a>
       </div>
     </div>
@@ -2711,15 +2776,21 @@ Tell me if there are any lines in the export I should remove before pasting
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
-      Powered by <strong>RR Skillverse (Raushan Ranjan)</strong> · Built for <strong>Koenig Solutions</strong> · Khan Chacha MRMS · Day 3
+      Built, created and written by <strong>Raushan Ranjan</strong> · MCT, Koenig Solutions · Khan Chacha MRMS · Day 3
     </div>
     <div class="footer-links">
-      <a href="home.html">All Sessions</a>
+      <a href="index.html">All Sessions</a>
       <a href="day2.html">← Day 2</a>
-      <a href="https://rrskillverse.in" target="_blank">RR Skillverse</a>
+      <a href="https://rrskillverse.in" target="_blank">Koenig Solutions</a>
     </div>
   </div>
   <div class="footer-bottom">Beast AI Initiative · Khan Chacha MRMS Training Programme · 2026</div>
+
+<div class="beast-footer-nav">
+  <a href="full-app-guide.html">&larr; Full App Guide</a>
+  <a href="home.html">&#128218; All Sessions</a>
+  <a href="day4.html" class="fn-next">Phase 4 &rarr;</a>
+</div>
 </footer>
 
 <script>
