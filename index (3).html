@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beast AI Initiative — Build Real Apps with AI | Koenig Solutions × RR Skillverse</title>
+<meta name="description" content="Non-technical professionals build a production-ready Flutter app with Node.js API and PostgreSQL — using Claude AI as a co-programmer. Enterprise training by Raushan Ranjan, MCT.">
+<style>
+:root{
+  --bg:#0d1117;--bg2:#11161d;--card:#161b22;--border:#26303d;--border-soft:#1d2530;
+  --text:#e6edf3;--text-dim:#9da7b3;--text-faint:#6b7480;
+  --teal:#00c2e0;--teal-deep:#0082A0;--teal-glow:rgba(0,194,224,0.15);
+  --green:#3fb950;--amber:#f59e0b;--orange:#e88c1f;--red:#f85149;--purple:#a371f7;
+  --radius:10px;--maxw:1080px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px;overflow-x:hidden;}
+a{color:var(--teal);text-decoration:none;}a:hover{text-decoration:underline;}
+code{font-family:"SF Mono",Consolas,"Courier New",monospace;background:#0a0e14;color:#7ee787;padding:2px 7px;border-radius:4px;font-size:.87em;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,17,23,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border-soft);padding:0 24px;}
+.nav-inner{max-width:var(--maxw);margin:0 auto;height:58px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:10px;}
+.nav-logo-mark{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--teal) 0%,var(--teal-deep) 100%);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#001318;flex-shrink:0;}
+.nav-brand{font-size:14.5px;font-weight:700;letter-spacing:-.2px;}
+.nav-brand span{color:var(--teal);}
+.nav-links{display:flex;align-items:center;gap:6px;}
+.nav-link{font-size:13.5px;color:var(--text-dim);padding:6px 14px;border-radius:6px;transition:color .15s,background .15s;}
+.nav-link:hover{color:var(--text);background:rgba(255,255,255,.06);text-decoration:none;}
+.nav-cta{background:var(--teal);color:#001318;font-size:13.5px;font-weight:700;padding:7px 18px;border-radius:8px;transition:opacity .15s;}
+.nav-cta:hover{opacity:.88;text-decoration:none;color:#001318;}
+@media(max-width:640px){.nav-links .nav-link{display:none;}}
+section{padding:96px 24px;}
+.section-inner{max-width:var(--maxw);margin:0 auto;}
+.hero{padding:140px 24px 100px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(0,194,224,.12) 0%,transparent 70%);pointer-events:none;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,194,224,.1);border:1px solid rgba(0,194,224,.3);border-radius:20px;padding:6px 16px;font-size:13px;font-weight:600;color:var(--teal);letter-spacing:.3px;margin-bottom:28px;}
+.hero-badge-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+h1.hero-title{font-size:clamp(36px,6vw,68px);font-weight:800;line-height:1.1;letter-spacing:-.5px;margin-bottom:24px;}
+h1.hero-title span{background:linear-gradient(135deg,var(--teal) 0%,var(--teal-deep) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-size:clamp(17px,2.5vw,21px);color:var(--text-dim);max-width:640px;margin:0 auto 40px;line-height:1.6;}
+.hero-cta-group{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:56px;}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--teal);color:#001318;font-size:16px;font-weight:800;padding:14px 32px;border-radius:10px;letter-spacing:-.2px;transition:opacity .15s,transform .15s;}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px);text-decoration:none;color:#001318;}
+.btn-primary .arrow{font-size:18px;transition:transform .2s;}
+.btn-primary:hover .arrow{transform:translateX(3px);}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text-dim);font-size:15px;font-weight:600;padding:13px 24px;border-radius:10px;transition:color .15s,border-color .15s,background .15s;}
+.btn-secondary:hover{color:var(--text);border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.09);text-decoration:none;}
+.hero-quote{max-width:580px;margin:0 auto;padding:20px 24px;background:var(--card);border:1px solid var(--border-soft);border-left:3px solid var(--teal);border-radius:var(--radius);text-align:left;}
+.hero-quote p{font-size:15px;color:var(--text-dim);font-style:italic;line-height:1.7;margin-bottom:10px;}
+.hero-quote cite{font-size:13px;color:var(--text-faint);font-style:normal;}
+.hero-quote cite strong{color:var(--teal);font-weight:600;}
+.stats{padding:0 24px 72px;}
+.stats-inner{max-width:var(--maxw);margin:0 auto;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border-soft);border-radius:12px;overflow:hidden;}
+.stat-box{background:var(--card);padding:28px 20px;text-align:center;}
+.stat-num{font-size:36px;font-weight:800;color:var(--teal);line-height:1;margin-bottom:6px;letter-spacing:-1px;}
+.stat-label{font-size:13.5px;color:var(--text-faint);}
+@media(max-width:640px){.stats-grid{grid-template-columns:1fr 1fr;}}
+.section-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--teal);margin-bottom:10px;}
+h2.section-title{font-size:clamp(26px,4vw,38px);font-weight:800;letter-spacing:-.4px;margin-bottom:14px;}
+.section-desc{font-size:17px;color:var(--text-dim);max-width:560px;line-height:1.65;}
+.app-showcase{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;margin-top:48px;}
+.app-screen-list{display:flex;flex-direction:column;gap:12px;}
+.screen-item{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);transition:border-color .2s;}
+.screen-item:hover{border-color:rgba(0,194,224,.35);}
+.screen-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+.screen-body h4{font-size:14.5px;font-weight:600;color:var(--text);margin-bottom:3px;}
+.screen-body p{font-size:13px;color:var(--text-faint);margin:0;}
+.app-stack-visual{background:var(--card);border:1px solid var(--border-soft);border-radius:12px;padding:24px;font-family:"SF Mono",Consolas,monospace;font-size:13px;line-height:2.4;}
+@media(max-width:720px){.app-showcase{grid-template-columns:1fr;}}
+.days-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:40px;}
+@media(max-width:900px){.days-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:560px){.days-grid{grid-template-columns:1fr;}}
+.day-card{background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s;}
+.day-card:hover{border-color:rgba(0,194,224,.3);transform:translateY(-2px);}
+.day-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.day-card.d1::before{background:linear-gradient(90deg,#3fb950,#00c2e0);}
+.day-card.d2::before{background:linear-gradient(90deg,#00c2e0,#a371f7);}
+.day-card.d3::before{background:linear-gradient(90deg,#a371f7,#f59e0b);}
+.day-card.d4::before{background:linear-gradient(90deg,#f59e0b,#e88c1f);}
+.day-card.d5::before{background:linear-gradient(90deg,#e88c1f,#f85149);}
+.day-card.guide::before{background:linear-gradient(90deg,#3fb950,#0082A0);}
+.day-num{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-faint);margin-bottom:8px;}
+.day-title{font-size:15.5px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.day-desc{font-size:13px;color:var(--text-faint);line-height:1.6;margin-bottom:14px;}
+.day-output{font-size:12px;color:var(--teal);font-weight:600;background:rgba(0,194,224,.08);padding:5px 10px;border-radius:6px;display:inline-block;}
+.tech-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:40px;}
+@media(max-width:720px){.tech-grid{grid-template-columns:repeat(2,1fr);}}
+.tech-item{background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:18px;text-align:center;transition:border-color .2s;}
+.tech-item:hover{border-color:rgba(0,194,224,.3);}
+.tech-icon{font-size:28px;margin-bottom:10px;}
+.tech-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.tech-role{font-size:12px;color:var(--text-faint);}
+.trainer-section{background:var(--bg2);border-top:1px solid var(--border-soft);border-bottom:1px solid var(--border-soft);}
+.trainer-inner{max-width:var(--maxw);margin:0 auto;padding:96px 24px;display:grid;grid-template-columns:1fr 1.4fr;gap:60px;align-items:center;}
+@media(max-width:720px){.trainer-inner{grid-template-columns:1fr;gap:36px;}}
+.trainer-avatar{width:100px;height:100px;border-radius:20px;background:linear-gradient(135deg,var(--teal-deep),var(--teal));display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:800;color:#001318;margin-bottom:20px;}
+.trainer-name{font-size:28px;font-weight:800;margin-bottom:4px;}
+.trainer-title{font-size:15px;color:var(--teal);font-weight:600;margin-bottom:16px;}
+.trainer-bio{font-size:15px;color:var(--text-dim);line-height:1.7;margin-bottom:20px;}
+.cred-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.cred-item{background:var(--card);border:1px solid var(--border-soft);border-radius:8px;padding:12px 14px;}
+.cred-num{font-size:22px;font-weight:800;color:var(--teal);line-height:1;}
+.cred-label{font-size:12px;color:var(--text-faint);margin-top:3px;}
+.client-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-faint);margin-bottom:14px;}
+.client-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;}
+.client-pill{font-size:12.5px;padding:5px 12px;background:var(--card);border:1px solid var(--border-soft);border-radius:20px;color:var(--text-dim);}
+.specialisations{font-size:14px;color:var(--text-dim);line-height:1.9;}
+.specialisations strong{color:var(--text);}
+.philosophy-box{background:linear-gradient(135deg,rgba(0,194,224,.07),rgba(63,185,80,.06));border:1px solid rgba(0,194,224,.25);border-radius:var(--radius);padding:16px 18px;margin-top:20px;}
+.philosophy-box p{font-size:14px;color:#d0eef4;margin:0;line-height:1.7;}
+.philosophy-box strong{color:var(--teal);}
+.cta-final{text-align:center;padding:100px 24px;}
+.cta-final-inner{max-width:600px;margin:0 auto;}
+.cta-glow{display:inline-block;background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(0,194,224,.15) 0%,transparent 70%);padding:60px 40px;border-radius:24px;border:1px solid rgba(0,194,224,.2);width:100%;}
+.cta-final h2{font-size:36px;font-weight:800;margin-bottom:14px;letter-spacing:-.4px;}
+.cta-final p{font-size:17px;color:var(--text-dim);margin-bottom:32px;line-height:1.6;}
+.btn-large{display:inline-flex;align-items:center;gap:10px;background:var(--teal);color:#001318;font-size:18px;font-weight:800;padding:18px 40px;border-radius:12px;letter-spacing:-.2px;transition:opacity .15s,transform .2s;box-shadow:0 0 40px rgba(0,194,224,.3);}
+.btn-large:hover{opacity:.9;transform:translateY(-2px);text-decoration:none;color:#001318;}
+.cta-note{font-size:13px;color:var(--text-faint);margin-top:16px;}
+.cta-note a{color:var(--text-faint);border-bottom:1px solid var(--border);}
+footer{border-top:1px solid var(--border-soft);padding:40px 24px;background:var(--bg2);}
+.footer-inner{max-width:var(--maxw);margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+.footer-brand{font-size:13.5px;color:var(--text-dim);}
+.footer-brand strong{color:var(--text);}
+.footer-links{display:flex;gap:20px;font-size:13px;flex-wrap:wrap;}
+.footer-links a{color:var(--text-faint);}
+.footer-links a:hover{color:var(--teal);}
+.footer-bottom{text-align:center;font-size:12.5px;color:var(--text-faint);margin-top:20px;padding-top:20px;border-top:1px solid var(--border-soft);max-width:var(--maxw);margin-left:auto;margin-right:auto;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <div class="nav-logo-mark">B</div>
+      <div class="nav-brand">Beast <span>AI Initiative</span></div>
+    </div>
+    <div class="nav-links">
+      <a href="#programme" class="nav-link">Programme</a>
+      <a href="#stack" class="nav-link">Tech Stack</a>
+      <a href="#trainer" class="nav-link">Trainer</a>
+      <a href="home.html" class="nav-cta">Explore Sessions &rarr;</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge">
+    <span class="hero-badge-dot"></span>
+    Koenig Solutions &times; RR Skillverse &middot; Enterprise Training
+  </div>
+  <h1 class="hero-title">
+    Non-Technical Teams.<br/>
+    <span>Production-Ready Apps.</span><br/>
+    Built With AI.
+  </h1>
+  <p class="hero-sub">A live enterprise training programme where professionals with zero programming background build a complete Flutter mobile app, Node.js REST API, and PostgreSQL database &mdash; using Claude AI as a co-programmer.</p>
+  <div class="hero-cta-group">
+    <a href="home.html" class="btn-primary">
+      Let's Get Started <span class="arrow">&rarr;</span>
+    </a>
+    <a href="https://github.com/raushan1107" target="_blank" class="btn-secondary">
+      View on GitHub
+    </a>
+  </div>
+  <div class="hero-quote">
+    <p>&ldquo;You don't need to be a programmer to build one. You need to understand what you're building &mdash; and have the right AI partner beside you.&rdquo;</p>
+    <cite>&mdash; <strong>Raushan Ranjan</strong>, MCT &amp; Iconic Corporate Trainer, Koenig Solutions</cite>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="stats-inner">
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-num">5</div><div class="stat-label">Training days</div></div>
+      <div class="stat-box"><div class="stat-num">25+</div><div class="stat-label">Countries delivered</div></div>
+      <div class="stat-box"><div class="stat-num">40+</div><div class="stat-label">Enterprise clients</div></div>
+      <div class="stat-box"><div class="stat-num">0</div><div class="stat-label">Coding background needed</div></div>
+    </div>
+  </div>
+</div>
+
+<section id="programme" style="padding-top:60px;">
+  <div class="section-inner">
+    <div class="section-label">What Students Build</div>
+    <h2 class="section-title">A Real App. A Real Client. Real Data.</h2>
+    <p class="section-desc">Not a tutorial project. A functioning Maintenance Request Management System for <strong>Khan Chacha</strong> &mdash; a multi-outlet restaurant chain. The same app they use in production.</p>
+    <div class="app-showcase">
+      <div class="app-screen-list">
+        <div class="screen-item"><div class="screen-icon">&#128272;</div><div class="screen-body"><h4>Login Screen</h4><p>Role-based auth &mdash; manager vs staff &mdash; different views, different data access</p></div></div>
+        <div class="screen-item"><div class="screen-icon">&#128202;</div><div class="screen-body"><h4>Dashboard</h4><p>Live status counts, outlet-specific for staff, all-outlet for managers</p></div></div>
+        <div class="screen-item"><div class="screen-icon">&#128203;</div><div class="screen-body"><h4>Request List</h4><p>Search, filters, swipe-to-delete, pull-to-refresh &mdash; real database behind it</p></div></div>
+        <div class="screen-item"><div class="screen-icon">&#128196;</div><div class="screen-body"><h4>Detail Screen</h4><p>Full request view with status history log and image attachment</p></div></div>
+        <div class="screen-item"><div class="screen-icon">&#9998;&#65039;</div><div class="screen-body"><h4>New / Edit Request</h4><p>Create or edit requests with image picker &mdash; writes to PostgreSQL via REST API</p></div></div>
+      </div>
+      <div class="app-stack-visual">
+        <div style="color:var(--text-faint);font-size:11.5px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);">FULL PRODUCTION STACK</div>
+        <div style="color:#7dd3fc;">&#128242; Flutter App</div>
+        <div style="color:#475569;font-size:11.5px;">&nbsp;&nbsp;&nbsp;Android &middot; iOS &middot; Windows</div>
+        <div style="color:var(--text-faint);">&nbsp;&nbsp;&nbsp;&nbsp;&#9474; HTTPS / JSON</div>
+        <div style="color:#7dd3fc;">&#9889; Node.js + Express API</div>
+        <div style="color:#475569;font-size:11.5px;">&nbsp;&nbsp;&nbsp;8 REST endpoints &middot; AWS EC2</div>
+        <div style="color:var(--text-faint);">&nbsp;&nbsp;&nbsp;&nbsp;&#9474; PostgreSQL wire protocol</div>
+        <div style="color:#7dd3fc;">&#128024; PostgreSQL</div>
+        <div style="color:#475569;font-size:11.5px;">&nbsp;&nbsp;&nbsp;3 tables &middot; FK constraints &middot; AWS RDS</div>
+        <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border);font-size:12px;color:var(--text-faint);">All data migrated from Google Sheets<br/>Role-based access &middot; Status history &middot; Image storage</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--bg2);border-top:1px solid var(--border-soft);border-bottom:1px solid var(--border-soft);">
+  <div class="section-inner">
+    <div class="section-label">Programme Structure</div>
+    <h2 class="section-title">Five Days. One Complete App.</h2>
+    <p class="section-desc">Each day has a dedicated interactive handbook &mdash; tabbed navigation, copy-ready Claude Code prompts, architecture diagrams, and real-session Q&amp;A.</p>
+    <div class="days-grid">
+      <div class="day-card d1"><div class="day-num">Day 1</div><div class="day-title">Flutter Foundations</div><div class="day-desc">Install Flutter, understand widgets and hot reload, write first Dart code with Claude as pair-programmer. First working screen on your machine.</div><div class="day-output">&#10022; First running app</div></div>
+      <div class="day-card d2"><div class="day-num">Day 2</div><div class="day-title">Full App + Prompting Patterns</div><div class="day-desc">All 5 screens built. Role-based auth, animated transitions, image picker, confirmation dialogs. Learn the prompting patterns that make Claude generate exactly what you need.</div><div class="day-output">&#10022; Complete app on dummy data</div></div>
+      <div class="day-card d3"><div class="day-num">Day 3</div><div class="day-title">Real Database &mdash; PostgreSQL</div><div class="day-desc">Design a 3-table schema with ENUM types, foreign keys, and indexes. Seed with real data. Connect Flutter directly to PostgreSQL.</div><div class="day-output">&#10022; App backed by PostgreSQL</div></div>
+      <div class="day-card d4"><div class="day-num">Day 4</div><div class="day-title">API Layer &mdash; Node.js + Express</div><div class="day-desc">Build a Node.js REST API with 8 endpoints. Flutter switches from direct DB to HTTP calls. Database credentials leave the app. Production-grade architecture.</div><div class="day-output">&#10022; Flutter &rarr; API &rarr; PostgreSQL</div></div>
+      <div class="day-card d5"><div class="day-num">Day 5</div><div class="day-title">Build, Export &amp; Deploy</div><div class="day-desc">Export the Flutter app as APK for Android, IPA for iOS, EXE for Windows. Deploy the API to AWS EC2, migrate the database to AWS RDS.</div><div class="day-output">&#10022; Live on AWS + Play Store</div></div>
+      <div class="day-card guide"><div class="day-num">Field Guide</div><div class="day-title">Pre-Launch Essentials</div><div class="day-desc">Migrate Google Sheets data to PostgreSQL. Dev/Test/Production environments. APK size management. Full security checklist &mdash; because AI-generated code is not automatically secure.</div><div class="day-output">&#10022; Production ready</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="stack">
+  <div class="section-inner">
+    <div class="section-label">Technology</div>
+    <h2 class="section-title">The Stack Students Master</h2>
+    <p class="section-desc">Industry-standard technologies used by real engineering teams &mdash; learned by non-technical professionals through structured AI-assisted development.</p>
+    <div class="tech-grid">
+      <div class="tech-item"><div class="tech-icon">&#127919;</div><div class="tech-name">Flutter + Dart</div><div class="tech-role">Cross-platform mobile &amp; desktop</div></div>
+      <div class="tech-item"><div class="tech-icon">&#9889;</div><div class="tech-name">Node.js + Express</div><div class="tech-role">REST API &mdash; 8 endpoints, CRUD + auth</div></div>
+      <div class="tech-item"><div class="tech-icon">&#128024;</div><div class="tech-name">PostgreSQL</div><div class="tech-role">Relational DB &mdash; schema, FKs, ENUMs</div></div>
+      <div class="tech-item"><div class="tech-icon">&#9729;&#65039;</div><div class="tech-name">AWS</div><div class="tech-role">EC2 for API &middot; RDS for database</div></div>
+      <div class="tech-item"><div class="tech-icon">&#129302;</div><div class="tech-name">Claude Code</div><div class="tech-role">AI pair-programmer &mdash; every build step</div></div>
+      <div class="tech-item"><div class="tech-icon">&#128272;</div><div class="tech-name">JWT + bcrypt</div><div class="tech-role">Authentication &amp; password security</div></div>
+      <div class="tech-item"><div class="tech-icon">&#128230;</div><div class="tech-name">APK / IPA / EXE</div><div class="tech-role">Native app export for all platforms</div></div>
+      <div class="tech-item"><div class="tech-icon">&#129514;</div><div class="tech-name">Dev / Test / Prod</div><div class="tech-role">Environment management from day one</div></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--bg2);border-top:1px solid var(--border-soft);border-bottom:1px solid var(--border-soft);padding:80px 24px;">
+  <div class="section-inner">
+    <div class="section-label">The Method</div>
+    <h2 class="section-title">Vibe Coding &mdash; But With Discipline</h2>
+    <p class="section-desc" style="margin-bottom:36px;">Claude is the co-programmer. Students are the architects. Every decision is explained before it is implemented.</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+      <div style="background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:22px;"><div style="font-size:26px;margin-bottom:12px;">&#128172;</div><h4 style="font-size:15px;font-weight:700;margin-bottom:8px;">Why Before How</h4><p style="font-size:13.5px;color:var(--text-faint);margin:0;line-height:1.6;">Every concept is explained in plain English before any code is written. Students understand what they are building &mdash; not just how to paste a prompt.</p></div>
+      <div style="background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:22px;"><div style="font-size:26px;margin-bottom:12px;">&#128203;</div><h4 style="font-size:15px;font-weight:700;margin-bottom:8px;">Step-by-Step + Capstone</h4><p style="font-size:13.5px;color:var(--text-faint);margin:0;line-height:1.6;">Every day gives two paths: 10&ndash;12 progressive prompts that teach each piece, or one complete capstone prompt that builds it all at once.</p></div>
+      <div style="background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:22px;"><div style="font-size:26px;margin-bottom:12px;">&#128269;</div><h4 style="font-size:15px;font-weight:700;margin-bottom:8px;">Real Errors Documented</h4><p style="font-size:13.5px;color:var(--text-faint);margin:0;line-height:1.6;">Every error encountered in live sessions is documented in the handbook Q&amp;A. No clean fictional examples &mdash; real mistakes, real fixes.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="trainer" class="trainer-section">
+  <div class="trainer-inner">
+    <div>
+      <div class="trainer-avatar">R</div>
+      <div class="trainer-name">Raushan Ranjan</div>
+      <div class="trainer-title">MCT &middot; Iconic Corporate Trainer &middot; Koenig Solutions</div>
+      <div class="trainer-bio">Microsoft Certified Trainer delivering enterprise ILT/VILT across 25+ countries for 4+ years. Founder of RR Skillverse, an independent EdTech platform. Architect of the Beast AI Initiative.</div>
+      <div class="cred-grid">
+        <div class="cred-item"><div class="cred-num">11+</div><div class="cred-label">Years in education</div></div>
+        <div class="cred-item"><div class="cred-num">25+</div><div class="cred-label">Countries trained</div></div>
+        <div class="cred-item"><div class="cred-num">40+</div><div class="cred-label">Certifications held</div></div>
+        <div class="cred-item"><div class="cred-num">40+</div><div class="cred-label">Enterprise clients</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="client-title">Global client roster includes</div>
+      <div class="client-list">
+        <span class="client-pill">Central Bank of Nigeria</span>
+        <span class="client-pill">World Bank Group</span>
+        <span class="client-pill">US Navy</span>
+        <span class="client-pill">Finance Ministry Riyadh</span>
+        <span class="client-pill">DEWA</span><span class="client-pill">GOSI</span>
+        <span class="client-pill">UN Italy</span>
+        <span class="client-pill">Paris Saint-Germain FC</span>
+        <span class="client-pill">Coca-Cola</span>
+        <span class="client-pill">Green Concrete KSA</span>
+      </div>
+      <div class="specialisations"><strong>Core specialisations:</strong><br/>Azure &middot; Power Platform &middot; Microsoft 365<br/>.NET / Blazor / Clean Architecture<br/>AI Engineering &middot; Flutter &middot; OpenGL / Vulkan</div>
+      <div class="philosophy-box"><p><strong>"Why Before How"</strong> &mdash; Students must understand <em>why</em> something works before learning <em>how</em> to implement it. This is especially critical in AI-assisted development. The Beast AI Initiative is built entirely on this philosophy.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-final">
+  <div class="cta-final-inner">
+    <div class="cta-glow">
+      <div style="font-size:48px;margin-bottom:16px;">&#129409;</div>
+      <h2>Ready to Build?</h2>
+      <p>All training handbooks, Claude Code prompts, architecture guides, and session materials &mdash; open and free to explore.</p>
+      <a href="home.html" class="btn-large">Let's Get Started &rarr;</a>
+      <div class="cta-note">
+        Or jump directly to
+        <a href="day1.html">Day 1</a> &middot;
+        <a href="day4.html">Day 4 API Guide</a> &middot;
+        <a href="pre-launch-guide.html">Pre-Launch Guide</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand"><strong>Beast AI Initiative</strong> &middot; Koenig Solutions &times; RR Skillverse &middot; 2026</div>
+    <div class="footer-links">
+      <a href="home.html">All Sessions</a>
+      <a href="https://rrskillverse.in" target="_blank">RR Skillverse</a>
+      <a href="https://www.koenig-solutions.com" target="_blank">Koenig Solutions</a>
+      <a href="https://github.com/raushan1107" target="_blank">GitHub</a>
+      <a href="mailto:raushanr1107@gmail.com">Contact</a>
+    </div>
+  </div>
+  <div class="footer-bottom">Designed &amp; delivered by Raushan Ranjan &middot; MCT &middot; Non-technical professionals &rarr; production-ready apps &middot; Powered by Claude AI</div>
+</footer>
+
+</body>
+</html>
