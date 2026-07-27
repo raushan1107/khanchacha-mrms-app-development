@@ -283,6 +283,147 @@ Returns:
     <tr><td><code>shared_preferences</code></td><td>Store last_check timestamp between app sessions</td><td><code>shared_preferences: ^2.2.0</code></td></tr>
     <tr><td><code>badge_plus</code></td><td>Red badge count on the bell icon</td><td><code>badge_plus: ^3.0.0</code></td></tr>
   </table>
+
+  <h2>Testing Notifications with Android Studio Emulator</h2>
+  <p>You do not need to extract an APK or deploy anything to test notifications. The Android emulator in Android Studio runs a full Android OS on your PC. Flutter treats it exactly like a real phone — you get real system notifications, badge counts, and the notification tray.</p>
+
+  <div class="card green">
+    <h4>Step 1 &mdash; Check if an emulator already exists</h4>
+    <pre style="margin:6px 0 0;background:var(--code-bg);border:none;padding:10px;border-radius:6px;font-size:12.5px;">flutter emulators</pre>
+    <p style="margin:8px 0 0;font-size:13.5px;color:var(--text-dim);">If it lists an emulator &mdash; you are ready. Skip to Step 3. If the list is empty, continue to Step 2.</p>
+  </div>
+
+  <div class="card amber">
+    <h4>Step 2 &mdash; Create an emulator in Android Studio</h4>
+    <ol style="margin:6px 0 0 18px;font-size:13.5px;color:var(--text-dim);">
+      <li>Open Android Studio &rarr; <strong>Tools &rarr; Device Manager</strong></li>
+      <li>Click <strong>Create Virtual Device</strong></li>
+      <li>Choose <strong>Pixel 6</strong> &rarr; Next</li>
+      <li>Select <strong>API 34 (Android 14)</strong> &rarr; Download if needed &rarr; Next</li>
+      <li>Click <strong>Finish</strong></li>
+      <li>Press the play button &#9654; next to the device to start it</li>
+    </ol>
+  </div>
+
+  <div class="card teal">
+    <h4>Step 3 &mdash; Critical: Change BASE_URL for emulator</h4>
+    <p style="font-size:13.5px;color:var(--text-dim);margin-bottom:8px;">The Android emulator cannot reach <code>localhost</code> &mdash; it uses a special IP instead:</p>
+    <pre style="margin:0;background:var(--code-bg);border:none;padding:10px;border-radius:6px;font-size:12.5px;">// lib/services/api_service.dart
+static const String _baseUrl = 'http://10.0.2.2:3000/api';
+// 10.0.2.2 is Android emulator's alias for the host machine's localhost</pre>
+    <p style="font-size:13px;color:var(--text-dim);margin:8px 0 0;">For Windows desktop: use <code>localhost:3000</code>. For emulator: use <code>10.0.2.2:3000</code>. Switch between them as needed.</p>
+  </div>
+
+  <div class="card purple">
+    <h4>Step 4 &mdash; Run both server and app</h4>
+    <pre style="margin:6px 0 0;background:var(--code-bg);border:none;padding:10px;border-radius:6px;font-size:12.5px;"># Terminal 1 &mdash; API server
+cd khan_chacha_api
+npm run dev
+
+# Terminal 2 &mdash; Flutter on emulator
+cd khanchacha
+flutter run -d emulator</pre>
+  </div>
+
+  <h3>&#127916; The live demo sequence &mdash; show this in session</h3>
+  <div class="arch-box" style="line-height:2.6;">
+    <span style="color:#6b7480;font-size:11.5px;">DEVICE 1 &mdash; Android emulator logged in as STAFF (Priya Nair)</span><br/>
+    <span style="color:#6b7480;font-size:11.5px;">DEVICE 2 &mdash; Windows desktop app logged in as MANAGER (Arjun Sharma)</span><br/><br/>
+    Staff taps <span style="color:#7dd3fc;">New Request</span> on emulator &rarr; fills form &rarr; submits<br/>
+    &nbsp;&nbsp;&nbsp;&#9474; POST /api/requests &rarr; saved in PostgreSQL<br/>
+    Manager&rsquo;s Windows app timer fires (0&ndash;30 seconds later)<br/>
+    &nbsp;&nbsp;&nbsp;&#9474; GET /api/notifications?since=... &rarr; API returns new request<br/>
+    <span style="color:#D4A017;">Bell icon on manager&rsquo;s app shows a red badge &#128276;</span><br/>
+    Manager taps bell &rarr; sees &ldquo;New request: [product name] from Priya Nair&rdquo;<br/>
+    Manager changes status to Pending &rarr; Staff&rsquo;s next poll shows the update
+  </div>
+
+  <div class="note-box">
+    <div class="note-label">&#128161; Tip for the demo</div>
+    <p>Reduce the polling interval to 10 seconds during the demo so the notification appears faster: <code>Timer.periodic(const Duration(seconds: 10), ...)</code>. Change it back to 30 seconds before the session ends.</p>
+  </div>
+
+  <h2>Polling vs Real-Time &mdash; What comes next</h2>
+  <p>The notification system we built uses <strong>polling</strong> &mdash; the app asks the server every 30 seconds "anything new?" This works well for a demo and for small deployments. But it has real limitations at production scale.</p>
+
+  <div class="grid2">
+    <div class="card red">
+      <h4>&#9203; Limitations of polling</h4>
+      <ul style="margin:6px 0 0 16px;font-size:13.5px;color:var(--text-dim);">
+        <li>30-second delay is not truly real-time</li>
+        <li>Every device makes an API call every 30 seconds &mdash; 20 outlets &times; 2 users = 40 API calls/minute doing nothing</li>
+        <li>Does not scale well beyond ~50 concurrent users</li>
+        <li>Wastes API and database resources when nothing is happening</li>
+        <li>If the manager&rsquo;s app is closed &mdash; no notification at all</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h4>&#9889; What real-time requires</h4>
+      <ul style="margin:6px 0 0 16px;font-size:13.5px;color:var(--text-dim);">
+        <li>Server pushes to clients the moment something changes</li>
+        <li>Clients listen, not ask &mdash; no wasted calls</li>
+        <li>Push notification delivered even when app is closed</li>
+        <li>Scales to hundreds of users efficiently</li>
+        <li>Standard in enterprise HRMS, ERP, and ops tools</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Event-driven architecture &mdash; the right long-term solution</h3>
+  <p>Real-time delivery requires an event-driven layer between the API and the app. When a new request is saved to the database, the API publishes an event to a message bus. That bus delivers it to all subscribed clients instantly &mdash; no polling needed.</p>
+
+  <div class="arch-box" style="line-height:2.4;">
+    <span style="color:#6b7480;font-size:11.5px;">EVENT-DRIVEN FLOW (future architecture)</span><br/>
+    Flutter form submit &rarr; POST /api/requests<br/>
+    Node.js saves to DB &rarr; <span style="color:#D4A017;">publishes event to Message Bus</span><br/>
+    &nbsp;&nbsp;&nbsp;&#9474;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9474;<br/>
+    <span style="color:#7dd3fc;">Mobile push (FCM)</span>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#7dd3fc;">WebSocket push to open apps</span><br/>
+    Phone notification tray&nbsp;&nbsp;Bell badge updates instantly
+  </div>
+
+  <h3>Azure vs AWS &mdash; event-driven options and cost comparison</h3>
+  <table>
+    <tr><th>Requirement</th><th>Azure option</th><th>Azure cost</th><th>AWS option</th><th>AWS cost</th></tr>
+    <tr>
+      <td>Event routing<br/><small style="color:var(--text-faint);">Trigger actions when DB changes</small></td>
+      <td><strong>Azure Event Grid</strong><br/>Pub/sub for events</td>
+      <td>First 100K events/month free<br/>~$0.60 per million after</td>
+      <td><strong>Amazon EventBridge</strong><br/>Same concept</td>
+      <td>First 14M events/month free<br/>$1.00 per million after</td>
+    </tr>
+    <tr>
+      <td>Message queuing<br/><small style="color:var(--text-faint);">Reliable delivery, retry logic</small></td>
+      <td><strong>Azure Service Bus</strong><br/>Enterprise messaging</td>
+      <td>Basic: ~&#8377;670/month ($8)<br/>Standard: ~&#8377;830/month ($10)</td>
+      <td><strong>Amazon SQS</strong><br/>Simple queue service</td>
+      <td>First 1M requests/month free<br/>$0.40 per million after</td>
+    </tr>
+    <tr>
+      <td>Real-time WebSocket<br/><small style="color:var(--text-faint);">Instant push to open apps</small></td>
+      <td><strong>Azure Web PubSub</strong><br/>Managed WebSocket service</td>
+      <td>Free: 20K messages/day<br/>Standard: ~&#8377;670/month ($8)</td>
+      <td><strong>AWS API Gateway WebSocket</strong><br/>or AWS AppSync</td>
+      <td>$1.00 per million messages<br/>+ connection minutes</td>
+    </tr>
+    <tr>
+      <td>Mobile push<br/><small style="color:var(--text-faint);">Notification to closed app</small></td>
+      <td><strong>Azure Notification Hubs</strong><br/>Wraps FCM + APNs</td>
+      <td>Free: 1M pushes/month<br/>Basic: ~&#8377;830/month ($10)</td>
+      <td><strong>Amazon SNS</strong><br/>Simple notification service</td>
+      <td>First 1M pushes/month free<br/>$0.50 per million after</td>
+    </tr>
+  </table>
+
+  <div class="rec-box">
+    <div class="rec-label">&#127775; Raushan&rsquo;s suggestion &mdash; if you go real-time</div>
+    <p><strong>Azure Web PubSub + Azure Notification Hubs</strong> is the cleanest path if you are already using Azure App Service for the API. All services are in one portal, one bill, one subscription. The Node.js SDK for Web PubSub is simple &mdash; publishing an event after a DB write is 3 lines of code. For Khan Chacha&rsquo;s scale (20 outlets, ~40 users), the free tier of both services covers the entire workload indefinitely. AWS is equally capable but requires more services wired together (SQS + SNS + Lambda or AppSync) &mdash; more powerful but more configuration. Stick with Azure if you are already there.</p>
+    <p style="margin-top:10px;"><strong>Estimated real-time stack cost on Azure:</strong> &#8377;0&ndash;&#8377;1,500/month ($0&ndash;$18) depending on message volume. For Khan Chacha, likely free tier for 12+ months.</p>
+  </div>
+
+  <div class="card amber">
+    <h4>&#128203; Note for students</h4>
+    <p style="margin:0;font-size:13.5px;color:var(--text-dim);">The polling approach we implemented today is production-acceptable for small deployments. Most internal enterprise tools at 20&ndash;50 users use polling. Real-time WebSocket infrastructure adds complexity and cost that is only justified when you have hundreds of concurrent users or when seconds of delay genuinely affect operations. For Khan Chacha in Year 1 &mdash; polling is perfectly fine. Revisit this decision when the chain expands beyond 50 outlets.</p>
+  </div>
 </div>
 
 <!-- ══ TAB 3 · SMART DESCRIPTIONS ══ -->
