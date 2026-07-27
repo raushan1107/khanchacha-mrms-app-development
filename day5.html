@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 5 — Features, Cloud & Deployment | Khan Chacha MRMS | Beast AI Initiative</title>
+<style>
+:root{
+  --bg:#0d1117;--bg2:#11161d;--card:#161b22;--border:#26303d;--border-soft:#1d2530;
+  --text:#e6edf3;--text-dim:#9da7b3;--text-faint:#6b7480;
+  --teal:#00c2e0;--teal-deep:#0082A0;--green:#3fb950;--amber:#f59e0b;
+  --orange:#e88c1f;--red:#f85149;--purple:#a371f7;--violet:#7c3aed;
+  --radius:10px;--maxw:1000px;--code-bg:#0a0e14;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.65;font-size:16px;padding-top:54px;}
+a{color:var(--teal);text-decoration:none;}a:hover{text-decoration:underline;}
+code{font-family:"SF Mono",Consolas,monospace;background:var(--code-bg);color:#7ee787;padding:2px 6px;border-radius:4px;font-size:.87em;}
+pre{background:var(--code-bg);border:1px solid var(--border-soft);border-radius:var(--radius);padding:14px 16px;overflow-x:auto;font-family:"SF Mono",Consolas,monospace;font-size:13px;line-height:1.7;margin:12px 0;color:#c9d1d9;}
+strong{color:var(--text);}
+p{margin-bottom:12px;color:#c5ccd4;}
+ul,ol{margin:8px 0 14px 22px;color:#c5ccd4;}li{margin-bottom:7px;}
+
+.beast-nav{position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(13,17,23,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--border-soft);height:54px;display:flex;align-items:center;padding:0 24px;}
+.beast-nav-inner{max-width:var(--maxw);margin:0 auto;width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.beast-nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none!important;}
+.beast-nav-mark{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,#a371f7,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;}
+.beast-nav-brand{font-size:13px;font-weight:700;color:#e6edf3;}
+.beast-nav-brand em{color:#a371f7;font-style:normal;}
+.beast-nav-right{display:flex;align-items:center;gap:7px;}
+.beast-nav-pill{font-size:12px;color:#9da7b3;padding:5px 12px;border:1px solid #26303d;border-radius:16px;text-decoration:none!important;transition:color .15s,border-color .15s;white-space:nowrap;}
+.beast-nav-pill:hover{color:#a371f7!important;border-color:#a371f7;}
+.beast-nav-btn{font-size:12px;font-weight:700;background:#a371f7;color:#fff!important;padding:5px 14px;border-radius:8px;text-decoration:none!important;}
+.beast-nav-btn:hover{opacity:.88;}
+
+header{background:linear-gradient(180deg,#0f141b 0%,var(--bg) 100%);border-bottom:1px solid var(--border-soft);padding:28px 24px 0;position:sticky;top:54px;z-index:100;}
+.header-inner{max-width:var(--maxw);margin:0 auto;}
+.brand-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px;}
+.brand-left{display:flex;align-items:center;gap:12px;}
+.logo-mark{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#a371f7,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;}
+.brand-title{font-size:15px;font-weight:600;}
+.brand-sub{font-size:12.5px;color:var(--text-faint);}
+.home-btn{font-size:12.5px;font-weight:600;color:var(--text-dim);background:rgba(255,255,255,.05);border:1px solid var(--border);padding:5px 14px;border-radius:20px;text-decoration:none;}
+.home-btn:hover{color:var(--purple);border-color:var(--purple);text-decoration:none;}
+h1.pt{font-size:26px;font-weight:700;margin-bottom:6px;letter-spacing:-.3px;}
+.ps{font-size:15px;color:var(--text-dim);margin-bottom:22px;max-width:680px;}
+.tabnav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;}
+.tabnav::-webkit-scrollbar{display:none;}
+.tabnav button{background:none;border:none;color:var(--text-dim);font-size:13px;font-weight:500;padding:11px 14px;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;font-family:inherit;}
+.tabnav button:hover{color:var(--text);}
+.tabnav button.active{color:var(--purple);border-bottom-color:var(--purple);}
+
+main{max-width:var(--maxw);margin:0 auto;padding:32px 24px 60px;}
+.tabpanel{display:none;}.tabpanel.active{display:block;animation:fadein .22s ease;}
+@keyframes fadein{from{opacity:0;transform:translateY(4px);}to{opacity:1;}}
+
+h2{font-size:20px;font-weight:700;margin:34px 0 12px;letter-spacing:-.2px;}
+h2:first-child{margin-top:0;}
+h3{font-size:16px;font-weight:600;margin:20px 0 8px;color:var(--text);}
+
+.card{background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:16px 18px;margin:12px 0;}
+.card.purple{border-left:3px solid var(--purple);}
+.card.green{border-left:3px solid var(--green);}
+.card.amber{border-left:3px solid var(--amber);}
+.card.teal{border-left:3px solid var(--teal);}
+.card.red{border-left:3px solid var(--red);}
+.card h4{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-faint);margin-bottom:8px;font-weight:600;}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0;}
+@media(max-width:720px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+.prompt-box{background:#15101f;border:1px solid rgba(163,113,247,.3);border-radius:var(--radius);padding:16px 18px;margin:14px 0;}
+.prompt-label{font-size:11.5px;color:var(--purple);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+.prompt-text{font-size:13px;color:#e8e0f7;line-height:1.75;white-space:pre-wrap;font-family:"SF Mono",Consolas,monospace;}
+.copy-btn{background:rgba(163,113,247,.15);border:1px solid rgba(163,113,247,.4);color:var(--purple);font-size:11.5px;padding:5px 12px;border-radius:6px;cursor:pointer;font-weight:600;font-family:inherit;}
+.copy-btn:hover{background:rgba(163,113,247,.28);}
+.copy-btn.copied{background:rgba(63,185,80,.2);color:var(--green);border-color:rgba(63,185,80,.4);}
+
+.what-box{background:rgba(63,185,80,.06);border:1px solid rgba(63,185,80,.2);border-radius:8px;padding:10px 14px;margin:8px 0 14px;}
+.what-label{font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.what-box p{margin:0;font-size:13.5px;color:#b4d9ba;}
+
+.proj-banner{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:8px;margin:22px 0 12px;font-size:13px;font-weight:700;}
+.proj-api{background:rgba(232,140,31,.1);border:2px solid rgba(232,140,31,.4);color:var(--orange);}
+.proj-flutter{background:rgba(0,194,224,.07);border:2px solid rgba(0,194,224,.3);color:var(--teal);}
+
+.note-box{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.3);border-radius:var(--radius);padding:14px 16px;margin:14px 0;}
+.note-label{font-size:11px;color:var(--amber);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.note-box p{color:#d4c08a;margin:0;font-size:14px;}
+
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px;}
+th{text-align:left;color:var(--text-faint);font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;padding:9px 12px;border-bottom:1px solid var(--border);}
+td{padding:10px 12px;border-bottom:1px solid var(--border-soft);color:#c5ccd4;vertical-align:top;}
+td:first-child{color:var(--text);font-weight:600;}
+
+.arch-box{background:#060e18;border:1px solid var(--border-soft);border-radius:var(--radius);padding:18px 22px;margin:14px 0;font-family:"SF Mono",Consolas,monospace;font-size:13px;line-height:2.2;color:#7dd3fc;}
+.arch-box .dim{color:#475569;font-size:11.5px;}
+
+.price-card{background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:18px;text-align:center;}
+.price-card .tier{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+.price-card .amount{font-size:28px;font-weight:800;line-height:1;margin-bottom:4px;}
+.price-card .period{font-size:12px;color:var(--text-faint);margin-bottom:12px;}
+.price-card ul{text-align:left;margin:0 0 0 16px;font-size:13px;}
+.price-card li{margin-bottom:5px;color:var(--text-dim);}
+.pill-green{background:rgba(63,185,80,.15);color:var(--green);display:inline-block;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:600;}
+.pill-amber{background:rgba(245,158,11,.15);color:var(--amber);display:inline-block;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:600;}
+.pill-purple{background:rgba(163,113,247,.15);color:var(--purple);display:inline-block;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:600;}
+
+.rec-box{background:linear-gradient(135deg,rgba(163,113,247,.08),rgba(0,194,224,.06));border:2px solid rgba(163,113,247,.35);border-radius:var(--radius);padding:18px 20px;margin:18px 0;}
+.rec-label{font-size:11px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+.rec-box p{margin:0;color:#d8c0f7;font-size:14px;line-height:1.7;}
+
+.toc-strip{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 26px;padding:12px;background:var(--card);border:1px solid var(--border-soft);border-radius:var(--radius);}
+.toc-strip a{font-size:12.5px;color:var(--text-dim);padding:4px 10px;border:1px solid var(--border);border-radius:14px;}
+.toc-strip a:hover{color:var(--purple);border-color:var(--purple);text-decoration:none;}
+
+.beast-footer-nav{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;background:#11161d;border-top:2px solid #1d2530;flex-wrap:wrap;gap:12px;}
+.beast-footer-nav a{font-size:13.5px;font-weight:600;color:#9da7b3;text-decoration:none!important;padding:9px 20px;border:1px solid #26303d;border-radius:8px;transition:color .15s,border-color .15s;}
+.beast-footer-nav a:hover{color:#a371f7;border-color:#a371f7;}
+.beast-footer-nav .fn-next{background:#a371f7;color:#fff!important;border-color:#a371f7;}
+.beast-footer-nav .fn-next:hover{opacity:.88;color:#fff!important;}
+footer{border-top:1px solid var(--border-soft);padding:28px 24px;background:var(--bg2);}
+.footer-inner{max-width:var(--maxw);margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
+.footer-brand{font-size:13px;color:var(--text-dim);}
+.footer-brand strong{color:var(--text);}
+.footer-links{display:flex;gap:18px;font-size:13px;}
+.footer-links a{color:var(--text-faint);}
+.footer-links a:hover{color:var(--purple);}
+.footer-bottom{text-align:center;font-size:12px;color:var(--text-faint);padding:14px 24px 0;max-width:var(--maxw);margin:0 auto;}
+</style>
+</head>
+<body>
+
+<nav class="beast-nav">
+  <div class="beast-nav-inner">
+    <a href="index.html" class="beast-nav-logo">
+      <div class="beast-nav-mark">B</div>
+      <div class="beast-nav-brand">Beast <em>AI Initiative</em></div>
+    </a>
+    <div class="beast-nav-right">
+      <a href="home.html" class="beast-nav-pill">&#128218; All Sessions</a>
+      <a href="day4.html" class="beast-nav-pill">&larr; Phase 4</a>
+      <a href="pre-launch-guide.html" class="beast-nav-btn">Pre-Launch &rarr;</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="header-inner">
+    <div class="brand-row">
+      <div class="brand-left">
+        <div class="logo-mark">&#128640;</div>
+        <div>
+          <div class="brand-title">Khan Chacha MRMS &mdash; Phase 5 &middot; Features &amp; Cloud</div>
+          <div class="brand-sub">Beast AI Initiative &middot; Koenig Solutions</div>
+        </div>
+      </div>
+      <a href="home.html" class="home-btn">&larr; All Sessions</a>
+    </div>
+    <h1 class="pt">Phase 5 &mdash; Smart Features, Cloud Migration &amp; Deployment</h1>
+    <p class="ps">Notifications, smart descriptions, WhatsApp sharing, PDF export, Supabase migration, and cloud deployment. Build real enterprise features with Claude as your pair-programmer.</p>
+    <nav class="tabnav" id="tabnav">
+      <button data-tab="recap" class="active">&#128203; Recap</button>
+      <button data-tab="notifications">&#128276; Notifications</button>
+      <button data-tab="smartdesc">&#9999;&#65039; Smart Descriptions</button>
+      <button data-tab="share">&#128228; Share &amp; Export</button>
+      <button data-tab="supabase">&#127758; Supabase Migration</button>
+      <button data-tab="claudepair">&#129302; Claude as Pair</button>
+      <button data-tab="prompts">&#128296; Step-by-Step</button>
+      <button data-tab="architecture">&#128366; Architecture</button>
+      <button data-tab="pricing">&#128176; Pricing Guide</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ══ TAB 1 · RECAP ══ -->
+<div class="tabpanel active" id="tab-recap">
+  <div class="toc-strip">
+    <a href="#r-built">What we built</a>
+    <a href="#r-how">How it connects</a>
+    <a href="#r-files">Key files</a>
+    <a href="#r-modify">Where to modify</a>
+    <a href="#r-phase5">Phase 5 plan</a>
+  </div>
+
+  <h2 id="r-built">What we have built so far</h2>
+  <div class="grid3">
+    <div class="card purple"><h4>&#127919; Flutter App</h4><p style="margin:0;font-size:13.5px;color:var(--text-dim);">5-screen MRMS app running on Windows desktop and Android. Role-based login, dashboard with status counts, request list with filters, detail view, new/edit form. Khan Chacha brand colours with left navigation rail.</p></div>
+    <div class="card teal"><h4>&#9889; Node.js REST API</h4><p style="margin:0;font-size:13.5px;color:var(--text-dim);">9 endpoints handling authentication, full CRUD for maintenance requests, and dashboard counts. Express + pg running on port 3000. Parameterized queries, safe null casting, CORS enabled.</p></div>
+    <div class="card green"><h4>&#128024; PostgreSQL Database</h4><p style="margin:0;font-size:13.5px;color:var(--text-dim);">3-table schema: outlets, users, maintenance_requests. ENUM types for status and category. Foreign key constraints. JSONB status_history. Seeded with 2 outlets, 2 users, 8+ requests.</p></div>
+  </div>
+
+  <h2 id="r-how">How the three components connect</h2>
+  <div class="arch-box">
+    <span style="color:#6b7480;">FLUTTER APP (your machine or Android phone)</span><br/>
+    &nbsp;&nbsp;lib/services/api_service.dart &nbsp;<span class="dim">&#8592; all HTTP calls live here</span><br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&#9474; HTTP/JSON &rarr; localhost:3000 (dev) or AWS/Azure URL (prod)<br/>
+    <span style="color:#6b7480;">NODE.JS API (khan_chacha_api/)</span><br/>
+    &nbsp;&nbsp;server.js &rarr; routes/requests.js &middot; auth.js &middot; dashboard.js<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&#9474; pg Pool &rarr; port 5432<br/>
+    <span style="color:#6b7480;">POSTGRESQL (local &rarr; Supabase in Phase 5)</span><br/>
+    &nbsp;&nbsp;outlets &#8592;FK&#8212; users &#8592;FK&#8212; maintenance_requests
+  </div>
+
+  <h2 id="r-files">Key files reference &mdash; where everything lives</h2>
+  <table>
+    <tr><th>File</th><th>What it does</th><th>Change this when you want to&hellip;</th></tr>
+    <tr><td><code>lib/services/api_service.dart</code></td><td>All HTTP calls to the API</td><td>Add a new API endpoint call, change the BASE_URL</td></tr>
+    <tr><td><code>lib/services/auth_service.dart</code></td><td>Login and current user storage</td><td>Change login logic, add user fields</td></tr>
+    <tr><td><code>lib/models/maintenance_request.dart</code></td><td>Data model, fromJson(), toInsertMap()</td><td>Add new fields to requests</td></tr>
+    <tr><td><code>lib/screens/dashboard_screen.dart</code></td><td>Home screen with stats and rail</td><td>Add new navigation items, change dashboard layout</td></tr>
+    <tr><td><code>lib/screens/request_form_screen.dart</code></td><td>New/edit request form</td><td>Add new form fields, change validation</td></tr>
+    <tr><td><code>lib/theme/app_theme.dart</code></td><td>All colours and theme</td><td>Change any colour, font, or widget style</td></tr>
+    <tr><td><code>khan_chacha_api/routes/requests.js</code></td><td>CRUD endpoints for requests</td><td>Add new API behaviour, change SQL queries</td></tr>
+    <tr><td><code>khan_chacha_api/routes/auth.js</code></td><td>Login endpoint</td><td>Add JWT, change password handling</td></tr>
+    <tr><td><code>khan_chacha_api/.env</code></td><td>All secrets and DB connection</td><td>Switch database (local &rarr; Supabase)</td></tr>
+    <tr><td><code>db/schema.sql</code></td><td>PostgreSQL table definitions</td><td>Add columns, change constraints</td></tr>
+  </table>
+
+  <h2 id="r-modify">How to modify specific things</h2>
+  <div class="grid2">
+    <div class="card amber"><h4>Add a new field to requests</h4><p style="font-size:13.5px;color:var(--text-dim);margin:0;">1. Add column in schema.sql &rarr; ALTER TABLE<br/>2. Add field in maintenance_request.dart (fromJson + toInsertMap)<br/>3. Add TextField in request_form_screen.dart<br/>4. Display in detail_screen.dart</p></div>
+    <div class="card teal"><h4>Add a new API endpoint</h4><p style="font-size:13.5px;color:var(--text-dim);margin:0;">1. Add route in the relevant routes/*.js file<br/>2. Mount in server.js if new router file<br/>3. Add corresponding method in api_service.dart<br/>4. Call from the relevant screen</p></div>
+    <div class="card green"><h4>Change the colour scheme</h4><p style="font-size:13.5px;color:var(--text-dim);margin:0;">Edit lib/theme/app_theme.dart only. Change the const Color values. Hot restart. No other files need changing.</p></div>
+    <div class="card purple"><h4>Switch the database</h4><p style="font-size:13.5px;color:var(--text-dim);margin:0;">Edit khan_chacha_api/.env only. Change DB_HOST, DB_NAME, DB_USER, DB_PASSWORD to point at Supabase or RDS. Restart the API server. Flutter app needs no changes.</p></div>
+  </div>
+
+  <h2 id="r-phase5">Phase 5 session plan</h2>
+  <table>
+    <tr><th>Feature</th><th>What it adds</th><th>Complexity</th></tr>
+    <tr><td>&#128276; In-app notifications</td><td>Bell icon with badge, polling for new requests and status changes</td><td>&#11088;&#11088; Medium</td></tr>
+    <tr><td>&#9999;&#65039; Smart descriptions</td><td>Quick-select buttons that generate structured descriptions for non-technical staff</td><td>&#11088; Easy</td></tr>
+    <tr><td>&#128228; WhatsApp share</td><td>Share request details as text directly to WhatsApp</td><td>&#11088; Easy</td></tr>
+    <tr><td>&#128196; PDF export</td><td>Generate a PDF report of requests filtered by date range, shareable via WhatsApp</td><td>&#11088;&#11088; Medium</td></tr>
+    <tr><td>&#127758; Supabase migration</td><td>Move local PostgreSQL to Supabase cloud, update .env, done</td><td>&#11088; Easy</td></tr>
+    <tr><td>&#128640; API deployment</td><td>Deploy Node.js API to Azure App Service or AWS</td><td>&#11088;&#11088;&#11088; Moderate</td></tr>
+  </table>
+</div>
+
+<!-- ══ TAB 2 · NOTIFICATIONS ══ -->
+<div class="tabpanel" id="tab-notifications">
+  <h2>Notification System</h2>
+  <p>Two levels of notifications: in-app (bell icon with badge, works while the app is open) and push (system notification even when app is in background or closed).</p>
+
+  <div class="grid2">
+    <div class="card teal"><h4>&#128276; In-app notifications (polling)</h4>
+      <p style="font-size:13.5px;color:var(--text-dim);margin:0;">A timer runs every 30 seconds and checks the API for changes since the last check. If new requests or status changes are found, the bell icon shows a badge count. Tapping the bell shows a notification list. Works on Windows and Android without any external service.</p>
+    </div>
+    <div class="card purple"><h4>&#128242; Push notifications (firebase)</h4>
+      <p style="font-size:13.5px;color:var(--text-dim);margin:0;">When the app is closed or in the background, push notifications are sent via Firebase Cloud Messaging (FCM). The API sends a push after creating or updating a request. Requires a Firebase project but works on Android and Windows.</p>
+    </div>
+  </div>
+
+  <h3>How in-app notification polling works</h3>
+  <div class="arch-box">
+    App launches &rarr; store last_check timestamp<br/>
+    Timer.periodic(30 seconds) &rarr; GET /api/notifications?since=last_check<br/>
+    API queries: new requests (for managers) + status changes on user's requests (for staff)<br/>
+    Returns: [ { id, type, message, requestId, createdAt } ]<br/>
+    Flutter: update badge count &rarr; store in local list &rarr; show bell badge<br/>
+    User taps bell &rarr; NotificationDrawer slides in &rarr; mark all as read
+  </div>
+
+  <h3>New API endpoint needed</h3>
+  <pre><code>// routes/notifications.js
+GET /api/notifications?since=2026-07-27T10:00:00&user_id=U001&role=manager
+
+Returns:
+[
+  { "type": "new_request", "message": "Priya Nair raised: AC Voltas Unit", "requestId": "REQ-001" },
+  { "type": "status_change", "message": "REQ-002 changed from Open to Pending", "requestId": "REQ-002" }
+]</code></pre>
+
+  <h3>Flutter packages needed</h3>
+  <table>
+    <tr><th>Package</th><th>Purpose</th><th>Add to pubspec.yaml</th></tr>
+    <tr><td><code>flutter_local_notifications</code></td><td>System tray / push notifications on Windows and Android</td><td><code>flutter_local_notifications: ^17.0.0</code></td></tr>
+    <tr><td><code>firebase_messaging</code></td><td>Push notifications when app is closed (Android)</td><td><code>firebase_messaging: ^15.0.0</code></td></tr>
+    <tr><td><code>shared_preferences</code></td><td>Store last_check timestamp between app sessions</td><td><code>shared_preferences: ^2.2.0</code></td></tr>
+    <tr><td><code>badge_plus</code></td><td>Red badge count on the bell icon</td><td><code>badge_plus: ^3.0.0</code></td></tr>
+  </table>
+</div>
+
+<!-- ══ TAB 3 · SMART DESCRIPTIONS ══ -->
+<div class="tabpanel" id="tab-smartdesc">
+  <h2>Smart Description Templates</h2>
+  <p>Non-technical staff often write vague descriptions like "not working" or "problem with AC." This feature adds quick-select buttons above the description field. Tapping one inserts a well-structured template that the staff member only needs to fill in the specifics.</p>
+
+  <h3>How it looks</h3>
+  <div class="card teal">
+    <h4>Quick description buttons (shown above the description TextField)</h4>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+      <span style="background:rgba(0,194,224,.1);border:1px solid rgba(0,194,224,.3);color:var(--teal);padding:6px 14px;border-radius:20px;font-size:13px;cursor:pointer;">&#128274; Not Working</span>
+      <span style="background:rgba(0,194,224,.1);border:1px solid rgba(0,194,224,.3);color:var(--teal);padding:6px 14px;border-radius:20px;font-size:13px;">&#10052;&#65039; Cooling Issue</span>
+      <span style="background:rgba(0,194,224,.1);border:1px solid rgba(0,194,224,.3);color:var(--teal);padding:6px 14px;border-radius:20px;font-size:13px;">&#128166; Leaking</span>
+      <span style="background:rgba(0,194,224,.1);border:1px solid rgba(0,194,224,.3);color:var(--teal);padding:6px 14px;border-radius:20px;font-size:13px;">&#9889; Power Issue</span>
+      <span style="background:rgba(0,194,224,.1);border:1px solid rgba(0,194,224,.3);color:var(--teal);padding:6px 14px;border-radius:20px;font-size:13px;">&#128266; Strange Noise</span>
+      <span style="background:rgba(0,194,224,.1);border:1px solid rgba(0,194,224,.3);color:var(--teal);padding:6px 14px;border-radius:20px;font-size:13px;">&#128293; Overheating</span>
+    </div>
+  </div>
+
+  <h3>Templates for each button</h3>
+  <table>
+    <tr><th>Button</th><th>Template inserted into description</th></tr>
+    <tr><td>Not Working</td><td>The [product] is completely non-functional. It was last working on [date]. Issue noticed by [name] at [time]. No error messages visible. Please inspect and repair urgently.</td></tr>
+    <tr><td>Cooling Issue</td><td>The [product] is running but not cooling adequately. Room temperature remains high despite the unit being ON for [duration]. Possible causes: gas leak, filter blockage, or compressor issue. Requires technician inspection.</td></tr>
+    <tr><td>Leaking</td><td>Water/liquid leakage observed from [product]. Leak started approximately [date/time]. Leak location: [describe location]. Leakage is [minor/moderate/severe]. Area has been cordoned off to prevent accidents.</td></tr>
+    <tr><td>Power Issue</td><td>The [product] is not turning ON / trips frequently. Power supply to the unit has been checked and appears normal. Issue may be with the internal circuit, fuse, or motor. Immediate inspection required.</td></tr>
+    <tr><td>Strange Noise</td><td>The [product] is making an unusual [grinding/rattling/humming] sound since [date]. Sound is most prominent when [describe condition]. Normal operation is affected. Please inspect for loose parts or mechanical failure.</td></tr>
+    <tr><td>Overheating</td><td>The [product] is overheating beyond normal operating temperature. Unit becomes very hot to the touch after [duration] of operation. This poses a safety risk. Unit has been switched OFF. Urgent inspection required.</td></tr>
+  </table>
+
+  <div class="note-box">
+    <div class="note-label">Teaching point</div>
+    <p>The words in [brackets] are the only parts staff need to fill in. Everything else is written for them. This means even a staff member with minimal literacy can raise a clear, useful maintenance request that gives the manager enough information to act.</p>
+  </div>
+</div>
+
+<!-- ══ TAB 4 · SHARE & EXPORT ══ -->
+<div class="tabpanel" id="tab-share">
+  <h2>Share &amp; PDF Export</h2>
+  <p>Two sharing mechanisms: direct WhatsApp text share for quick communication, and PDF report export with date range filter for formal reporting.</p>
+
+  <div class="grid2">
+    <div class="card green">
+      <h4>&#128232; WhatsApp Text Share</h4>
+      <p style="font-size:13.5px;color:var(--text-dim);margin-bottom:10px;">Formats the request details as a readable text message and opens WhatsApp with it pre-filled. The recipient can read and respond without needing app access.</p>
+      <pre style="font-size:11.5px;margin:0;background:#0a0e14;padding:10px;border-radius:6px;">*Khan Chacha MRMS*
+Request ID: REQ-001
+Product: AC Voltas Unit
+Category: AC
+Status: Open
+Outlet: Khan Chacha CP
+Date: 24 Jul 2026
+Description: Cooling issue...</pre>
+    </div>
+    <div class="card purple">
+      <h4>&#128196; PDF Report Export</h4>
+      <p style="font-size:13.5px;color:var(--text-dim);margin-bottom:10px;">Generates a PDF report of all requests within a selected date range. Manager picks start and end date, taps Export, receives a downloadable PDF they can share via WhatsApp or email.</p>
+      <ul style="margin:0 0 0 16px;font-size:13px;color:var(--text-dim);">
+        <li>Date range picker (start &rarr; end)</li>
+        <li>Filter by status and outlet</li>
+        <li>Table format: ID, product, status, date, outlet</li>
+        <li>Summary section: total counts per status</li>
+        <li>Share via WhatsApp PDF share</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Flutter packages needed</h3>
+  <table>
+    <tr><th>Package</th><th>Purpose</th><th>pubspec.yaml</th></tr>
+    <tr><td><code>url_launcher</code></td><td>Opens WhatsApp with pre-filled text via whatsapp:// URL scheme</td><td><code>url_launcher: ^6.2.0</code></td></tr>
+    <tr><td><code>pdf</code></td><td>Generates PDF documents from Dart code</td><td><code>pdf: ^3.10.0</code></td></tr>
+    <tr><td><code>printing</code></td><td>Print or share PDF files from Flutter</td><td><code>printing: ^5.12.0</code></td></tr>
+    <tr><td><code>share_plus</code></td><td>Share files (PDF) via system share sheet</td><td><code>share_plus: ^9.0.0</code></td></tr>
+    <tr><td><code>path_provider</code></td><td>Get temp directory to save PDF before sharing</td><td><code>path_provider: ^2.1.0</code></td></tr>
+  </table>
+
+  <h3>WhatsApp share URL format</h3>
+  <pre><code>// Opens WhatsApp with pre-filled message
+final text = Uri.encodeComponent(formattedMessage);
+final url = 'https://wa.me/?text=$text';
+await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);</code></pre>
+
+  <h3>Date range filter UI</h3>
+  <p>Add a date range picker in the requests list screen. Two date fields — From and To. When set, the list filters by <code>request_date</code> between these dates. The Export PDF button becomes active when a date range is selected.</p>
+</div>
+
+<!-- ══ TAB 5 · SUPABASE ══ -->
+<div class="tabpanel" id="tab-supabase">
+  <h2>Migrating to Supabase</h2>
+  <p>Supabase is managed PostgreSQL in the cloud. Migration from local PostgreSQL to Supabase is one <code>.env</code> change on the API server. The SQL schema, queries, and Flutter code need zero changes.</p>
+
+  <h3>Step-by-step migration</h3>
+  <div class="card green">
+    <h4>Step 1 &mdash; Create a Supabase project</h4>
+    <ol style="margin:6px 0 0 18px;font-size:14px;color:var(--text-dim);">
+      <li>Go to <strong>supabase.com</strong> &rarr; sign in with GitHub</li>
+      <li>Click <strong>New Project</strong></li>
+      <li>Choose a region (South Asia &rarr; Singapore for India)</li>
+      <li>Set a database password &mdash; save it securely</li>
+      <li>Wait ~2 minutes for the project to be ready</li>
+    </ol>
+  </div>
+
+  <div class="card amber">
+    <h4>Step 2 &mdash; Run your schema on Supabase</h4>
+    <ol style="margin:6px 0 0 18px;font-size:14px;color:var(--text-dim);">
+      <li>In Supabase: go to <strong>SQL Editor</strong></li>
+      <li>Paste the contents of <code>db/schema.sql</code> and run it</li>
+      <li>Then paste <code>db/seed.sql</code> and run it</li>
+      <li>Check <strong>Table Editor</strong> &rarr; verify outlets, users, maintenance_requests exist</li>
+    </ol>
+  </div>
+
+  <div class="card teal">
+    <h4>Step 3 &mdash; Get the connection string</h4>
+    <p style="font-size:13.5px;color:var(--text-dim);margin-bottom:8px;">In Supabase: Settings &rarr; Database &rarr; Connection string &rarr; URI tab. Copy the string. It looks like:</p>
+    <pre style="margin:0;font-size:12px;">postgresql://postgres:[YOUR-PASSWORD]@db.xxxxxxxxxxxx.supabase.co:5432/postgres</pre>
+  </div>
+
+  <div class="card purple">
+    <h4>Step 4 &mdash; Update API .env (one change)</h4>
+    <pre style="margin:6px 0 0;font-size:12.5px;">DB_HOST=db.xxxxxxxxxxxx.supabase.co
+DB_PORT=5432
+DB_NAME=postgres
+DB_USER=postgres
+DB_PASSWORD=[YOUR-SUPABASE-PASSWORD]</pre>
+    <p style="font-size:13px;color:var(--text-dim);margin:8px 0 0;">Restart the API: <code>npm run dev</code>. Flutter app needs zero changes. Done.</p>
+  </div>
+
+  <div class="note-box">
+    <div class="note-label">Free tier limitation</div>
+    <p>Supabase free tier pauses the database after 1 week of inactivity. For a live demo this is fine. For production use, upgrade to Pro ($25/month) which has no pause. Alternatively, send one request per week to keep it active.</p>
+  </div>
+
+  <h3>Migrating real data from Google Sheets</h3>
+  <p>Once Supabase is set up, follow the Google Sheets migration guide in the Pre-Launch Field Guide. Export the sheet as CSV, run the Claude audit prompt, generate the migration SQL, and run it in the Supabase SQL Editor. The same process, same SQL &mdash; just a different target database.</p>
+</div>
+
+<!-- ══ TAB 6 · CLAUDE AS PAIR ══ -->
+<div class="tabpanel" id="tab-claudepair">
+  <h2>Claude as Your Phase 5 Pair-Programmer</h2>
+  <p>Phase 5 adds features on top of existing, working code. The approach changes slightly from Phase 4: you are extending, not building from scratch. Here is how to work with Claude effectively for each feature type.</p>
+
+  <div class="card purple">
+    <h4>Orientation prompt &mdash; run before any Phase 5 prompt</h4>
+    <div class="prompt-box" style="margin-top:10px;">
+      <div class="prompt-label">Paste in Claude Code (flutter project)<button class="copy-btn" onclick="copyP(this,'p-orient')">Copy</button></div>
+      <div class="prompt-text" id="p-orient">Read these files completely before I give you any Phase 5 tasks:
+  lib/services/api_service.dart
+  lib/models/maintenance_request.dart
+  lib/screens/dashboard_screen.dart
+  lib/screens/request_form_screen.dart
+  lib/screens/request_list_screen.dart
+  pubspec.yaml
+
+Report:
+1. All packages currently in pubspec.yaml under dependencies
+2. The current _selectedIndex values in the rail navigation
+3. The method names in api_service.dart
+4. The fields in MaintenanceRequest.fromJson()
+
+Do not change any file yet. Just confirm you have read everything.</div>
+    </div>
+  </div>
+
+  <h3>Rules for Phase 5 prompts</h3>
+  <ul>
+    <li><strong>Always read before writing</strong> &mdash; every Phase 5 prompt starts with "Read [file] first." Claude must understand what exists before extending it.</li>
+    <li><strong>Add, don't replace</strong> &mdash; Phase 5 adds features. Tell Claude explicitly "do not change existing functionality, only add."</li>
+    <li><strong>One feature per prompt</strong> &mdash; notifications, then smart descriptions, then share &mdash; never combine in one prompt.</li>
+    <li><strong>Specify platform constraints</strong> &mdash; WhatsApp share works differently on Windows vs Android. Tell Claude which platform you are testing on.</li>
+    <li><strong>Test after each prompt</strong> &mdash; run <code>flutter run -d windows</code> after each prompt. Fix errors before the next prompt.</li>
+  </ul>
+
+  <div class="card amber">
+    <h4>Pattern for adding a new package</h4>
+    <div class="prompt-box" style="margin-top:8px;">
+      <div class="prompt-label">Template</div>
+      <div class="prompt-text">Add [package_name: ^version] to pubspec.yaml under dependencies.
+Run: flutter pub get
+Confirm "Got dependencies!" appears.
+Then read lib/[relevant_file].dart and implement [feature description].
+Do not change any other files.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TAB 7 · STEP-BY-STEP PROMPTS ══ -->
+<div class="tabpanel" id="tab-prompts">
+  <h2>Step-by-Step Prompts</h2>
+  <p>Run these in sequence. Each builds on the previous. Verify the app runs after each prompt before continuing.</p>
+
+  <!-- P1 -->
+  <div class="proj-banner proj-api">&#128308; API PROJECT &mdash; Window 1 (khan_chacha_api/) &mdash; Claude Code</div>
+  <h3>Prompt 1 &mdash; Notifications API endpoint</h3>
+  <div class="what-box"><div class="what-label">What this does</div><p>Creates a new /api/notifications route that returns new events since a given timestamp. Managers see new requests; staff see status changes on their own requests.</p></div>
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code &mdash; P1 &mdash; API project<button class="copy-btn" onclick="copyP(this,'p1')">Copy</button></div>
+    <div class="prompt-text" id="p1">Create routes/notifications.js in the Khan Chacha API.
+
+Import express, create router, import pool from ../db/connection.js.
+
+GET /  route:
+  Read query params: since (ISO timestamp), user_id, role, outlet_id
+
+  If role is 'manager':
+    Query: SELECT id, product_name, outlet_id, request_date, raised_by
+    FROM maintenance_requests
+    WHERE created_at > $1
+    ORDER BY created_at DESC LIMIT 20
+    Map each row to: { type: 'new_request', message: 'New request: ' + product_name, requestId: id, at: request_date }
+
+  If role is 'staff':
+    Query: SELECT id, product_name, status, updated_at
+    FROM maintenance_requests
+    WHERE raised_by = $1 AND updated_at > $2 AND status != 'Open'
+    ORDER BY updated_at DESC LIMIT 20
+    Map each row to: { type: 'status_change', message: product_name + ' status updated to ' + status, requestId: id, at: updated_at }
+
+  Return: res.json({ notifications: results, count: results.length })
+  On error: res.status(500).json({ error: error.message })
+
+In server.js, mount: app.use('/api/notifications', require('./routes/notifications'));
+
+Show me the complete routes/notifications.js after creation.
+Test with: Invoke-RestMethod "http://localhost:3000/api/notifications?since=2020-01-01&role=manager"</div>
+  </div>
+
+  <!-- P2 -->
+  <div class="proj-banner proj-flutter">&#128309; FLUTTER PROJECT &mdash; Window 2 (khan_chacha_mrms/) &mdash; Claude Code</div>
+  <h3>Prompt 2 &mdash; In-app notification bell with badge</h3>
+  <div class="what-box"><div class="what-label">What this does</div><p>Adds a notification bell icon to the top bar of the app. A polling timer checks for new notifications every 30 seconds. The bell shows a red badge count when there are unread notifications. Tapping shows a slide-in drawer with the notification list.</p></div>
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code &mdash; P2 &mdash; Flutter project<button class="copy-btn" onclick="copyP(this,'p2')">Copy</button></div>
+    <div class="prompt-text" id="p2">Read lib/screens/dashboard_screen.dart and lib/services/api_service.dart completely.
+
+Add notification polling to the Khan Chacha MRMS app.
+
+Step 1 - Add to pubspec.yaml:
+  shared_preferences: ^2.2.3
+  badge_plus: ^3.0.0
+Then run: flutter pub get
+
+Step 2 - Add to api_service.dart:
+  Future<Map<String, dynamic>> getNotifications() async {
+    final prefs = await SharedPreferences.getInstance();
+    final since = prefs.getString('last_notif_check') ?? '2020-01-01T00:00:00.000Z';
+    final user = AuthService().currentUser!;
+    final url = '$_baseUrl/notifications?since=${Uri.encodeComponent(since)}&role=${user.role}&user_id=${user.id}&outlet_id=${user.outletId}';
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      await prefs.setString('last_notif_check', DateTime.now().toIso8601String());
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    }
+    return {'notifications': [], 'count': 0};
+  }
+
+Step 3 - In dashboard_screen.dart State class, add:
+  int _notifCount = 0;
+  List<Map<String,dynamic>> _notifications = [];
+  Timer? _notifTimer;
+
+  In initState():
+    _startNotifPolling();
+
+  void _startNotifPolling() {
+    _checkNotifications();
+    _notifTimer = Timer.periodic(const Duration(seconds: 30), (_) => _checkNotifications());
+  }
+
+  void _checkNotifications() async {
+    try {
+      final result = await ApiService().getNotifications();
+      final list = result['notifications'] as List? ?? [];
+      if (mounted) setState(() {
+        _notifCount = list.length;
+        _notifications = list.cast<Map<String,dynamic>>();
+      });
+    } catch (_) {}
+  }
+
+  Override dispose():
+    _notifTimer?.cancel();
+    super.dispose();
+
+Step 4 - Add notification bell to the top bar Container in the dashboard.
+  In the Row that contains the outlet name and refresh button, add:
+    Stack(children: [
+      IconButton(
+        icon: const Icon(Icons.notifications_outlined, color: Color(0xFF8A9E8A)),
+        onPressed: () => _showNotificationDrawer(context),
+      ),
+      if (_notifCount > 0) Positioned(
+        right: 8, top: 8,
+        child: Container(
+          padding: const EdgeInsets.all(4),
+          decoration: const BoxDecoration(
+            color: Color(0xFFF85149), shape: BoxShape.circle),
+          child: Text('$_notifCount',
+            style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+        ),
+      ),
+    ])
+
+Step 5 - Add _showNotificationDrawer method:
+  void _showNotificationDrawer(BuildContext context) {
+    setState(() => _notifCount = 0); // clear badge on open
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF1C2B1C),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      builder: (_) => SizedBox(
+        height: 400,
+        child: Column(children: [
+          Padding(padding: const EdgeInsets.all(16),
+            child: Row(children: [
+              const Text('Notifications', style: TextStyle(color: Color(0xFFF5F0E8), fontSize: 16, fontWeight: FontWeight.w700)),
+              const Spacer(),
+              TextButton(onPressed: () => Navigator.pop(context),
+                child: const Text('Close', style: TextStyle(color: Color(0xFF8A9E8A)))),
+            ])),
+          Expanded(child: _notifications.isEmpty
+            ? const Center(child: Text('No new notifications', style: TextStyle(color: Color(0xFF8A9E8A))))
+            : ListView.separated(
+                itemCount: _notifications.length,
+                separatorBuilder: (_, __) => const Divider(color: Color(0xFF243024)),
+                itemBuilder: (_, i) {
+                  final n = _notifications[i];
+                  return ListTile(
+                    leading: Icon(n['type'] == 'new_request' ? Icons.add_circle_outline : Icons.update,
+                      color: const Color(0xFFD4A017)),
+                    title: Text(n['message']?.toString() ?? '', style: const TextStyle(color: Color(0xFFF5F0E8), fontSize: 13)),
+                    subtitle: Text(n['at']?.toString().substring(0, 10) ?? '',
+                      style: const TextStyle(color: Color(0xFF8A9E8A), fontSize: 11)),
+                  );
+                }
+              )),
+        ]),
+      ),
+    );
+  }
+
+Run: flutter analyze lib/ and fix all errors.</div>
+  </div>
+
+  <!-- P3 -->
+  <div class="proj-banner proj-flutter">&#128309; FLUTTER PROJECT &mdash; Window 2 &mdash; Continue in Claude Code</div>
+  <h3>Prompt 3 &mdash; Smart description templates</h3>
+  <div class="what-box"><div class="what-label">What this does</div><p>Adds quick-select buttons above the Description field in the New Request form. Tapping a button fills the description with a structured template. Staff only need to fill in the bracketed parts.</p></div>
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code &mdash; P3 &mdash; Flutter project<button class="copy-btn" onclick="copyP(this,'p3')">Copy</button></div>
+    <div class="prompt-text" id="p3">Read lib/screens/request_form_screen.dart completely.
+
+Add smart description template buttons above the Description TextField.
+
+Add this constant map at the top of the file (outside any class):
+const Map<String, String> kDescTemplates = {
+  'Not Working':    'The [product] is completely non-functional. Last working on [date]. Issue noticed by [name] at [time]. No error messages visible. Please inspect and repair urgently.',
+  'Cooling Issue':  'The [product] is running but not cooling adequately. Room temperature remains high despite unit being ON for [duration]. Possible causes: gas leak, filter blockage, or compressor issue. Requires technician inspection.',
+  'Leaking':        'Water/liquid leakage observed from [product]. Leak started approximately [date/time]. Leak location: [describe location]. Severity: [minor/moderate/severe]. Area cordoned off to prevent accidents.',
+  'Power Issue':    'The [product] is not turning ON / trips frequently. Power supply checked and appears normal. Issue may be with internal circuit, fuse, or motor. Immediate inspection required.',
+  'Strange Noise':  'The [product] is making an unusual [grinding/rattling/humming] sound since [date]. Sound is most prominent when [describe condition]. Normal operation affected. Please inspect for loose parts or mechanical failure.',
+  'Overheating':    'The [product] is overheating beyond normal operating temperature. Becomes very hot to touch after [duration] of operation. Safety risk. Unit has been switched OFF. Urgent inspection required.',
+};
+
+Find the section with the Description TextField.
+Just ABOVE the Description TextField, add:
+
+Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    const Text('QUICK TEMPLATES',
+      style: TextStyle(color: Color(0xFFD4A017), fontSize: 11,
+        fontWeight: FontWeight.w700, letterSpacing: 1.2)),
+    const SizedBox(height: 8),
+    Wrap(
+      spacing: 8, runSpacing: 8,
+      children: kDescTemplates.keys.map((label) => GestureDetector(
+        onTap: () => setState(() => _descriptionController.text = kDescTemplates[label]!),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+          decoration: BoxDecoration(
+            color: const Color(0xFF162016),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: const Color(0xFF2E3E2E)),
+          ),
+          child: Text(label,
+            style: const TextStyle(color: Color(0xFFB8C8B0), fontSize: 12)),
+        ),
+      )).toList(),
+    ),
+    const SizedBox(height: 12),
+  ],
+)
+
+Do not change the Description TextField itself or any other form field.
+Run: flutter analyze lib/ and fix errors.</div>
+  </div>
+
+  <!-- P4 -->
+  <div class="proj-banner proj-flutter">&#128309; FLUTTER PROJECT &mdash; Window 2 &mdash; Continue in Claude Code</div>
+  <h3>Prompt 4 &mdash; WhatsApp share button</h3>
+  <div class="what-box"><div class="what-label">What this does</div><p>Adds a WhatsApp share button on the detail screen. Tapping it formats the request details as a message and opens WhatsApp with the text pre-filled.</p></div>
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code &mdash; P4 &mdash; Flutter project<button class="copy-btn" onclick="copyP(this,'p4')">Copy</button></div>
+    <div class="prompt-text" id="p4">Read lib/screens/detail_screen.dart completely.
+
+Add WhatsApp share to the detail screen.
+
+Step 1 - Add to pubspec.yaml:
+  url_launcher: ^6.2.5
+Run: flutter pub get
+
+Step 2 - In detail_screen.dart, add import:
+  import 'package:url_launcher/url_launcher.dart';
+
+Step 3 - Add this method to the State class:
+  Future<void> _shareOnWhatsApp() async {
+    final r = widget.request; // or however request is accessed
+    final msg = '''*Khan Chacha MRMS*
+━━━━━━━━━━━━━━━━━━━━
+Request ID: ${r.id}
+Product: ${r.productName}
+Category: ${r.category}
+Status: ${r.status}
+Outlet: ${r.outletName}
+Date: ${r.requestDate.substring(0, 10)}
+Description: ${r.description}
+━━━━━━━━━━━━━━━━━━━━
+_Sent from Khan Chacha MRMS_''';
+
+    final url = Uri.parse('https://wa.me/?text=${Uri.encodeComponent(msg)}');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('WhatsApp not installed')));
+    }
+  }
+
+Step 4 - Find the bottom action bar or the AppBar actions in detail_screen.dart.
+Add a WhatsApp share button:
+  IconButton(
+    icon: const Icon(Icons.share_outlined, color: Color(0xFF4CAF50)),
+    tooltip: 'Share on WhatsApp',
+    onPressed: _shareOnWhatsApp,
+  )
+
+Run: flutter analyze lib/ and fix errors.</div>
+  </div>
+
+  <!-- P5 -->
+  <div class="proj-banner proj-flutter">&#128309; FLUTTER PROJECT &mdash; Window 2 &mdash; Continue in Claude Code</div>
+  <h3>Prompt 5 &mdash; PDF export with date range filter</h3>
+  <div class="what-box"><div class="what-label">What this does</div><p>Adds a date range filter to the requests list and an Export PDF button. Generates a formatted PDF report and opens the system share sheet so it can be sent via WhatsApp, email, or saved.</p></div>
+  <div class="prompt-box">
+    <div class="prompt-label">Claude Code &mdash; P5 &mdash; Flutter project<button class="copy-btn" onclick="copyP(this,'p5')">Copy</button></div>
+    <div class="prompt-text" id="p5">Read lib/screens/request_list_screen.dart and lib/services/api_service.dart.
+
+Add PDF export with date range filter to the requests list.
+
+Step 1 - Add to pubspec.yaml:
+  pdf: ^3.10.8
+  printing: ^5.12.0
+  share_plus: ^9.0.0
+  path_provider: ^2.1.3
+Run: flutter pub get
+
+Step 2 - In request_list_screen.dart State class, add:
+  DateTime? _fromDate;
+  DateTime? _toDate;
+
+Step 3 - Add date range filter row above the request list (below the status filter chips):
+  Row(children: [
+    Expanded(child: GestureDetector(
+      onTap: () async {
+        final d = await showDatePicker(context: context,
+          initialDate: _fromDate ?? DateTime.now().subtract(const Duration(days: 30)),
+          firstDate: DateTime(2020), lastDate: DateTime.now());
+        if (d != null) setState(() => _fromDate = d);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(color: const Color(0xFF1C2B1C),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0xFF2E3E2E))),
+        child: Text(_fromDate == null ? 'From date' : _fromDate!.toString().substring(0,10),
+          style: TextStyle(color: _fromDate == null ? const Color(0xFF6A7A6A) : const Color(0xFFF5F0E8), fontSize: 13)),
+      ),
+    )),
+    const SizedBox(width: 8),
+    Expanded(child: GestureDetector(
+      onTap: () async {
+        final d = await showDatePicker(context: context,
+          initialDate: _toDate ?? DateTime.now(),
+          firstDate: DateTime(2020), lastDate: DateTime.now());
+        if (d != null) setState(() => _toDate = d);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(color: const Color(0xFF1C2B1C),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0xFF2E3E2E))),
+        child: Text(_toDate == null ? 'To date' : _toDate!.toString().substring(0,10),
+          style: TextStyle(color: _toDate == null ? const Color(0xFF6A7A6A) : const Color(0xFFF5F0E8), fontSize: 13)),
+      ),
+    )),
+    const SizedBox(width: 8),
+    ElevatedButton.icon(
+      onPressed: (_fromDate != null && _toDate != null) ? _exportPDF : null,
+      icon: const Icon(Icons.picture_as_pdf, size: 16),
+      label: const Text('Export'),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFFD4A017),
+        foregroundColor: const Color(0xFF0A1A0A),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      ),
+    ),
+  ])
+
+Step 4 - Add _exportPDF method:
+  Future<void> _exportPDF() async {
+    final filtered = _requests.where((r) {
+      try {
+        final d = DateTime.parse(r.requestDate);
+        return d.isAfter(_fromDate!.subtract(const Duration(days: 1)))
+            && d.isBefore(_toDate!.add(const Duration(days: 1)));
+      } catch (_) { return true; }
+    }).toList();
+
+    final pdf = pw.Document();
+    pdf.addPage(pw.MultiPage(
+      pageFormat: PdfPageFormat.a4,
+      build: (ctx) => [
+        pw.Text('Khan Chacha MRMS — Request Report',
+          style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
+        pw.SizedBox(height: 4),
+        pw.Text('Period: ${_fromDate.toString().substring(0,10)} to ${_toDate.toString().substring(0,10)}  |  Total: ${filtered.length} requests'),
+        pw.SizedBox(height: 16),
+        pw.Table.fromTextArray(
+          headers: ['ID', 'Product', 'Category', 'Status', 'Outlet', 'Date'],
+          data: filtered.map((r) => [
+            r.id, r.productName, r.category, r.status,
+            r.outletName, r.requestDate.substring(0,10)
+          ]).toList(),
+          headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9),
+          cellStyle: const pw.TextStyle(fontSize: 8),
+        ),
+        pw.SizedBox(height: 16),
+        pw.Text('Summary — Open: ${filtered.where((r)=>r.status=="Open").length}  Pending: ${filtered.where((r)=>r.status=="Pending").length}  Closed: ${filtered.where((r)=>r.status=="Closed").length}'),
+      ],
+    ));
+
+    final dir = await getTemporaryDirectory();
+    final file = File('${dir.path}/khan_chacha_report_${DateTime.now().millisecondsSinceEpoch}.pdf');
+    await file.writeAsBytes(await pdf.save());
+    await Share.shareXFiles([XFile(file.path)], text: 'Khan Chacha MRMS Report');
+  }
+
+Add imports at top of file:
+  import 'package:pdf/pdf.dart';
+  import 'package:pdf/widgets.dart' as pw;
+  import 'package:printing/printing.dart';
+  import 'package:share_plus/share_plus.dart';
+  import 'package:path_provider/path_provider.dart';
+  import 'dart:io';
+
+Run: flutter analyze lib/ and fix all errors.</div>
+  </div>
+</div>
+
+<!-- ══ TAB 8 · ARCHITECTURE ══ -->
+<div class="tabpanel" id="tab-architecture">
+  <h2>Complete System Architecture</h2>
+
+  <h3>Phase 5 deployment target</h3>
+  <div class="arch-box" style="line-height:2.4;">
+    <span style="color:#6b7480;font-size:11.5px;">USER DEVICES (Android phone / Windows laptop)</span><br/>
+    &nbsp;&nbsp;<span style="color:#7dd3fc;">Khan Chacha MRMS.apk / .exe</span><span class="dim"> &larr; exported once, installed on device</span><br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&#9474; HTTPS &rarr; api.khanchacha.com (or Azure/AWS URL)<br/>
+    <span style="color:#6b7480;font-size:11.5px;">CLOUD SERVER (Azure App Service or AWS Elastic Beanstalk)</span><br/>
+    &nbsp;&nbsp;<span style="color:#7dd3fc;">Node.js API &mdash; server.js + routes/ + db/connection.js</span><br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&#9474; pg connection &rarr; Supabase (or AWS RDS)<br/>
+    <span style="color:#6b7480;font-size:11.5px;">CLOUD DATABASE (Supabase PostgreSQL)</span><br/>
+    &nbsp;&nbsp;<span style="color:#7dd3fc;">outlets &larr;FK&mdash; users &larr;FK&mdash; maintenance_requests</span><br/><br/>
+    <span style="color:#6b7480;font-size:11.5px;">NOTIFICATION FLOW</span><br/>
+    &nbsp;&nbsp;App timer (30s) &rarr; GET /api/notifications?since= &rarr; API queries DB &rarr; returns new events<br/>
+    &nbsp;&nbsp;Flutter: update bell badge &rarr; user taps &rarr; notification drawer opens
+  </div>
+
+  <h3>Key files in Phase 5</h3>
+  <table>
+    <tr><th>File</th><th>Phase 5 additions</th></tr>
+    <tr><td><code>lib/services/api_service.dart</code></td><td>getNotifications() method added</td></tr>
+    <tr><td><code>lib/screens/dashboard_screen.dart</code></td><td>Notification bell, polling timer, notification drawer</td></tr>
+    <tr><td><code>lib/screens/request_form_screen.dart</code></td><td>Smart description template buttons above Description field</td></tr>
+    <tr><td><code>lib/screens/detail_screen.dart</code></td><td>WhatsApp share button in actions</td></tr>
+    <tr><td><code>lib/screens/request_list_screen.dart</code></td><td>Date range filter, Export PDF button, _exportPDF() method</td></tr>
+    <tr><td><code>khan_chacha_api/routes/notifications.js</code></td><td>New file &mdash; GET /api/notifications endpoint</td></tr>
+    <tr><td><code>khan_chacha_api/server.js</code></td><td>Mount notifications router</td></tr>
+    <tr><td><code>khan_chacha_api/.env</code></td><td>DB_HOST changed to Supabase connection string</td></tr>
+  </table>
+
+  <h3>What deploys where</h3>
+  <div class="grid3">
+    <div class="card teal"><h4>Flutter App</h4><p style="font-size:13.5px;color:var(--text-dim);margin:0;"><strong>NOT deployed to a server.</strong> Compiled to a binary: .apk (Android), .exe (Windows). Distributed directly to devices. The server never runs Flutter.</p></div>
+    <div class="card purple"><h4>Node.js API</h4><p style="font-size:13.5px;color:var(--text-dim);margin:0;"><strong>Deployed to Azure App Service or AWS.</strong> Always-on server listening for Flutter's HTTP requests. One change: BASE_URL in api_service.dart points to the live URL.</p></div>
+    <div class="card green"><h4>PostgreSQL Database</h4><p style="font-size:13.5px;color:var(--text-dim);margin:0;"><strong>Hosted on Supabase (recommended) or AWS RDS.</strong> The API's .env points to Supabase. Zero code changes anywhere else.</p></div>
+  </div>
+</div>
+
+<!-- ══ TAB 9 · PRICING ══ -->
+<div class="tabpanel" id="tab-pricing">
+  <h2>Estimated Pricing Guide</h2>
+  <p>Every cost a Khan Chacha deployment would actually incur &mdash; from free tiers to production-ready plans.</p>
+
+  <h3>Flutter App Export</h3>
+  <div class="grid3">
+    <div class="price-card">
+      <div class="tier" style="color:var(--green);">Android APK</div>
+      <div class="amount" style="color:var(--green);">Free</div>
+      <div class="period">Build &amp; distribute directly</div>
+      <ul><li>flutter build apk &mdash; free</li><li>Side-load directly to device</li><li>No review process</li><li>Ideal for internal enterprise use</li></ul>
+    </div>
+    <div class="price-card">
+      <div class="tier" style="color:var(--amber);">Google Play Store</div>
+      <div class="amount" style="color:var(--amber);">$25</div>
+      <div class="period">one-time registration fee</div>
+      <ul><li>One-time developer account fee</li><li>flutter build appbundle (AAB)</li><li>1&ndash;3 day review for new apps</li><li>Automatic updates for users</li></ul>
+    </div>
+    <div class="price-card">
+      <div class="tier" style="color:var(--purple);">Windows EXE</div>
+      <div class="amount" style="color:var(--purple);">Free</div>
+      <div class="period">Build &amp; distribute</div>
+      <ul><li>flutter build windows &mdash; free</li><li>Share as ZIP with installer</li><li>No store required for enterprise</li><li>Microsoft Store: $19 one-time (optional)</li></ul>
+    </div>
+  </div>
+
+  <h3 style="margin-top:28px;">Database &mdash; Supabase</h3>
+  <div class="grid2">
+    <div class="price-card">
+      <div class="tier" style="color:var(--green);">Free Tier</div>
+      <div class="amount" style="color:var(--green);">$0</div>
+      <div class="period">/ month</div>
+      <ul>
+        <li>500 MB database storage</li>
+        <li>2 GB bandwidth/month</li>
+        <li>Pauses after 1 week of inactivity</li>
+        <li>1 project max on free tier</li>
+        <li><span class="pill-green">Good for</span> demos, training, development</li>
+      </ul>
+    </div>
+    <div class="price-card">
+      <div class="tier" style="color:var(--amber);">Pro Plan</div>
+      <div class="amount" style="color:var(--amber);">$25</div>
+      <div class="period">/ month</div>
+      <ul>
+        <li>8 GB database storage</li>
+        <li>250 GB bandwidth/month</li>
+        <li>No pause &mdash; always on</li>
+        <li>Daily backups</li>
+        <li><span class="pill-amber">Good for</span> production, real users</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="margin-top:28px;">API Deployment &mdash; Azure vs AWS</h3>
+  <table>
+    <tr><th>Factor</th><th>Azure App Service</th><th>AWS Elastic Beanstalk</th></tr>
+    <tr><td>Free tier</td><td>F1: 60 CPU min/day (enough for demo)<br/>B1: ~&#8377;1,000/month ($13)</td><td>Free tier: 750 hrs/month for 12 months<br/>After: ~$15-20/month</td></tr>
+    <tr><td>Node.js support</td><td>&#9989; Native, first-class. Just upload code.</td><td>&#9989; Works well but more config needed</td></tr>
+    <tr><td>Setup complexity</td><td>&#11088; Simple &mdash; CLI or GitHub Actions, 10 min</td><td>&#11088;&#11088;&#11088; More steps: VPC, IAM, EC2 config</td></tr>
+    <tr><td>Environment variables</td><td>Set in Azure Portal &rarr; Configuration tab, no .env needed</td><td>Set via EB console or eb CLI</td></tr>
+    <tr><td>Deployment method</td><td><code>az webapp up</code> or GitHub Actions</td><td><code>eb deploy</code> or zip upload</td></tr>
+    <tr><td>Logging</td><td>Log Stream built into portal</td><td>CloudWatch (needs setup)</td></tr>
+    <tr><td>Custom domain + HTTPS</td><td>Built in, free SSL via App Service</td><td>Needs Load Balancer + ACM + Route 53</td></tr>
+    <tr><td>Familiarity (MCT context)</td><td>&#9989; Same ecosystem as Azure, M365, Power Platform</td><td>Separate learning curve</td></tr>
+  </table>
+
+  <div class="rec-box">
+    <div class="rec-label">&#127775; Raushan's Recommendation</div>
+    <p><strong>Use Azure App Service for the Node.js API.</strong> Setup takes 10 minutes with the Azure CLI. Environment variables go in the portal &mdash; no .env file needed. Free SSL included. The same Azure account your students already use for AZ-204 training works here. Supabase for the database keeps things simple and avoids the VPC/RDS complexity of keeping everything on AWS. This combination &mdash; Azure App Service + Supabase &mdash; is the fastest path to a live, real URL that students can demo to their managers the same day.</p>
+  </div>
+
+  <h3>Total estimated cost &mdash; Khan Chacha production deployment</h3>
+  <table>
+    <tr><th>Component</th><th>Choice</th><th>Monthly cost</th></tr>
+    <tr><td>Flutter APK (Android)</td><td>Direct distribution or Play Store one-time $25</td><td>&#8377;0 (free to build)</td></tr>
+    <tr><td>PostgreSQL database</td><td>Supabase Pro (for production)</td><td>~&#8377;2,100 ($25)</td></tr>
+    <tr><td>Node.js API</td><td>Azure App Service B1</td><td>~&#8377;1,100 ($13)</td></tr>
+    <tr><td>Domain (optional)</td><td>GoDaddy .com domain</td><td>~&#8377;900/year (~&#8377;75/month)</td></tr>
+    <tr><td><strong>Total</strong></td><td></td><td><strong>~&#8377;3,200 / month</strong> (~$38)</td></tr>
+  </table>
+  <p style="font-size:13px;color:var(--text-faint);">For a restaurant chain with 20+ outlets, this is less than one day's electricity bill for the kitchen equipment they are tracking. The ROI justification writes itself.</p>
+</div>
+
+</main>
+
+<div class="beast-footer-nav">
+  <a href="day4.html">&larr; Phase 4</a>
+  <a href="home.html">&#128218; All Sessions</a>
+  <a href="pre-launch-guide.html" class="fn-next">Pre-Launch Guide &rarr;</a>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">Built, created and written by <strong>Raushan Ranjan</strong> &middot; MCT, Koenig Solutions &middot; Beast AI Initiative 2026</div>
+    <div class="footer-links">
+      <a href="home.html">All Sessions</a>
+      <a href="day4.html">&larr; Phase 4</a>
+      <a href="pre-launch-guide.html">Pre-Launch &rarr;</a>
+    </div>
+  </div>
+  <div class="footer-bottom">Beast AI Initiative &middot; Khan Chacha MRMS &middot; 2026</div>
+</footer>
+
+<script>
+document.querySelectorAll('.tabnav button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tabnav button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tabpanel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+function copyP(btn, id) {
+  const text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1800);
+  });
+}
+</script>
+</body>
+</html>
