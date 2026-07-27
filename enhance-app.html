@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enhance App UI | Khan Chacha MRMS | Beast AI Initiative</title>
+<style>
+:root{
+  --bg:#0d1117;--bg2:#11161d;--card:#161b22;--border:#26303d;--border-soft:#1d2530;
+  --text:#e6edf3;--text-dim:#9da7b3;--text-faint:#6b7480;
+  --teal:#00c2e0;--teal-deep:#0082A0;--green:#3fb950;--amber:#f59e0b;
+  --orange:#e88c1f;--red:#f85149;--purple:#a371f7;
+  --radius:10px;--maxw:1000px;--code-bg:#0a0e14;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.65;font-size:16px;}
+a{color:var(--teal);text-decoration:none;}
+a:hover{text-decoration:underline;}
+code{font-family:"SF Mono",Consolas,monospace;background:var(--code-bg);color:#7ee787;padding:2px 6px;border-radius:4px;font-size:.87em;}
+
+/* ── BEAST NAV ── */
+.beast-nav{position:fixed;top:0;left:0;right:0;z-index:9999;
+  background:rgba(13,17,23,.94);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border-soft);height:54px;
+  display:flex;align-items:center;padding:0 24px;}
+.beast-nav-inner{max-width:var(--maxw);margin:0 auto;width:100%;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.beast-nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none!important;}
+.beast-nav-mark{width:30px;height:30px;border-radius:7px;
+  background:linear-gradient(135deg,#00c2e0,#0082A0);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:800;color:#001318;flex-shrink:0;}
+.beast-nav-brand{font-size:13px;font-weight:700;color:#e6edf3;}
+.beast-nav-brand em{color:#00c2e0;font-style:normal;}
+.beast-nav-right{display:flex;align-items:center;gap:7px;}
+.beast-nav-pill{font-size:12px;color:#9da7b3;padding:5px 12px;border:1px solid #26303d;
+  border-radius:16px;text-decoration:none!important;transition:color .15s,border-color .15s;}
+.beast-nav-pill:hover{color:#00c2e0!important;border-color:#00c2e0;}
+.beast-nav-btn{font-size:12px;font-weight:700;background:#00c2e0;color:#001318!important;
+  padding:5px 14px;border-radius:8px;text-decoration:none!important;transition:opacity .15s;}
+.beast-nav-btn:hover{opacity:.88;}
+body{padding-top:54px;}
+
+/* ── LAYOUT ── */
+header{background:linear-gradient(180deg,#0f141b 0%,var(--bg) 100%);
+  border-bottom:1px solid var(--border-soft);padding:28px 24px 0;
+  position:sticky;top:54px;z-index:100;}
+.header-inner{max-width:var(--maxw);margin:0 auto;}
+.brand-row{display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;margin-bottom:18px;}
+.brand-left{display:flex;align-items:center;gap:12px;}
+.logo-mark{width:40px;height:40px;border-radius:10px;
+  background:linear-gradient(135deg,var(--green) 0%,var(--teal) 100%);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:700;color:#001318;}
+.brand-title{font-size:15px;font-weight:600;}
+.brand-sub{font-size:12.5px;color:var(--text-faint);}
+.home-btn{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;
+  font-weight:600;color:var(--text-dim);background:rgba(255,255,255,.05);
+  border:1px solid var(--border);padding:5px 14px;border-radius:20px;text-decoration:none;}
+.home-btn:hover{color:var(--green);border-color:var(--green);text-decoration:none;}
+h1.page-title{font-size:26px;font-weight:700;margin-bottom:6px;letter-spacing:-.3px;}
+.page-subtitle{font-size:15px;color:var(--text-dim);margin-bottom:22px;max-width:680px;}
+.tabnav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;}
+.tabnav::-webkit-scrollbar{display:none;}
+.tabnav button{background:none;border:none;color:var(--text-dim);font-size:13.5px;
+  font-weight:500;padding:12px 16px;cursor:pointer;white-space:nowrap;
+  border-bottom:2px solid transparent;transition:color .15s,border-color .15s;font-family:inherit;}
+.tabnav button:hover{color:var(--text);}
+.tabnav button.active{color:var(--green);border-bottom-color:var(--green);}
+
+main{max-width:var(--maxw);margin:0 auto;padding:36px 24px 60px;}
+.tabpanel{display:none;}
+.tabpanel.active{display:block;animation:fadein .25s ease;}
+@keyframes fadein{from{opacity:0;transform:translateY(4px);}to{opacity:1;}}
+
+h2{font-size:21px;font-weight:700;margin:36px 0 12px;letter-spacing:-.2px;}
+h2:first-child{margin-top:0;}
+h3{font-size:16px;font-weight:600;margin:22px 0 8px;}
+p{margin-bottom:12px;color:#c5ccd4;}
+ul,ol{margin:8px 0 14px 22px;color:#c5ccd4;}
+li{margin-bottom:7px;}
+strong{color:var(--text);}
+
+.card{background:var(--card);border:1px solid var(--border-soft);
+  border-radius:var(--radius);padding:18px 20px;margin:14px 0;}
+.card.success{border-left:3px solid var(--green);}
+.card.warn{border-left:3px solid var(--amber);}
+.card.accent{border-left:3px solid var(--teal);}
+.card.purple{border-left:3px solid var(--purple);}
+.card h4{font-size:12.5px;text-transform:uppercase;letter-spacing:.5px;
+  color:var(--text-faint);margin-bottom:8px;font-weight:600;}
+
+/* ── PROMPT BOX ── */
+.prompt-wrapper{position:relative;margin:20px 0;}
+.prompt-header{display:flex;align-items:center;justify-content:space-between;
+  background:#15101f;border:1px solid rgba(163,113,247,.4);
+  border-bottom:none;border-radius:var(--radius) var(--radius) 0 0;
+  padding:12px 18px;}
+.prompt-label{font-size:11.5px;color:var(--purple);text-transform:uppercase;
+  letter-spacing:.6px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.copy-btn{background:rgba(163,113,247,.15);border:1px solid rgba(163,113,247,.4);
+  color:var(--purple);font-size:12px;padding:6px 16px;border-radius:6px;cursor:pointer;
+  font-weight:700;font-family:inherit;transition:background .15s;display:flex;align-items:center;gap:6px;}
+.copy-btn:hover{background:rgba(163,113,247,.28);}
+.copy-btn.copied{background:rgba(63,185,80,.2);color:var(--green);border-color:rgba(63,185,80,.4);}
+.prompt-body{background:#0e0918;border:1px solid rgba(163,113,247,.3);
+  border-radius:0 0 var(--radius) var(--radius);padding:20px 22px;
+  font-family:"SF Mono",Consolas,monospace;font-size:13px;color:#e2d9f7;
+  line-height:1.75;white-space:pre-wrap;overflow-x:auto;max-height:600px;overflow-y:auto;}
+
+.ref-box{background:rgba(0,194,224,.06);border:2px dashed rgba(0,194,224,.3);
+  border-radius:var(--radius);padding:20px 22px;margin:20px 0;}
+.ref-box .ref-label{font-size:11.5px;font-weight:700;color:var(--teal);
+  text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;}
+.ref-box p{margin:0;color:#a8dde8;font-size:14px;line-height:1.7;}
+
+.change-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+@media(max-width:640px){.change-grid{grid-template-columns:1fr;}}
+.change-item{background:var(--card);border:1px solid var(--border-soft);
+  border-radius:var(--radius);padding:14px 16px;}
+.change-item .ci-icon{font-size:20px;margin-bottom:8px;}
+.change-item h4{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.change-item p{font-size:13px;color:var(--text-dim);margin:0;}
+
+.note-box{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.3);
+  border-radius:var(--radius);padding:16px 18px;margin:18px 0;}
+.note-box .note-label{font-size:11.5px;color:var(--amber);font-weight:700;
+  text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.note-box p{color:#d4c08a;margin:0;font-size:14px;}
+
+.pill{display:inline-block;font-size:11.5px;padding:3px 10px;border-radius:20px;font-weight:600;}
+.pill-green{background:rgba(63,185,80,.15);color:var(--green);}
+.pill-amber{background:rgba(245,158,11,.15);color:var(--amber);}
+.pill-red{background:rgba(248,81,73,.15);color:var(--red);}
+.pill-teal{background:rgba(0,194,224,.12);color:var(--teal);}
+
+footer{border-top:1px solid var(--border-soft);margin-top:40px;
+  padding:28px 24px;background:var(--bg2);}
+.footer-inner{max-width:var(--maxw);margin:0 auto;display:flex;
+  justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
+.footer-brand{font-size:13px;color:var(--text-dim);}
+.footer-brand strong{color:var(--text);}
+.footer-links{display:flex;gap:18px;font-size:13px;}
+.footer-links a{color:var(--text-faint);}
+.footer-links a:hover{color:var(--teal);}
+
+/* ── BEFORE/AFTER ── */
+.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}
+@media(max-width:600px){.ba-grid{grid-template-columns:1fr;}}
+.ba-box{border-radius:var(--radius);padding:14px 16px;font-size:13.5px;}
+.ba-before{background:rgba(248,81,73,.07);border:1px solid rgba(248,81,73,.25);color:#f4b8b5;}
+.ba-after{background:rgba(63,185,80,.07);border:1px solid rgba(63,185,80,.25);color:#b4d9ba;}
+.ba-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.ba-before .ba-label{color:var(--red);}
+.ba-after .ba-label{color:var(--green);}
+</style>
+</head>
+<body>
+
+<!-- BEAST NAV -->
+<nav class="beast-nav">
+  <div class="beast-nav-inner">
+    <a href="index.html" class="beast-nav-logo">
+      <div class="beast-nav-mark">B</div>
+      <div class="beast-nav-brand">Beast <em>AI Initiative</em></div>
+    </a>
+    <div class="beast-nav-right">
+      <a href="home.html" class="beast-nav-pill">&#128218; All Sessions</a>
+      <a href="day4.html" class="beast-nav-pill">&larr; Phase 4</a>
+      <a href="pre-launch-guide.html" class="beast-nav-btn">Pre-Launch &rarr;</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="header-inner">
+    <div class="brand-row">
+      <div class="brand-left">
+        <div class="logo-mark">✨</div>
+        <div>
+          <div class="brand-title">Khan Chacha MRMS &mdash; UI Enhancement Guide</div>
+          <div class="brand-sub">Beast AI Initiative &middot; Koenig Solutions</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <a href="home.html" class="home-btn">&larr; All Sessions</a>
+      </div>
+    </div>
+    <h1 class="page-title">Enhancing the App UI &mdash; One Prompt, Done Right</h1>
+    <p class="page-subtitle">After your app is functional, one pass to make it look like a real product. Brand colours, navigation rail, visible cards, split login, auto-filled forms &mdash; all in a single Claude Code prompt.</p>
+    <nav class="tabnav" id="tabnav">
+      <button data-tab="overview" class="active">&#128736;&#65039; Overview</button>
+      <button data-tab="prompt">&#129302; The Prompt</button>
+      <button data-tab="form-ref">&#128203; Form Reference</button>
+      <button data-tab="whatchanged">&#9989; What Changed</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ══ TAB 1 · OVERVIEW ══ -->
+<div class="tabpanel active" id="tab-overview">
+  <h2>When to use this guide</h2>
+  <p>You have completed Phase 4. The app is fully functional &mdash; login works, requests are created, the API is connected, data lives in PostgreSQL. But the UI looks generic: white backgrounds, invisible text on dark cards, no brand identity.</p>
+  <p>This guide gives you <strong>one single Claude Code prompt</strong> that transforms the entire visual experience in one pass. No iterations. No guessing. Run it once on the Flutter project and the app looks like it belongs to Khan Chacha.</p>
+
+  <div class="note-box">
+    <div class="note-label">&#128073; Before you run this</div>
+    <p>Make a copy of your Flutter project folder first. Rename the original to <code>khan_chacha_mrms_backup/</code>. Then run the prompt on the working copy. If anything breaks you have a clean fallback.</p>
+  </div>
+
+  <h2>What this prompt does</h2>
+  <div class="change-grid">
+    <div class="change-item">
+      <div class="ci-icon">&#127881;</div>
+      <h4>Khan Chacha brand colours</h4>
+      <p>Deep forest green backgrounds + warm amber/gold accents matching the actual Khan Chacha restaurant brand identity.</p>
+    </div>
+    <div class="change-item">
+      <div class="ci-icon">&#9776;</div>
+      <h4>Left navigation rail</h4>
+      <p>Replaces the bottom navigation bar with a desktop-appropriate side rail. Home, Requests, New Request &mdash; always visible.</p>
+    </div>
+    <div class="change-item">
+      <div class="ci-icon">&#128274;</div>
+      <h4>Split login screen</h4>
+      <p>Left panel: Khan Chacha branding, heritage, feature pills. Right panel: compact login form &mdash; not full-width fields.</p>
+    </div>
+    <div class="change-item">
+      <div class="ci-icon">&#128203;</div>
+      <h4>Visible request cards</h4>
+      <p>Every Text widget gets an explicit warm-white colour. Status chips colour-coded. Category icons. Left border stripe per status.</p>
+    </div>
+    <div class="change-item">
+      <div class="ci-icon">&#128204;</div>
+      <h4>Auto-filled outlet fields</h4>
+      <p>The new request form reads the logged-in user&rsquo;s outlet and pre-fills Outlet ID, Outlet Name, Address, and Manager Name automatically.</p>
+    </div>
+    <div class="change-item">
+      <div class="ci-icon">&#128260;</div>
+      <h4>Dashboard refresh</h4>
+      <p>Status counts reload when returning to the Home tab. A refresh button is also added for manual refresh at any time.</p>
+    </div>
+  </div>
+
+  <div class="ba-grid">
+    <div class="ba-box ba-before">
+      <div class="ba-label">Before</div>
+      White/grey generic Flutter look. Cards appear empty (dark text on dark background). Bottom navigation bar. Full-width login fields. Outlet fields blank in the form. Dashboard counts go stale.
+    </div>
+    <div class="ba-box ba-after">
+      <div class="ba-label">After</div>
+      Deep green + gold Khan Chacha identity. Cards show product name, category icon, status chip clearly. Left rail navigation. Split login with branding. Auto-filled outlet fields. Dashboard refreshes on tab switch.
+    </div>
+  </div>
+</div>
+
+<!-- ══ TAB 2 · THE PROMPT ══ -->
+<div class="tabpanel" id="tab-prompt">
+  <h2>The Unified Enhancement Prompt</h2>
+  <p>Open Claude Code inside your <code>khan_chacha_mrms/</code> Flutter project folder. Paste the entire prompt below in one go. Do not split it into parts.</p>
+
+  <div class="card accent">
+    <h4>Before pasting</h4>
+    <p style="margin:0;">Make sure the Flutter project compiles and runs without errors first. Run <code>flutter run -d windows</code> and confirm the app launches. Fix any existing errors before applying this prompt.</p>
+  </div>
+
+  <div class="prompt-wrapper">
+    <div class="prompt-header">
+      <div class="prompt-label">
+        <span>&#129302;</span> Claude Code &mdash; UI Enhancement Prompt &mdash; Paste in khan_chacha_mrms/
+      </div>
+      <button class="copy-btn" onclick="copyPrompt()">
+        <span id="copy-icon">&#128203;</span>
+        <span id="copy-text">Copy Prompt</span>
+      </button>
+    </div>
+    <div class="prompt-body" id="main-prompt">You are enhancing the Khan Chacha MRMS Flutter app UI.
+Do NOT change any API calls, data models, business logic, or navigation routing.
+Change only: colours, layout, widget styling, card design, form field behaviour.
+
+Read every file in lib/ before making any changes.
+Work through each section below in order.
+
+═══════════════════════════════════════════════════
+SECTION 1 — COLOUR SYSTEM
+═══════════════════════════════════════════════════
+
+Create or replace lib/theme/app_theme.dart with these exact colours:
+
+const Color kBgPrimary    = Color(0xFF0E1A0E);   // darkest green — scaffold
+const Color kBgSurface    = Color(0xFF162016);   // dark green — cards, rail
+const Color kBgCard       = Color(0xFF1C2B1C);   // card background
+const Color kBgElevated   = Color(0xFF243024);   // elevated / hover
+
+const Color kGold         = Color(0xFFD4A017);   // Khan Chacha gold — primary
+const Color kGoldLight    = Color(0xFFF0B942);   // lighter gold — highlights
+
+const Color kTextPrimary  = Color(0xFFF5F0E8);   // warm white — main text
+const Color kTextSecond   = Color(0xFFB8C8B0);   // muted — secondary text
+const Color kTextHint     = Color(0xFF8A9E8A);   // very muted — hints
+
+const Color kStatusOpen   = Color(0xFFE8A020);   const Color kBgOpen    = Color(0xFF3A2800);
+const Color kStatusPend   = Color(0xFF4A90D9);   const Color kBgPend    = Color(0xFF0A2040);
+const Color kStatusClose  = Color(0xFF4CAF50);   const Color kBgClose   = Color(0xFF0A280A);
+const Color kBorderColor  = Color(0xFF2E3E2E);
+const Color kDivider      = Color(0xFF243024);
+
+Build ThemeData and apply in main.dart:
+  scaffoldBackgroundColor: kBgPrimary
+  colorScheme: ColorScheme.dark(primary: kGold, surface: kBgSurface)
+  cardColor: kBgCard
+  ElevatedButton: backgroundColor=kGold, foregroundColor=kBgPrimary,
+    shape=RoundedRectangleBorder(radius 10), padding vertical 14
+  InputDecoration theme: filled=true, fillColor=kBgSurface,
+    border radius 10, focusedBorder with kGold
+  floatingActionButtonTheme: backgroundColor=kGold, foregroundColor=kBgPrimary
+  textTheme: set bodyLarge/bodyMedium/bodySmall foreground to kTextPrimary
+
+═══════════════════════════════════════════════════
+SECTION 2 — LEFT NAVIGATION RAIL
+═══════════════════════════════════════════════════
+
+In the main shell screen (the screen that shows after login — DashboardScreen
+or HomeScreen or MainScreen), replace any BottomNavigationBar or Scaffold
+with a Row-based layout:
+
+Scaffold(
+  body: Row(children: [
+    _buildRail(),
+    VerticalDivider(thickness:1, width:1, color: kBorderColor),
+    Expanded(child: _buildPage()),
+  ]),
+)
+
+_buildRail() returns a NavigationRail:
+  backgroundColor: kBgSurface
+  selectedIndex: _selectedIndex
+  extended: false
+  labelType: NavigationRailLabelType.all
+  selectedIconTheme: IconThemeData(color: kGold, size: 26)
+  unselectedIconTheme: IconThemeData(color: kTextHint, size: 24)
+  selectedLabelTextStyle: TextStyle(color: kGold, fontSize: 10, fontWeight: FontWeight.w600)
+  unselectedLabelTextStyle: TextStyle(color: kTextHint, fontSize: 10)
+  indicatorColor: kBgElevated
+  onDestinationSelected: (i) {
+    setState(() => _selectedIndex = i);
+    if (i == 0) _loadDashboard(); // refresh dashboard when returning home
+  }
+
+  leading: Padding(
+    padding: EdgeInsets.symmetric(vertical: 16),
+    child: Container(
+      width: 40, height: 40,
+      decoration: BoxDecoration(color: kGold, borderRadius: BorderRadius.circular(10)),
+      child: Center(child: Text('KC',
+        style: TextStyle(color: kBgPrimary, fontWeight: FontWeight.w800, fontSize: 14))),
+    ),
+  )
+
+  destinations: [
+    NavigationRailDestination(icon: Icon(Icons.dashboard_outlined),
+      selectedIcon: Icon(Icons.dashboard), label: Text('Home')),
+    NavigationRailDestination(icon: Icon(Icons.list_alt_outlined),
+      selectedIcon: Icon(Icons.list_alt), label: Text('Requests')),
+    NavigationRailDestination(icon: Icon(Icons.add_circle_outline),
+      selectedIcon: Icon(Icons.add_circle), label: Text('New')),
+  ]
+
+  trailing: Padding(
+    padding: EdgeInsets.only(bottom: 20),
+    child: IconButton(
+      icon: Icon(Icons.logout_outlined, color: kTextHint),
+      tooltip: 'Logout',
+      onPressed: () {
+        AuthService().logout();
+        Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (_) => LoginScreen()), (_) => false);
+      },
+    ),
+  )
+
+_buildPage() returns based on _selectedIndex:
+  0: _DashboardContent()
+  1: _RequestListContent()
+  2: _NewRequestContent()
+
+Wrap each content widget in its own StatefulWidget class inside this file,
+or reference the existing screen files as child widgets (not full Scaffold pushes).
+The detail screen remains a separate Navigator.push() screen.
+
+═══════════════════════════════════════════════════
+SECTION 3 — REQUEST LIST CARDS (CRITICAL — EXPLICIT COLOURS)
+═══════════════════════════════════════════════════
+
+Find the ListView.builder that renders request cards.
+Replace the itemBuilder return with this exact widget structure.
+Use hardcoded const Color() values — do NOT rely on theme inheritance for text:
+
+itemBuilder: (context, index) {
+  final r = _requests[index]; // use your actual list variable name
+
+  Color statusColor;
+  Color statusBg;
+  switch (r.status) {
+    case 'Open':    statusColor = const Color(0xFFE8A020); statusBg = const Color(0xFF3A2800); break;
+    case 'Pending': statusColor = const Color(0xFF4A90D9); statusBg = const Color(0xFF0A2040); break;
+    case 'Closed':  statusColor = const Color(0xFF4CAF50); statusBg = const Color(0xFF0A280A); break;
+    default:        statusColor = const Color(0xFFE8A020); statusBg = const Color(0xFF3A2800);
+  }
+
+  IconData catIcon;
+  switch (r.category) {
+    case 'Electrical': catIcon = Icons.bolt;    break;
+    case 'AC':         catIcon = Icons.ac_unit; break;
+    case 'Kitchen':    catIcon = Icons.kitchen; break;
+    default:           catIcon = Icons.build;
+  }
+
+  return GestureDetector(
+    onTap: () {
+      Navigator.push(context,
+        MaterialPageRoute(builder: (_) => DetailScreen(request: r)),
+      ).then((_) => setState(() => _loadRequests()));
+    },
+    child: Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1C2B1C),
+        borderRadius: BorderRadius.circular(12),
+        border: Border(left: BorderSide(color: statusColor, width: 4)),
+      ),
+      child: Row(children: [
+        Container(
+          width: 44, height: 44,
+          decoration: BoxDecoration(color: const Color(0xFF243024),
+            borderRadius: BorderRadius.circular(10)),
+          child: Icon(catIcon, color: const Color(0xFFD4A017), size: 22),
+        ),
+        const SizedBox(width: 14),
+        Expanded(child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              r.productName.isNotEmpty ? r.productName : r.id,
+              style: const TextStyle(color: Color(0xFFF5F0E8),
+                fontSize: 15, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '${r.category}  ·  ${r.outletName.isNotEmpty ? r.outletName : r.outletId}',
+              style: const TextStyle(color: Color(0xFFB8C8B0), fontSize: 12),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              r.requestDate.isNotEmpty ? r.requestDate : '—',
+              style: const TextStyle(color: Color(0xFF8A9E8A), fontSize: 11),
+            ),
+          ],
+        )),
+        const SizedBox(width: 12),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(color: statusBg,
+                borderRadius: BorderRadius.circular(20)),
+              child: Text(r.status,
+                style: TextStyle(color: statusColor,
+                  fontSize: 12, fontWeight: FontWeight.w700)),
+            ),
+            if (AuthService().currentUser?.role == 'manager') ...[
+              const SizedBox(height: 8),
+              Row(children: [
+                InkWell(
+                  onTap: () => _onEditRequest(r),
+                  child: const Icon(Icons.edit_outlined,
+                    color: Color(0xFFD4A017), size: 18),
+                ),
+                const SizedBox(width: 12),
+                InkWell(
+                  onTap: () => _onDeleteRequest(r),
+                  child: const Icon(Icons.delete_outline,
+                    color: Color(0xFFF85149), size: 18),
+                ),
+              ]),
+            ],
+          ],
+        ),
+      ]),
+    ),
+  );
+}
+
+Add these helper methods in the requests state class:
+
+void _onEditRequest(MaintenanceRequest r) {
+  // switch rail to New Request tab with existing request data
+  setState(() { _selectedIndex = 2; _editingRequest = r; });
+}
+
+void _onDeleteRequest(MaintenanceRequest r) async {
+  final confirm = await showDialog<bool>(
+    context: context,
+    builder: (_) => AlertDialog(
+      backgroundColor: const Color(0xFF1C2B1C),
+      title: const Text('Delete Request',
+        style: TextStyle(color: Color(0xFFF5F0E8))),
+      content: const Text('This cannot be undone.',
+        style: TextStyle(color: Color(0xFFB8C8B0))),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context, false),
+          child: const Text('Cancel', style: TextStyle(color: Color(0xFF8A9E8A)))),
+        TextButton(onPressed: () => Navigator.pop(context, true),
+          child: const Text('Delete', style: TextStyle(color: Color(0xFFF85149)))),
+      ],
+    ),
+  );
+  if (confirm == true) {
+    await ApiService().deleteRequest(r.id);
+    setState(() => _loadRequests());
+  }
+}
+
+═══════════════════════════════════════════════════
+SECTION 4 — FORM AUTO-FILL OUTLET FIELDS
+═══════════════════════════════════════════════════
+
+In the new request form (request_form_screen.dart or equivalent),
+in initState(), auto-fill all outlet fields from the logged-in user:
+
+  final user = AuthService().currentUser!;
+  outletIdController.text    = user.outletId;
+  outletNameController.text  = user.outletName;
+  raisedByController.text    = user.name;
+  const addressMap = {
+    'OUT-01': 'Connaught Place, New Delhi',
+    'OUT-02': 'Lajpat Nagar, New Delhi',
+  };
+  outletAddressController.text = addressMap[user.outletId] ?? user.outletId;
+
+Set all outlet fields as readOnly: true.
+The user should only fill: Product Name, Category, Description.
+Product ID auto-generates if left blank on submit:
+  if (productIdController.text.isEmpty) {
+    productIdController.text = 'EQ-${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}';
+  }
+Request ID auto-generates in initState:
+  idController.text = 'REQ-${DateTime.now().millisecondsSinceEpoch.toString().substring(6)}';
+
+═══════════════════════════════════════════════════
+SECTION 5 — LOGIN SCREEN SPLIT LAYOUT
+═══════════════════════════════════════════════════
+
+Replace the Scaffold body with:
+
+Row(children: [
+  // LEFT — Branding panel
+  Expanded(flex: 4, child: Container(
+    decoration: const BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft, end: Alignment.bottomRight,
+        colors: [Color(0xFF0A1A0A), Color(0xFF1A3A1A)],
+      ),
+    ),
+    child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Container(width: 80, height: 80,
+        decoration: BoxDecoration(color: const Color(0xFFD4A017),
+          borderRadius: BorderRadius.circular(20)),
+        child: const Icon(Icons.restaurant, color: Color(0xFF0A1A0A), size: 42)),
+      const SizedBox(height: 24),
+      const Text('Khan Chacha', style: TextStyle(color: Color(0xFFD4A017),
+        fontSize: 34, fontWeight: FontWeight.w800, letterSpacing: 1.0)),
+      const SizedBox(height: 8),
+      Container(width: 48, height: 2, color: const Color(0x80D4A017)),
+      const SizedBox(height: 12),
+      const Text('Maintenance Request System',
+        style: TextStyle(color: Color(0xFFB8C8B0), fontSize: 14)),
+      const SizedBox(height: 48),
+      _pill(Icons.location_on_outlined, '20+ Outlets across Delhi NCR'),
+      const SizedBox(height: 10),
+      _pill(Icons.build_outlined, 'Track maintenance in real time'),
+      const SizedBox(height: 10),
+      _pill(Icons.shield_outlined, 'Role-based access control'),
+      const SizedBox(height: 48),
+      const Text('Since 1972',
+        style: TextStyle(color: Color(0xFF6A7A6A), fontSize: 12)),
+    ]),
+  )),
+  // RIGHT — Login form
+  Expanded(flex: 6, child: Container(
+    color: const Color(0xFF0E1A0E),
+    child: Center(child: Container(
+      width: 380,
+      padding: const EdgeInsets.all(36),
+      decoration: BoxDecoration(
+        color: const Color(0xFF182818),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0x4DD4A017)),
+        boxShadow: [BoxShadow(color: Colors.black54, blurRadius: 24, offset: Offset(0,8))],
+      ),
+      child: Column(mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        const Text('Sign in', style: TextStyle(color: Color(0xFFD4A017),
+          fontSize: 22, fontWeight: FontWeight.w700)),
+        const SizedBox(height: 4),
+        const Text('Enter your credentials to continue',
+          style: TextStyle(color: Color(0xFF8A9E8A), fontSize: 13)),
+        const SizedBox(height: 28),
+        // USERNAME — keep existing controller and logic
+        TextField(controller: _usernameController,
+          style: const TextStyle(color: Color(0xFFF5F0E8)),
+          decoration: _inputDecor('Username', Icons.person_outline)),
+        const SizedBox(height: 14),
+        // PASSWORD — keep existing controller, obscureText, and toggle logic
+        TextField(controller: _passwordController,
+          obscureText: _obscurePassword,
+          style: const TextStyle(color: Color(0xFFF5F0E8)),
+          decoration: _inputDecor('Password', Icons.lock_outline).copyWith(
+            suffixIcon: IconButton(
+              icon: Icon(_obscurePassword
+                ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                color: const Color(0xFF8A9E8A)),
+              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+            ),
+          )),
+        const SizedBox(height: 24),
+        // LOGIN BUTTON — keep existing _handleLogin method
+        SizedBox(height: 50, child: ElevatedButton(
+          onPressed: _handleLogin,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFD4A017),
+            foregroundColor: const Color(0xFF0A1A0A),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            elevation: 4, shadowColor: const Color(0x66D4A017),
+          ),
+          child: const Text('Login',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+        )),
+        const SizedBox(height: 18),
+        const Text('Manager: manager / manager123  ·  Staff: staff / staff123',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Color(0xFF6A7A6A), fontSize: 11)),
+      ]),
+    )),
+  )),
+])
+
+Add this helper method to the login screen State:
+InputDecoration _inputDecor(String hint, IconData icon) => InputDecoration(
+  hintText: hint,
+  hintStyle: const TextStyle(color: Color(0xFF6A7A6A)),
+  prefixIcon: Icon(icon, color: const Color(0xFF8A9E8A)),
+  filled: true, fillColor: const Color(0xFF0E1A0E),
+  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10),
+    borderSide: const BorderSide(color: Color(0xFF2E3E2E))),
+  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10),
+    borderSide: const BorderSide(color: Color(0xFF2E3E2E))),
+  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10),
+    borderSide: const BorderSide(color: Color(0xFFD4A017), width: 1.5)),
+);
+
+Widget _pill(IconData icon, String label) => Row(
+  mainAxisSize: MainAxisSize.min, children: [
+    Icon(icon, color: const Color(0xFFD4A017), size: 16),
+    const SizedBox(width: 8),
+    Text(label, style: const TextStyle(color: Color(0xFFB8C8B0), fontSize: 13)),
+  ]);
+
+═══════════════════════════════════════════════════
+SECTION 6 — DASHBOARD REFRESH
+═══════════════════════════════════════════════════
+
+In the dashboard content widget, make _loadDashboard() (or equivalent) public.
+Call it when the rail switches back to index 0:
+  onDestinationSelected: (i) {
+    setState(() => _selectedIndex = i);
+    if (i == 0) _loadDashboard();
+  }
+
+Add a refresh IconButton in the dashboard top bar:
+  IconButton(
+    icon: const Icon(Icons.refresh_rounded, color: Color(0xFF8A9E8A), size: 18),
+    tooltip: 'Refresh',
+    onPressed: () => setState(() => _loadDashboard()),
+  )
+
+═══════════════════════════════════════════════════
+FINAL STEP
+═══════════════════════════════════════════════════
+
+Run: flutter analyze lib/
+Fix every error before finishing.
+Do not leave any TODO or placeholder — implement all sections completely.
+Show a summary of every file changed.</div>
+  </div>
+
+  <div class="note-box">
+    <div class="note-label">&#128161; If the list cards still appear blank after this</div>
+    <p>Add this one debug line inside the itemBuilder, right before the return statement: <code>debugPrint('Card $index: "${r.productName}" | "${r.category}"');</code> — Run the app and check the terminal. If names appear in the terminal but not on screen, the colour fix in Section 3 needs to be verified. If names are empty, the seed data needs product_name values &mdash; run <code>db/seed.sql</code> again after updating it.</p>
+  </div>
+</div>
+
+<!-- ══ TAB 3 · FORM REFERENCE ══ -->
+<div class="tabpanel" id="tab-form-ref">
+  <h2>Form Enhancement Reference</h2>
+  <p>Before moving to the next feature phase, here is a reference for how the New Request form should behave after this enhancement. Share this with students so they know what "correct" looks like.</p>
+
+  <div class="card success">
+    <h4>&#10003; Fields the user fills in (editable)</h4>
+    <ul style="margin:8px 0 0 18px;">
+      <li><strong>Product Name</strong> &mdash; free text, required (e.g. "AC Voltas Unit - Main Hall")</li>
+      <li><strong>Product ID</strong> &mdash; optional, auto-generated as <code>EQ-XXXXXXXX</code> if left blank</li>
+      <li><strong>Category</strong> &mdash; dropdown: Electrical / AC / Kitchen</li>
+      <li><strong>Description</strong> &mdash; multi-line, required</li>
+      <li><strong>Image</strong> &mdash; optional camera/gallery attachment</li>
+    </ul>
+  </div>
+
+  <div class="card warn">
+    <h4>&#128274; Fields auto-filled and read-only (not editable)</h4>
+    <ul style="margin:8px 0 0 18px;">
+      <li><strong>Request ID</strong> &mdash; auto-generated as <code>REQ-XXXXXXXX</code> on screen load</li>
+      <li><strong>Outlet ID</strong> &mdash; from <code>AuthService().currentUser.outletId</code></li>
+      <li><strong>Outlet Name</strong> &mdash; from <code>AuthService().currentUser.outletName</code></li>
+      <li><strong>Outlet Address</strong> &mdash; looked up from outletId map</li>
+      <li><strong>Manager / Raised By</strong> &mdash; from <code>AuthService().currentUser.name</code></li>
+      <li><strong>Status</strong> &mdash; always <code>Open</code> for new requests, shown informational only</li>
+    </ul>
+  </div>
+
+  <div class="ref-box">
+    <div class="ref-label">&#128203; Reference prompt for form-only fix</div>
+    <p>If you only need to fix the form auto-fill without running the full enhancement, paste this smaller targeted prompt in Claude Code:</p>
+  </div>
+
+  <div class="prompt-wrapper">
+    <div class="prompt-header">
+      <div class="prompt-label"><span>&#129302;</span> Form Fix Only &mdash; Smaller Prompt</div>
+      <button class="copy-btn" onclick="copyFormPrompt()">
+        <span id="form-copy-icon">&#128203;</span>
+        <span id="form-copy-text">Copy</span>
+      </button>
+    </div>
+    <div class="prompt-body" id="form-prompt">Read lib/screens/request_form_screen.dart completely.
+Read lib/models/user_account.dart completely.
+Read lib/services/auth_service.dart completely.
+
+In request_form_screen.dart, find initState().
+
+1. Auto-generate IDs on load:
+   final ts = DateTime.now().millisecondsSinceEpoch.toString();
+   _idController.text = 'REQ-${ts.substring(ts.length - 8)}';
+
+2. Auto-fill outlet details from logged-in user:
+   final user = AuthService().currentUser!;
+   _outletIdController.text   = user.outletId;
+   _outletNameController.text = user.outletName;
+   _raisedByController.text   = user.name;
+   const Map<String,String> addressMap = {
+     'OUT-01': 'Connaught Place, New Delhi',
+     'OUT-02': 'Lajpat Nagar, New Delhi',
+   };
+   _outletAddressController.text = addressMap[user.outletId] ?? user.outletId;
+
+3. Set these TextField widgets as readOnly: true:
+   outletId, outletName, outletAddress, raisedBy, status, requestId
+
+4. Before calling createRequest(), auto-generate productId if blank:
+   if (_productIdController.text.isEmpty) {
+     final ts2 = DateTime.now().millisecondsSinceEpoch.toString();
+     _productIdController.text = 'EQ-${ts2.substring(ts2.length - 6)}';
+   }
+
+5. In toInsertMap() inside maintenance_request.dart:
+   Confirm these keys exist: id, product_name, product_id, category,
+   status, request_date, description, image_path, outlet_id, raised_by
+   Remove: outlet_name, outlet_address, manager_name (server derives these via JOIN)
+
+Run: flutter analyze lib/ — fix all errors.</div>
+  </div>
+</div>
+
+<!-- ══ TAB 4 · WHAT CHANGED ══ -->
+<div class="tabpanel" id="tab-whatchanged">
+  <h2>What changed and why it matters</h2>
+  <p>A summary of every meaningful improvement so you can explain each one to students during the session.</p>
+
+  <h3>Why cards appeared blank</h3>
+  <p>Flutter&rsquo;s <code>DefaultTextStyle</code> inherits through the widget tree. When <code>ThemeData.textTheme</code> has a dark colour (which happens when the base theme is misconfigured), every <code>Text()</code> widget without an explicit <code>style</code> renders that dark colour on a dark card. The fix: every <code>Text</code> inside a card gets a hardcoded <code>const Color(0xFFF5F0E8)</code> that cannot be overridden by the theme.</p>
+
+  <h3>Why outlet fields were blank in the form</h3>
+  <p>The form&rsquo;s <code>initState()</code> didn&rsquo;t read from <code>AuthService().currentUser</code>. The controllers were created empty and left empty. Adding those four lines to <code>initState()</code> fills them from the already-logged-in user object without any extra API call.</p>
+
+  <h3>Why the bottom nav was replaced</h3>
+  <p>The app targets Windows desktop. Bottom navigation bars are a mobile pattern designed for thumb reach. On a desktop with a wide screen and a mouse, a left navigation rail is the correct pattern &mdash; it uses the vertical space efficiently and matches what users expect from desktop software.</p>
+
+  <h3>Why the login is split</h3>
+  <p>Full-width text fields on a 1440px wide screen look wrong &mdash; the fields stretch too far and the layout looks like a web form from 2005. A constrained 380px form centred on the right panel, with branding on the left, uses the space correctly and looks professional.</p>
+
+  <h3>Why dashboard counts went stale</h3>
+  <p><code>initState()</code> runs once when the widget mounts. If the dashboard is part of a rail layout (never unmounted), <code>initState()</code> never runs again when you switch tabs. Calling <code>_loadDashboard()</code> on every return to index 0 in the rail&rsquo;s <code>onDestinationSelected</code> fixes this completely.</p>
+
+  <div class="card purple">
+    <h4>Key lesson for students</h4>
+    <p style="margin:0;color:#d8c0f7;">The difference between a working app and a polished app is usually not the features &mdash; it is the attention to visible details that users actually see. Invisible text, blank forms, and generic layouts do not inspire confidence in a client. These are the fixes that make a demo feel like a real product.</p>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      Built, created and written by <strong>Raushan Ranjan</strong> &middot; MCT, Koenig Solutions &middot; Beast AI Initiative 2026
+    </div>
+    <div class="footer-links">
+      <a href="home.html">All Sessions</a>
+      <a href="day4.html">&larr; Phase 4</a>
+      <a href="pre-launch-guide.html">Pre-Launch &rarr;</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Tab navigation
+document.querySelectorAll('.tabnav button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tabnav button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tabpanel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  });
+});
+
+// Copy main prompt
+function copyPrompt() {
+  const text = document.getElementById('main-prompt').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    document.getElementById('copy-icon').textContent = '✓';
+    document.getElementById('copy-text').textContent = 'Copied!';
+    document.querySelector('.copy-btn').classList.add('copied');
+    setTimeout(() => {
+      document.getElementById('copy-icon').textContent = '📋';
+      document.getElementById('copy-text').textContent = 'Copy Prompt';
+      document.querySelector('.copy-btn').classList.remove('copied');
+    }, 2000);
+  });
+}
+
+// Copy form prompt
+function copyFormPrompt() {
+  const text = document.getElementById('form-prompt').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    document.getElementById('form-copy-icon').textContent = '✓';
+    document.getElementById('form-copy-text').textContent = 'Copied!';
+    setTimeout(() => {
+      document.getElementById('form-copy-icon').textContent = '📋';
+      document.getElementById('form-copy-text').textContent = 'Copy';
+    }, 2000);
+  });
+}
+</script>
+</body>
+</html>
