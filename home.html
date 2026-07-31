@@ -293,12 +293,12 @@ footer{border-top:1px solid var(--bsoft);padding:32px 32px;background:var(--bg2)
       <span class="phase-status ps-live">Live ✓</span>
     </div>
     <div class="phase-row">
-      <div class="phase-icon" style="background:rgba(107,116,128,.1);">☁️</div>
+      <div class="phase-icon" style="background:rgba(0,120,212,.12);">🚀</div>
       <div>
-        <div class="phase-name">Phase 5 — Build, Export &amp; Deploy</div>
-        <div class="phase-weeks">Day 5 · APK/IPA export + AWS deployment</div>
+        <div class="phase-name">Phase 5 — Features, Cloud &amp; Going Live</div>
+        <div class="phase-weeks">Day 5 · Notifications · Azure deploy · APK + EXE export</div>
       </div>
-      <span class="phase-status ps-soon">Coming Soon</span>
+      <span class="phase-status ps-live">Live ✓</span>
     </div>
   </div>
 </div>
@@ -389,29 +389,6 @@ footer{border-top:1px solid var(--bsoft);padding:32px 32px;background:var(--bg2)
       </div>
       <div class="card-footer">
         <a href="full-app-guide.html" class="card-btn" style="border-color:#1a7f37;color:var(--green);background:rgba(63,185,80,.07);">Open Guide →</a>
-      </div>
-    </div>
-
-    <!-- GOING LIVE — PRODUCTION DEPLOYMENT -->
-    <div class="session-card">
-      <div class="card-top" style="background:linear-gradient(90deg,#0078d4,#00c2e0);"></div>
-      <div class="card-body">
-        <div class="card-tag-row">
-          <span class="card-tag" style="background:rgba(0,120,212,.15);color:#60b0ff;">Azure</span>
-          <span class="card-tag" style="background:rgba(63,185,80,.12);color:#3fb950;">Production</span>
-          <span class="card-tag ct-gr">New ✓</span>
-        </div>
-        <div class="card-day">Deployment Guide</div>
-        <div class="card-title">Going Live &mdash; Production Deployment</div>
-        <div class="card-desc">Step-by-step: migrate database to Azure PostgreSQL, deploy API to App Service, update Flutter to point at the live URL, export Windows EXE and Android APK, distribute to users. Includes architecture diagram, Android permissions guide, and interactive go-live checklist.</div>
-        <div class="card-meta">
-          <div class="card-meta-item">&#128203; <span>8 tabs</span></div>
-          <div class="card-meta-item">&#129302; <span>Claude prompts included</span></div>
-          <div class="card-meta-item">&#9989; <span>Go-live checklist</span></div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <a href="deploy.html" class="card-btn" style="border-color:#0078d4;color:#60b0ff;background:rgba(0,120,212,.07);">Open Guide &rarr;</a>
       </div>
     </div>
 
@@ -552,25 +529,26 @@ footer{border-top:1px solid var(--bsoft);padding:32px 32px;background:var(--bg2)
     </div>
 
     <!-- DEPLOYMENT - LOCKED -->
-    <div class="session-card locked">
-      <div class="card-top ct-gray"></div>
-      <span class="lock-icon">🔒</span>
+    <div class="session-card">
+      <div class="card-top" style="background:linear-gradient(90deg,#0078d4,#a371f7);"></div>
       <div class="card-body">
         <div class="card-tag-row">
-          <span class="card-tag ct-gy">AWS</span>
-          <span class="card-tag ct-gy">APK / IPA</span>
-          <span class="card-tag ct-gy">Play Store</span>
+          <span class="card-tag" style="background:rgba(0,120,212,.15);color:#60b0ff;">Azure</span>
+          <span class="card-tag" style="background:rgba(163,113,247,.15);color:#a371f7;">Notifications</span>
+          <span class="card-tag ct-gr">Live ✓</span>
         </div>
         <div class="card-day">Phase 5</div>
-        <div class="card-title">Build &amp; Deploy — APK Export + AWS Cloud</div>
-        <div class="card-desc">Flutter apps are not deployed to servers — they are exported as installable files. Build an APK for Android, IPA for iOS, EXE for Windows. Deploy the Node.js API to AWS EC2 and migrate PostgreSQL to AWS RDS. Learn what affects APK size and how to keep it lean. Submit to Play Store.</div>
+        <div class="card-title">Features, Cloud &amp; Going Live</div>
+        <div class="card-desc">In-app notifications with polling, smart description templates, WhatsApp share, PDF export, Supabase migration guide, Azure vs AWS decision. Then the full production deployment: Azure PostgreSQL, Azure App Service, Flutter pointed at the live API, and EXE + APK exported and distributed.</div>
         <div class="card-meta">
-          <div class="card-meta-item">🕐 <span>Multi-day</span></div>
-          <div class="card-meta-item">📄 <span>TBA</span></div>
+          <div class="card-meta-item">🕐 <span>2 sessions</span></div>
+          <div class="card-meta-item">📄 <span>Features + Deploy</span></div>
+          <div class="card-meta-item">✓ <span>Live</span></div>
         </div>
       </div>
-      <div class="card-footer">
-        <span class="card-btn-locked">🔒 Phase 5</span>
+      <div class="card-footer" style="display:flex;gap:8px;">
+        <a href="day5.html" class="card-btn" style="flex:1;text-align:center;border-color:#a371f7;color:#a371f7;background:rgba(163,113,247,.07);">Features →</a>
+        <a href="deploy.html" class="card-btn" style="flex:1;text-align:center;border-color:#0078d4;color:#60b0ff;background:rgba(0,120,212,.07);">Go Live →</a>
       </div>
     </div>
 
@@ -622,7 +600,7 @@ footer{border-top:1px solid var(--bsoft);padding:32px 32px;background:var(--bg2)
           <div class="tl-items">
             <div class="tl-item"><span class="tl-item-icon">🔌</span><span class="tl-item-name">REST API Layer · Node.js + Express · 8 endpoints · Flutter switches to HTTP</span><span class="tl-item-tag tl-done">Done ✓</span></div>
             <div class="tl-item"><span class="tl-item-icon">🔐</span><span class="tl-item-name">Real Authentication · JWT tokens · Role-based server-side security</span><span class="tl-item-tag tl-now">Now ⟶</span></div>
-            <div class="tl-item"><span class="tl-item-icon">🖼️</span><span class="tl-item-name">Image Upload → AWS S3 · PDF Work Orders</span><span class="tl-item-tag tl-future">Upcoming</span></div>
+            <div class="tl-item"><span class="tl-item-icon">🖼️</span><span class="tl-item-name">Notifications · Smart Descriptions · WhatsApp Share · PDF Export</span><span class="tl-item-tag tl-future">Upcoming</span></div>
           </div>
         </div>
       </div>
@@ -634,8 +612,8 @@ footer{border-top:1px solid var(--bsoft);padding:32px 32px;background:var(--bg2)
         </div>
         <div class="tl-right">
           <div class="tl-items">
-            <div class="tl-item"><span class="tl-item-icon">☁️</span><span class="tl-item-name">AWS EC2 API deployment · RDS PostgreSQL migration</span><span class="tl-item-tag tl-future">Upcoming</span></div>
-            <div class="tl-item"><span class="tl-item-icon">📲</span><span class="tl-item-name">Flutter build APK/IPA · APK size management · Play Store submission</span><span class="tl-item-tag tl-future">Upcoming</span></div>
+            <div class="tl-item"><span class="tl-item-icon">☁️</span><span class="tl-item-name">Azure App Service deployment · Azure PostgreSQL migration</span><span class="tl-item-tag tl-future">Upcoming</span></div>
+            <div class="tl-item"><span class="tl-item-icon">📲</span><span class="tl-item-name">Flutter build APK (Android) + EXE (Windows) · Azure deploy · Go Live</span><span class="tl-item-tag tl-future">Upcoming</span></div>
             <div class="tl-item"><span class="tl-item-icon">🚀</span><span class="tl-item-name">Live app · Real outlet managers · Real maintenance requests</span><span class="tl-item-tag tl-future">Upcoming</span></div>
           </div>
         </div>
@@ -669,7 +647,7 @@ footer{border-top:1px solid var(--bsoft);padding:32px 32px;background:var(--bg2)
     </div>
     <div class="tech-card">
       <div class="tech-icon">☁️</div>
-      <div class="tech-name">AWS</div>
+      <div class="tech-name">Azure</div>
       <div class="tech-role">Cloud + Deployment</div>
     </div>
     <div class="tech-card">
