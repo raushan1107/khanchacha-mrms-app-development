@@ -162,6 +162,7 @@ td:first-child{color:var(--text);font-weight:600;}
       <button data-tab="arch">&#128366; Architecture</button>
       <button data-tab="permissions">&#128241; Permissions</button>
       <button data-tab="checklist">&#9989; Go-Live Checklist</button>
+      <button data-tab="pushnotif" style="color:#f59e0b;">&#127873; Bonus — Push Notifications</button>
     </nav>
   </div>
 </header>
@@ -796,6 +797,538 @@ Run: flutter analyze lib/ and fix all errors.</div>
     <h4>&#127881; When all items are checked — you are live</h4>
     <p style="margin:0;font-size:14px;color:#b4d9ba;">The Khan Chacha MRMS is in production. The API runs 24/7 on Azure. The database is managed and backed up by Azure. Staff can install the APK on their phones. Managers can run the Windows app. Every request raised by staff is visible to managers in real time. Congratulations — you built and deployed a production enterprise application.</p>
   </div>
+</div>
+
+
+<!-- ══ TAB 9 · BONUS — AZURE PUSH NOTIFICATIONS ══ -->
+<div class="tabpanel" id="tab-pushnotif">
+
+  <!-- BONUS HEADER -->
+  <div style="background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(0,120,212,.06));border:2px solid rgba(245,158,11,.35);border-radius:var(--radius);padding:20px 22px;margin-bottom:28px;">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;">
+      <span style="font-size:28px;">&#127873;</span>
+      <div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--amber);margin-bottom:3px;">Bonus from Raushan — Free Tier, No Extra Cost</div>
+        <div style="font-size:18px;font-weight:700;color:var(--text);">True Push Notifications with Azure Notification Hubs</div>
+      </div>
+    </div>
+    <p style="margin:0;color:#d4c08a;font-size:14px;line-height:1.7;">The app currently uses polling — notifications only work while the app is open. This bonus guide upgrades it to <strong style="color:var(--amber);">true push notifications</strong> that arrive even when the app is closed or the phone is locked. Entirely within Azure — one portal, one bill. <strong style="color:var(--green);">Free tier covers Khan Chacha's full scale indefinitely.</strong></p>
+  </div>
+
+  <h2>What Changes — Polling vs True Push</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;">
+    <div class="card red">
+      <h4>&#9203; Current — Polling (what we have)</h4>
+      <ul style="margin:6px 0 0 16px;font-size:13.5px;color:#f4b8b5;">
+        <li>App checks API every 15 seconds</li>
+        <li>Works only while app is open</li>
+        <li>App closed = no notification</li>
+        <li>40 wasted API calls/minute at 40 users</li>
+        <li>No system tray notification</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h4>&#9889; After this guide — True Push</h4>
+      <ul style="margin:6px 0 0 16px;font-size:13.5px;color:#b4d9ba;">
+        <li>API pushes the moment request is saved</li>
+        <li>Works when app is closed or phone locked</li>
+        <li>System notification tray — like WhatsApp</li>
+        <li>Zero wasted calls — event driven</li>
+        <li>Free tier: 1 million pushes/month</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Architecture</h2>
+  <div class="arch">
+    <span style="color:#374151;">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><br/>
+    Staff submits request on phone<br/>
+    &nbsp;&nbsp;&#9474; POST /api/requests &rarr; Node.js saves to DB<br/>
+    &nbsp;&nbsp;&#9474; <span style="color:#f59e0b;">API calls Azure Notification Hubs SDK (2 lines)</span><br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&#9474; Notification Hubs &rarr; FCM (Android) &rarr; Manager's phone<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&#9474; Notification Hubs &rarr; WNS (Windows) &rarr; Manager's laptop<br/>
+    <span style="color:#4CAF50;">&#128276; System notification appears — app can be closed</span><br/>
+    <span style="color:#374151;">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><br/>
+    <span style="color:#374151;font-size:11px;">Note: Notification Hubs wraps FCM internally. You never touch Firebase directly.</span><br/>
+    <span style="color:#374151;font-size:11px;">No Firebase account. No Firebase billing. Everything managed through Azure Portal.</span>
+  </div>
+
+  <h2>Cost — Free Forever at Khan Chacha Scale</h2>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0;">
+    <div style="background:var(--card);border:2px solid rgba(63,185,80,.4);border-radius:var(--radius);padding:16px;text-align:center;">
+      <div style="font-size:24px;font-weight:800;color:var(--green);">$0</div>
+      <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px;">Free Tier</div>
+      <div style="font-size:12px;color:var(--dim);">1 million pushes/month<br/>500 active devices<br/>No expiry</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--bsoft);border-radius:var(--radius);padding:16px;text-align:center;">
+      <div style="font-size:24px;font-weight:800;color:var(--amber);">$10</div>
+      <div style="font-size:12px;font-weight:700;color:var(--amber);margin-bottom:8px;">Basic Tier</div>
+      <div style="font-size:12px;color:var(--dim);">10 million pushes/month<br/>Unlimited devices<br/>SLA included</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--bsoft);border-radius:var(--radius);padding:16px;text-align:center;">
+      <div style="font-size:20px;font-weight:800;color:var(--dim);">Khan Chacha</div>
+      <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px;">Expected usage</div>
+      <div style="font-size:12px;color:var(--dim);">~40 users<br/>~100 pushes/day<br/>~3,000/month</div>
+    </div>
+  </div>
+  <p style="font-size:13px;color:var(--faint);">3,000 pushes/month vs 1,000,000 free tier limit. You are using 0.3% of the free allowance.</p>
+
+  <h2>Implementation — 4 Parts</h2>
+
+  <!-- PART 1 - MANUAL -->
+  <div class="step-banner manual">
+    <div class="step-num">A</div>
+    <div class="step-info">
+      <div class="step-type">&#128393; Manual — Azure Portal (15 minutes)</div>
+      <div class="step-title">Create Azure Notification Hubs</div>
+    </div>
+  </div>
+
+  <ol>
+    <li>Azure Portal &rarr; <strong>Create a resource</strong> &rarr; search <strong>"Notification Hubs"</strong></li>
+    <li>Click <strong>Create</strong></li>
+    <li>Fill in:
+      <ul>
+        <li>Namespace: <code>khan-chacha-notifications</code></li>
+        <li>Hub name: <code>khan-chacha-hub</code></li>
+        <li>Location: Same region as your App Service (<strong>Central India</strong>)</li>
+        <li>Pricing tier: <strong>Free</strong></li>
+        <li>Resource group: <code>khan-chacha-rg</code> (same as everything else)</li>
+      </ul>
+    </li>
+    <li>Click <strong>Review + Create</strong> &rarr; <strong>Create</strong></li>
+    <li>Once created, go to the hub &rarr; <strong>Access Policies</strong></li>
+    <li>Copy the <strong>DefaultFullSharedAccessSignature</strong> connection string — save it</li>
+  </ol>
+
+  <div class="note">
+    <div class="note-lbl">&#128073; About FCM inside Azure</div>
+    <p>For Android delivery, Azure Notification Hubs uses Google's FCM internally. You will need to configure this under <strong>Settings &rarr; Google (FCM v1)</strong> in the hub. Microsoft has a step-by-step wizard — it takes about 10 minutes and does not require creating a Firebase project in your name. Use the service account JSON method which Azure guides you through.</p>
+  </div>
+
+  <!-- PART 2 - API -->
+  <div class="step-banner claude" style="margin-top:24px;">
+    <div class="step-num">B</div>
+    <div class="step-info">
+      <div class="step-type">&#129302; Claude Code — khan_chacha_api/</div>
+      <div class="step-title">Add push notification sending to the API</div>
+    </div>
+  </div>
+
+  <div class="prompt-wrap">
+    <div class="prompt-hdr">
+      <div class="prompt-lbl">&#129302; Claude Code &mdash; API &mdash; Azure Notification Hubs integration</div>
+      <button class="copy-btn" onclick="copyP(this,'p-hub-api')">Copy</button>
+    </div>
+    <div class="prompt-body" id="p-hub-api">Read routes/requests.js and server.js completely.
+
+Add Azure Notification Hubs push notification support to the API.
+
+STEP 1 - Install the SDK:
+  npm install azure-sb
+
+STEP 2 - Create services/notificationService.js:
+  const azure = require('azure-sb');
+
+  const hubService = azure.createNotificationHubService(
+    process.env.NH_HUB_NAME,
+    process.env.NH_CONNECTION_STRING
+  );
+
+  // Send to all devices with a specific tag
+  function sendPushToTag(tag, title, body, data = {}) {
+    return new Promise((resolve, reject) => {
+      // Android (FCM) payload
+      const androidPayload = JSON.stringify({
+        notification: { title, body },
+        data: { ...data, click_action: 'FLUTTER_NOTIFICATION_CLICK' }
+      });
+
+      // Windows (WNS) payload
+      const windowsPayload = `<?xml version="1.0" encoding="utf-8"?>
+  <toast>
+    <visual>
+      <binding template="ToastGeneric">
+        <text>${title}</text>
+        <text>${body}</text>
+      </binding>
+    </visual>
+  </toast>`;
+
+      // Send to Android devices with this tag
+      hubService.gcm.send(tag, androidPayload, (err) => {
+        if (err) console.log('[NOTIF] Android send error:', err.message);
+        else console.log('[NOTIF] Android push sent to tag:', tag);
+      });
+
+      // Send to Windows devices with this tag
+      hubService.wns.sendToast(tag, windowsPayload, (err) => {
+        if (err) console.log('[NOTIF] Windows send error:', err.message);
+        else console.log('[NOTIF] Windows push sent to tag:', tag);
+      });
+
+      resolve();
+    });
+  }
+
+  module.exports = { sendPushToTag };
+
+STEP 3 - Add to .env:
+  NH_HUB_NAME=khan-chacha-hub
+  NH_CONNECTION_STRING=Endpoint=sb://khan-chacha-notifications...
+
+STEP 4 - In routes/requests.js, after the INSERT succeeds,
+add push notification for new requests:
+  const { sendPushToTag } = require('../services/notificationService');
+
+  // After successful INSERT into maintenance_requests:
+  try {
+    await sendPushToTag(
+      'manager',  // sends to all devices tagged as 'manager'
+      'New Maintenance Request',
+      `${productName} raised at ${outletName}`,
+      { requestId: newRequest.id, type: 'new_request' }
+    );
+  } catch (pushErr) {
+    console.log('[NOTIF] Push failed (non-critical):', pushErr.message);
+    // Never block the API response because of push failure
+  }
+
+STEP 5 - In routes/requests.js, in the PATCH /:id/status route,
+add push notification for status changes:
+  try {
+    await sendPushToTag(
+      `outlet_${outletId}`,  // sends to all devices tagged with this outlet
+      'Request Status Updated',
+      `${productName} is now ${newStatus}`,
+      { requestId: id, type: 'status_change', status: newStatus }
+    );
+  } catch (pushErr) {
+    console.log('[NOTIF] Status push failed:', pushErr.message);
+  }
+
+STEP 6 - Also set Azure App Service env vars:
+  NH_HUB_NAME = khan-chacha-hub
+  NH_CONNECTION_STRING = [the connection string from Azure Portal]
+
+Do not change any existing route behaviour.
+Push notification failure must NEVER cause the API request to fail.
+Always wrap push calls in try/catch.
+Run: node -e "require('./services/notificationService')" to verify no import errors.</div>
+  </div>
+
+  <!-- PART 3 - FLUTTER -->
+  <div class="step-banner claude" style="margin-top:24px;">
+    <div class="step-num">C</div>
+    <div class="step-info">
+      <div class="step-type">&#129302; Claude Code — khan_chacha_mrms/</div>
+      <div class="step-title">Register device and receive push notifications in Flutter</div>
+    </div>
+  </div>
+
+  <div class="prompt-wrap">
+    <div class="prompt-hdr">
+      <div class="prompt-lbl">&#129302; Claude Code &mdash; Flutter &mdash; Azure push notifications</div>
+      <button class="copy-btn" onclick="copyP(this,'p-hub-flutter')">Copy</button>
+    </div>
+    <div class="prompt-body" id="p-hub-flutter">Read lib/services/auth_service.dart and lib/main.dart completely.
+
+Add Azure Notification Hubs device registration to the Flutter app
+so it can receive push notifications even when closed.
+
+STEP 1 - Add to pubspec.yaml:
+  firebase_core: ^3.1.0
+  firebase_messaging: ^15.0.0
+  flutter_local_notifications: ^17.0.0
+Run: flutter pub get
+
+Note: firebase_messaging is the Flutter package for receiving FCM.
+Azure Notification Hubs sends TO FCM, FCM delivers to the device.
+You do not need a Firebase project — the token is registered with
+Azure Notification Hubs, not Firebase directly.
+
+STEP 2 - Create lib/services/push_notification_service.dart:
+
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'auth_service.dart';
+import 'api_service.dart';
+
+class PushNotificationService {
+  static final FlutterLocalNotificationsPlugin _local =
+      FlutterLocalNotificationsPlugin();
+  static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+
+  static Future<void> initialize() async {
+    // Request permission (Android 13+)
+    await _messaging.requestPermission(
+      alert: true, badge: true, sound: true,
+    );
+
+    // Initialize local notification display
+    const android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    await _local.initialize(
+      const InitializationSettings(android: android),
+      onDidReceiveNotificationResponse: (details) {
+        // Handle tap on notification — navigate to request detail
+        debugPrint('Notification tapped: ${details.payload}');
+      },
+    );
+
+    // Create notification channel for Android
+    const channel = AndroidNotificationChannel(
+      'khan_chacha_channel',
+      'Khan Chacha MRMS',
+      description: 'Maintenance request notifications',
+      importance: Importance.high,
+    );
+    await _local.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+
+    // Listen for foreground messages — show as local notification
+    FirebaseMessaging.onMessage.listen((message) {
+      final notification = message.notification;
+      if (notification != null) {
+        _local.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              'khan_chacha_channel',
+              'Khan Chacha MRMS',
+              channelDescription: 'Maintenance request notifications',
+              importance: Importance.high,
+              priority: Priority.high,
+              color: const Color(0xFFD4A017),
+            ),
+          ),
+          payload: jsonEncode(message.data),
+        );
+      }
+    });
+
+    // Handle background message tap
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      debugPrint('App opened from notification: ${message.data}');
+    });
+  }
+
+  // Call this after login to register device with Azure Notification Hubs
+  static Future<void> registerDevice() async {
+    try {
+      final user = AuthService().currentUser;
+      if (user == null) return;
+
+      final token = await _messaging.getToken();
+      if (token == null) return;
+      debugPrint('[PUSH] FCM token obtained: ${token.substring(0, 20)}...');
+
+      // Register with our API which passes it to Azure Notification Hubs
+      await ApiService().registerDeviceToken(token, user.role, user.outletId);
+      debugPrint('[PUSH] Device registered with Azure Notification Hubs');
+    } catch (e) {
+      debugPrint('[PUSH] Registration error: $e');
+    }
+  }
+
+  // Call this on logout to unregister
+  static Future<void> unregisterDevice() async {
+    try {
+      final token = await _messaging.getToken();
+      if (token != null) {
+        await ApiService().unregisterDeviceToken(token);
+      }
+      await _messaging.deleteToken();
+    } catch (e) {
+      debugPrint('[PUSH] Unregister error: $e');
+    }
+  }
+}
+
+STEP 3 - In lib/services/api_service.dart, add these two methods:
+
+  Future<void> registerDeviceToken(
+      String token, String role, String outletId) async {
+    try {
+      await http.post(
+        Uri.parse('$_baseUrl/notifications/register'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'token': token,
+          'role': role,
+          'outletId': outletId,
+        }),
+      );
+    } catch (e) {
+      debugPrint('Device registration error: $e');
+    }
+  }
+
+  Future<void> unregisterDeviceToken(String token) async {
+    try {
+      await http.delete(
+        Uri.parse('$_baseUrl/notifications/unregister'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'token': token}),
+      );
+    } catch (e) {
+      debugPrint('Device unregister error: $e');
+    }
+  }
+
+STEP 4 - In lib/main.dart, initialize push notifications on startup:
+  import 'services/push_notification_service.dart';
+  import 'package:firebase_core/firebase_core.dart';
+
+  void main() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp();
+    await PushNotificationService.initialize();
+    runApp(const MyApp());
+  }
+
+STEP 5 - In auth_service.dart, after successful login call:
+  await PushNotificationService.registerDevice();
+
+And on logout:
+  await PushNotificationService.unregisterDevice();
+
+Run: flutter analyze lib/ and fix all errors.</div>
+  </div>
+
+  <!-- PART 4 - API REGISTER ENDPOINT -->
+  <div class="step-banner claude" style="margin-top:24px;">
+    <div class="step-num">D</div>
+    <div class="step-info">
+      <div class="step-type">&#129302; Claude Code — khan_chacha_api/</div>
+      <div class="step-title">Add device registration endpoint to API</div>
+    </div>
+  </div>
+
+  <div class="prompt-wrap">
+    <div class="prompt-hdr">
+      <div class="prompt-lbl">&#129302; Claude Code &mdash; API &mdash; Device registration endpoint</div>
+      <button class="copy-btn" onclick="copyP(this,'p-hub-register')">Copy</button>
+    </div>
+    <div class="prompt-body" id="p-hub-register">Read routes/notifications.js and server.js completely.
+
+Add device registration endpoints to routes/notifications.js.
+These endpoints receive the FCM token from Flutter and register
+it with Azure Notification Hubs with the correct tags.
+
+Add at the top of routes/notifications.js:
+  const azure = require('azure-sb');
+  const hubService = azure.createNotificationHubService(
+    process.env.NH_HUB_NAME,
+    process.env.NH_CONNECTION_STRING
+  );
+
+Add POST /register route:
+  router.post('/register', async (req, res) => {
+    try {
+      const { token, role, outletId } = req.body;
+      if (!token || !role) {
+        return res.status(400).json({ error: 'token and role required' });
+      }
+
+      // Tags allow targeted push delivery
+      // e.g. send to all 'manager' devices, or all 'outlet_OUT-02' devices
+      const tags = [role, `outlet_${outletId}`, 'all'];
+
+      // Register FCM token with Azure Notification Hubs
+      const registration = {
+        GcmRegistrationId: token,  // FCM token
+        Tags: tags.join(',')
+      };
+
+      hubService.gcm.createOrUpdate(token, registration, (err, result) => {
+        if (err) {
+          console.log('[NOTIF] Registration error:', err.message);
+          // Still return 200 — push is non-critical, don't break login
+          return res.json({ registered: false, reason: err.message });
+        }
+        console.log('[NOTIF] Device registered:', role, outletId);
+        return res.json({ registered: true, tags });
+      });
+    } catch (e) {
+      console.log('[NOTIF] Register exception:', e.message);
+      res.json({ registered: false });
+    }
+  });
+
+Add DELETE /unregister route:
+  router.delete('/unregister', async (req, res) => {
+    try {
+      const { token } = req.body;
+      hubService.gcm.delete(token, (err) => {
+        if (err) console.log('[NOTIF] Unregister error:', err.message);
+        res.json({ unregistered: true });
+      });
+    } catch (e) {
+      res.json({ unregistered: false });
+    }
+  });
+
+These endpoints must never block login or any other flow.
+All errors are logged but responses always return 200.
+Run: npm run dev and verify the routes are accessible.</div>
+  </div>
+
+  <!-- HOW TO TEST -->
+  <h2>How to Test End-to-End</h2>
+  <div class="step-banner manual" style="margin-top:8px;">
+    <div class="step-num">&#9312;</div>
+    <div class="step-info">
+      <div class="step-type">&#128393; Manual — Test sequence</div>
+      <div class="step-title">Verify push notifications work</div>
+    </div>
+  </div>
+  <ol>
+    <li>Deploy the updated API to Azure: <code>az webapp up --name khan-chacha-api --resource-group khan-chacha-rg</code></li>
+    <li>Set the new env vars in Azure Portal → Configuration:<br/>
+      <code>NH_HUB_NAME</code> = <code>khan-chacha-hub</code><br/>
+      <code>NH_CONNECTION_STRING</code> = your connection string from Portal</li>
+    <li>Build and install the Flutter APK on a real Android phone: <code>flutter build apk --release</code></li>
+    <li>Install the APK on the manager's phone</li>
+    <li>Log in as manager — check the API terminal log for <code>[NOTIF] Device registered: manager</code></li>
+    <li><strong>Close the Khan Chacha app completely</strong> on the manager's phone</li>
+    <li>On another device (or emulator), log in as staff and raise a new request</li>
+    <li>Within 5&ndash;10 seconds — manager's phone shows a system notification even though the app is closed</li>
+    <li>Tap the notification — app opens</li>
+  </ol>
+
+  <!-- SUMMARY -->
+  <div style="background:linear-gradient(135deg,rgba(245,158,11,.07),rgba(0,120,212,.05));border:2px solid rgba(245,158,11,.3);border-radius:var(--radius);padding:20px 22px;margin-top:24px;">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--amber);margin-bottom:10px;">&#127873; Bonus Summary — What You Get for $0 Extra</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div>
+        <div style="font-size:13.5px;color:#d4c08a;line-height:1.8;">
+          &#10003; System push notifications when app is closed<br/>
+          &#10003; Notifications when phone is locked<br/>
+          &#10003; Targeted delivery by role (manager / staff)<br/>
+          &#10003; Targeted delivery by outlet (OUT-01, OUT-02)<br/>
+          &#10003; Windows toast notifications on laptop
+        </div>
+      </div>
+      <div>
+        <div style="font-size:13.5px;color:#d4c08a;line-height:1.8;">
+          &#10003; All within Azure — one portal, one bill<br/>
+          &#10003; Free tier: 1M pushes/month<br/>
+          &#10003; Khan Chacha uses ~3,000/month = 0.3% of free limit<br/>
+          &#10003; Polling still works as fallback<br/>
+          &#10003; No Firebase account or Firebase billing
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(245,158,11,.2);font-size:13px;color:#a08050;">
+      <strong style="color:var(--amber);">Note for students:</strong> Azure Notification Hubs wraps FCM internally for Android delivery. You configure it once in the Azure Portal. Microsoft manages the Firebase relationship on your behalf. You pay nothing to Google and nothing to Firebase. Everything is billed (or free-tiered) through your Azure subscription.
+    </div>
+  </div>
+
 </div>
 
 </main>
