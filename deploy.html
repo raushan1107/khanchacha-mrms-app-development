@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Going Live — Production Deployment | Khan Chacha MRMS | Beast AI Initiative</title>
+<style>
+:root{
+  --bg:#0d1117;--bg2:#11161d;--card:#161b22;--border:#26303d;--bsoft:#1d2530;
+  --text:#e6edf3;--dim:#9da7b3;--faint:#6b7480;
+  --teal:#00c2e0;--green:#3fb950;--amber:#f59e0b;--red:#f85149;
+  --purple:#a371f7;--orange:#e88c1f;--azure:#0078d4;
+  --radius:10px;--maxw:1000px;--code:#0a0e14;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.65;font-size:15px;padding-top:54px;}
+a{color:var(--teal);text-decoration:none;}a:hover{text-decoration:underline;}
+code{font-family:"SF Mono",Consolas,monospace;background:var(--code);color:#7ee787;padding:2px 6px;border-radius:4px;font-size:.85em;}
+pre{background:var(--code);border:1px solid var(--bsoft);border-radius:var(--radius);padding:14px 18px;overflow-x:auto;font-family:"SF Mono",Consolas,monospace;font-size:13px;line-height:1.75;margin:10px 0;color:#c9d1d9;}
+strong{color:var(--text);}p{margin-bottom:12px;color:#c5ccd4;}
+ul,ol{margin:8px 0 14px 22px;color:#c5ccd4;}li{margin-bottom:6px;}
+
+/* NAV */
+.beast-nav{position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(13,17,23,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--bsoft);height:54px;display:flex;align-items:center;padding:0 24px;}
+.beast-nav-inner{max-width:var(--maxw);margin:0 auto;width:100%;display:flex;align-items:center;justify-content:space-between;}
+.beast-nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none!important;}
+.beast-nav-mark{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,#0078d4,#00c2e0);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;}
+.beast-nav-brand{font-size:13px;font-weight:700;color:#e6edf3;}
+.beast-nav-brand em{color:#0078d4;font-style:normal;}
+.beast-nav-right{display:flex;gap:8px;align-items:center;}
+.npill{font-size:12px;color:var(--dim);padding:5px 12px;border:1px solid var(--border);border-radius:16px;text-decoration:none!important;transition:color .15s,border-color .15s;}
+.npill:hover{color:var(--teal)!important;border-color:var(--teal);}
+
+/* HEADER */
+header{background:linear-gradient(180deg,#0a121e,var(--bg));border-bottom:1px solid var(--bsoft);padding:28px 24px 0;position:sticky;top:54px;z-index:100;}
+.hdr{max-width:var(--maxw);margin:0 auto;}
+.brand-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px;}
+.lm{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#0078d4,#00c2e0);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+h1.pt{font-size:26px;font-weight:700;margin-bottom:6px;letter-spacing:-.3px;}
+.ps{font-size:14px;color:var(--dim);margin-bottom:20px;max-width:680px;}
+.tabnav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;}
+.tabnav::-webkit-scrollbar{display:none;}
+.tabnav button{background:none;border:none;color:var(--dim);font-size:13px;font-weight:500;padding:11px 14px;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;font-family:inherit;}
+.tabnav button:hover{color:var(--text);}
+.tabnav button.active{color:#60b0ff;border-bottom-color:#0078d4;}
+
+main{max-width:var(--maxw);margin:0 auto;padding:32px 24px 80px;}
+.tabpanel{display:none;}.tabpanel.active{display:block;animation:fi .2s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(4px);}to{opacity:1;}}
+
+h2{font-size:20px;font-weight:700;margin:32px 0 12px;letter-spacing:-.2px;}
+h2:first-child{margin-top:0;}
+h3{font-size:15.5px;font-weight:600;margin:20px 0 8px;}
+
+/* STEP BANNERS */
+.step-banner{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;border-radius:var(--radius);margin:18px 0 10px;}
+.step-banner.manual{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.3);}
+.step-banner.claude{background:rgba(163,113,247,.07);border:1px solid rgba(163,113,247,.3);}
+.step-banner.cmd{background:rgba(63,185,80,.06);border:1px solid rgba(63,185,80,.25);}
+.step-num{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0;}
+.manual .step-num{background:rgba(245,158,11,.2);color:var(--amber);}
+.claude .step-num{background:rgba(163,113,247,.2);color:var(--purple);}
+.cmd .step-num{background:rgba(63,185,80,.15);color:var(--green);}
+.step-info{}
+.step-type{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px;}
+.manual .step-type{color:var(--amber);}
+.claude .step-type{color:var(--purple);}
+.cmd .step-type{color:var(--green);}
+.step-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.step-desc{font-size:13px;color:var(--dim);}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--bsoft);border-radius:var(--radius);padding:16px 18px;margin:12px 0;}
+.card.azure{border-left:3px solid var(--azure);}
+.card.green{border-left:3px solid var(--green);}
+.card.amber{border-left:3px solid var(--amber);}
+.card.red{border-left:3px solid var(--red);}
+.card.purple{border-left:3px solid var(--purple);}
+.card h4{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--faint);margin-bottom:8px;font-weight:600;}
+
+/* PROMPT BOX */
+.prompt-wrap{background:#15101f;border:1px solid rgba(163,113,247,.3);border-radius:var(--radius);margin:12px 0;}
+.prompt-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid rgba(163,113,247,.15);}
+.prompt-lbl{font-size:11px;color:var(--purple);text-transform:uppercase;letter-spacing:.5px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.copy-btn{background:rgba(163,113,247,.15);border:1px solid rgba(163,113,247,.35);color:var(--purple);font-size:11.5px;padding:5px 12px;border-radius:6px;cursor:pointer;font-weight:600;font-family:inherit;}
+.copy-btn:hover{background:rgba(163,113,247,.28);}
+.copy-btn.ok{background:rgba(63,185,80,.2);color:var(--green);border-color:rgba(63,185,80,.4);}
+.prompt-body{padding:16px 18px;font-family:"SF Mono",Consolas,monospace;font-size:12.5px;color:#e8e0f7;line-height:1.75;white-space:pre-wrap;}
+
+/* ARCH BOX */
+.arch{background:#040a12;border:1px solid var(--bsoft);border-radius:var(--radius);padding:18px 22px;margin:14px 0;font-family:"SF Mono",Consolas,monospace;font-size:12.5px;line-height:2.3;color:#7dd3fc;}
+.arch .dim{color:#374151;font-size:11.5px;}
+
+/* NOTE */
+.note{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.28);border-radius:var(--radius);padding:12px 16px;margin:12px 0;}
+.note-lbl{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--amber);margin-bottom:5px;}
+.note p{color:#d4c08a;margin:0;font-size:13.5px;}
+
+/* CHECKLIST */
+.checklist{list-style:none;margin:10px 0;padding:0;}
+.checklist li{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--bsoft);font-size:13.5px;color:#c5ccd4;}
+.checklist li:last-child{border-bottom:none;}
+.checklist .ck{width:20px;height:20px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;}
+.checklist .ck.done{background:var(--green);border-color:var(--green);color:#fff;}
+
+/* PERM CARD */
+.perm-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;}
+@media(max-width:600px){.perm-grid{grid-template-columns:1fr;}}
+
+/* FOOTER */
+.beast-footer-nav{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;background:#11161d;border-top:2px solid #1d2530;flex-wrap:wrap;gap:12px;margin-top:40px;}
+.beast-footer-nav a{font-size:13px;font-weight:600;color:#9da7b3;text-decoration:none!important;padding:8px 18px;border:1px solid #26303d;border-radius:8px;}
+.beast-footer-nav a:hover{color:var(--teal);border-color:var(--teal);}
+.beast-footer-nav .fn-home{background:var(--azure);color:#fff!important;border-color:var(--azure);}
+footer{padding:22px 24px;background:var(--bg2);border-top:1px solid var(--bsoft);}
+.fi{max-width:var(--maxw);margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--dim);}
+.fi strong{color:var(--text);}
+
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px;}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--faint);padding:8px 12px;border-bottom:2px solid var(--border);}
+td{padding:10px 12px;border-bottom:1px solid var(--bsoft);color:#c5ccd4;vertical-align:top;}
+td:first-child{color:var(--text);font-weight:600;}
+</style>
+</head>
+<body>
+
+<nav class="beast-nav">
+  <div class="beast-nav-inner">
+    <a href="index.html" class="beast-nav-logo">
+      <div class="beast-nav-mark">B</div>
+      <div class="beast-nav-brand">Beast <em>AI Initiative</em></div>
+    </a>
+    <div class="beast-nav-right">
+      <a href="home.html" class="npill">&#128218; All Sessions</a>
+      <a href="day5.html" class="npill">&larr; Phase 5</a>
+      <a href="pre-launch-guide.html" class="npill">Pre-Launch &rarr;</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="hdr">
+    <div class="brand-row">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="lm">&#128640;</div>
+        <div>
+          <div style="font-size:15px;font-weight:600;">Going Live &mdash; Production Deployment Guide</div>
+          <div style="font-size:12px;color:var(--faint);">Beast AI Initiative &middot; Khan Chacha MRMS &middot; Full Azure</div>
+        </div>
+      </div>
+      <a href="home.html" class="npill">&larr; All Sessions</a>
+    </div>
+    <h1 class="pt">Taking Khan Chacha MRMS to Production</h1>
+    <p class="ps">Four sequential steps: migrate database to Azure, deploy API to App Service, point Flutter to the live API, then export and distribute the app. Step-by-step with manual instructions and Claude Code prompts clearly labelled.</p>
+    <nav class="tabnav" id="tabnav">
+      <button data-tab="overview" class="active">&#127919; Overview</button>
+      <button data-tab="step1">&#9312; Azure DB</button>
+      <button data-tab="step2">&#9313; Deploy API</button>
+      <button data-tab="step3">&#9314; Update Flutter</button>
+      <button data-tab="step4">&#9315; Export &amp; Distribute</button>
+      <button data-tab="arch">&#128366; Architecture</button>
+      <button data-tab="permissions">&#128241; Permissions</button>
+      <button data-tab="checklist">&#9989; Go-Live Checklist</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ══ TAB 1 · OVERVIEW ══ -->
+<div class="tabpanel active" id="tab-overview">
+  <h2>The Four Steps to Production</h2>
+  <p>Everything must happen in this exact sequence. Each step depends on the previous one being complete and tested. Do not jump ahead.</p>
+
+  <div style="display:grid;gap:12px;margin:16px 0;">
+    <div style="display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid var(--bsoft);border-radius:var(--radius);padding:16px 18px;">
+      <div style="width:44px;height:44px;background:rgba(0,120,212,.15);border:2px solid rgba(0,120,212,.4);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#60b0ff;flex-shrink:0;">1</div>
+      <div>
+        <div style="font-size:15px;font-weight:700;color:var(--text);">Migrate Database to Azure PostgreSQL</div>
+        <div style="font-size:13px;color:var(--dim);">Create Azure PostgreSQL Flexible Server &rarr; Run schema.sql &rarr; Run seed.sql &rarr; Get connection string</div>
+      </div>
+      <div style="margin-left:auto;font-size:11px;background:rgba(245,158,11,.15);color:var(--amber);padding:4px 10px;border-radius:12px;font-weight:700;white-space:nowrap;">Manual</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid var(--bsoft);border-radius:var(--radius);padding:16px 18px;">
+      <div style="width:44px;height:44px;background:rgba(0,120,212,.15);border:2px solid rgba(0,120,212,.4);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#60b0ff;flex-shrink:0;">2</div>
+      <div>
+        <div style="font-size:15px;font-weight:700;color:var(--text);">Deploy API to Azure App Service</div>
+        <div style="font-size:13px;color:var(--dim);">Update .env to Azure DB &rarr; Test locally &rarr; Deploy with Azure CLI &rarr; Set env vars in portal &rarr; Verify live URL</div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:6px;">
+        <div style="font-size:11px;background:rgba(163,113,247,.15);color:var(--purple);padding:4px 10px;border-radius:12px;font-weight:700;white-space:nowrap;">Claude Code</div>
+        <div style="font-size:11px;background:rgba(63,185,80,.12);color:var(--green);padding:4px 10px;border-radius:12px;font-weight:700;white-space:nowrap;">CLI</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid var(--bsoft);border-radius:var(--radius);padding:16px 18px;">
+      <div style="width:44px;height:44px;background:rgba(0,120,212,.15);border:2px solid rgba(0,120,212,.4);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#60b0ff;flex-shrink:0;">3</div>
+      <div>
+        <div style="font-size:15px;font-weight:700;color:var(--text);">Update Flutter App to Point at Live API</div>
+        <div style="font-size:13px;color:var(--dim);">Change BASE_URL to Azure App Service URL &rarr; Test all screens &rarr; Confirm data flows end-to-end</div>
+      </div>
+      <div style="margin-left:auto;font-size:11px;background:rgba(163,113,247,.15);color:var(--purple);padding:4px 10px;border-radius:12px;font-weight:700;white-space:nowrap;">Claude Code</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid var(--bsoft);border-radius:var(--radius);padding:16px 18px;">
+      <div style="width:44px;height:44px;background:rgba(0,120,212,.15);border:2px solid rgba(0,120,212,.4);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#60b0ff;flex-shrink:0;">4</div>
+      <div>
+        <div style="font-size:15px;font-weight:700;color:var(--text);">Export EXE + APK &amp; Distribute</div>
+        <div style="font-size:13px;color:var(--dim);">flutter build windows &rarr; flutter build apk --release &rarr; Locate files &rarr; Share via WhatsApp or email</div>
+      </div>
+      <div style="margin-left:auto;font-size:11px;background:rgba(63,185,80,.12);color:var(--green);padding:4px 10px;border-radius:12px;font-weight:700;white-space:nowrap;">Commands</div>
+    </div>
+  </div>
+
+  <div class="note">
+    <div class="note-lbl">&#9888; Before starting</div>
+    <p>Make sure your Node.js API runs without errors locally: <code>npm run dev</code> and verify <code>Database connected</code> appears. Make sure the Flutter app builds: <code>flutter run -d windows</code>. Fix any existing errors before touching cloud deployment.</p>
+  </div>
+</div>
+
+<!-- ══ TAB 2 · STEP 1 · AZURE DB ══ -->
+<div class="tabpanel" id="tab-step1">
+
+  <div class="step-banner manual">
+    <div class="step-num">1</div>
+    <div class="step-info">
+      <div class="step-type">&#128393; Manual — Azure Portal</div>
+      <div class="step-title">Create Azure PostgreSQL Flexible Server</div>
+      <div class="step-desc">Do this in the Azure Portal browser. No CLI needed for this step.</div>
+    </div>
+  </div>
+
+  <h3>1a — Create the database server</h3>
+  <ol>
+    <li>Go to <strong>portal.azure.com</strong> &rarr; Sign in with your Azure account</li>
+    <li>Search for <strong>"Azure Database for PostgreSQL"</strong> &rarr; Click Create</li>
+    <li>Choose <strong>Flexible Server</strong> &rarr; Click Create</li>
+    <li>Fill in:
+      <ul>
+        <li>Resource group: <code>khan-chacha-rg</code> (create new)</li>
+        <li>Server name: <code>khan-chacha-db</code></li>
+        <li>Region: <strong>Central India</strong> or <strong>South India</strong></li>
+        <li>PostgreSQL version: <strong>16</strong></li>
+        <li>Workload type: <strong>Development</strong> (cheapest)</li>
+        <li>Admin username: <code>kcadmin</code></li>
+        <li>Password: set a strong password — <strong>save it immediately</strong></li>
+      </ul>
+    </li>
+    <li>Click <strong>Networking</strong> tab &rarr; Check <strong>"Allow public access from any Azure service"</strong></li>
+    <li>Also add your current IP under Firewall rules so you can connect from your PC</li>
+    <li>Click <strong>Review + Create</strong> &rarr; <strong>Create</strong></li>
+    <li>Wait 3&ndash;5 minutes for deployment to complete</li>
+  </ol>
+
+  <h3>1b — Create the database</h3>
+  <ol>
+    <li>Once the server is ready, go to it in the portal</li>
+    <li>Left sidebar &rarr; <strong>Databases</strong> &rarr; <strong>Add</strong></li>
+    <li>Database name: <code>khan_chacha</code> &rarr; Save</li>
+  </ol>
+
+  <h3>1c — Get the connection string</h3>
+  <ol>
+    <li>Left sidebar &rarr; <strong>Connection strings</strong></li>
+    <li>Copy the <strong>ADO.NET</strong> or <strong>JDBC</strong> format &mdash; you need these values:</li>
+  </ol>
+  <pre>Host:     khan-chacha-db.postgres.database.azure.com
+Port:     5432
+Database: khan_chacha
+Username: kcadmin
+Password: [the password you set]
+SSL:      require</pre>
+
+  <div class="step-banner manual" style="margin-top:24px;">
+    <div class="step-num">&#9312;</div>
+    <div class="step-info">
+      <div class="step-type">&#128393; Manual — pgAdmin or Azure Cloud Shell</div>
+      <div class="step-title">Run schema.sql and seed.sql on Azure</div>
+      <div class="step-desc">Use Azure Cloud Shell (browser terminal) — no install needed.</div>
+    </div>
+  </div>
+
+  <h3>1d — Run schema on Azure using Cloud Shell</h3>
+  <ol>
+    <li>In Azure Portal, click the <strong>Cloud Shell</strong> icon (top right — looks like <code>&gt;_</code>)</li>
+    <li>Choose <strong>Bash</strong></li>
+    <li>Upload your schema.sql file: click the upload icon in Cloud Shell toolbar</li>
+    <li>Connect to your database:</li>
+  </ol>
+  <pre>psql "host=khan-chacha-db.postgres.database.azure.com port=5432 dbname=khan_chacha user=kcadmin sslmode=require"</pre>
+  <ol start="5">
+    <li>Enter your password when prompted</li>
+    <li>Run the schema: <code>\i schema.sql</code></li>
+    <li>Run the seed: <code>\i seed.sql</code></li>
+    <li>Verify: <code>SELECT COUNT(*) FROM users;</code> &mdash; should return 2</li>
+    <li>Type <code>\q</code> to exit</li>
+  </ol>
+
+  <div class="card green">
+    <h4>&#10003; Step 1 complete when:</h4>
+    <ul style="margin:4px 0 0 16px;font-size:13.5px;color:#b4d9ba;">
+      <li>Azure PostgreSQL server shows "Available" in portal</li>
+      <li>khan_chacha database exists</li>
+      <li>Users and outlets tables have data (SELECT COUNT returns > 0)</li>
+      <li>You have the host, port, username, and password saved</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══ TAB 3 · STEP 2 · DEPLOY API ══ -->
+<div class="tabpanel" id="tab-step2">
+
+  <div class="step-banner claude">
+    <div class="step-num">&#129302;</div>
+    <div class="step-info">
+      <div class="step-type">&#129302; Claude Code — API project</div>
+      <div class="step-title">Update .env to point at Azure PostgreSQL</div>
+      <div class="step-desc">Paste this in Claude Code inside khan_chacha_api/</div>
+    </div>
+  </div>
+
+  <div class="prompt-wrap">
+    <div class="prompt-hdr">
+      <div class="prompt-lbl">&#129302; Claude Code &mdash; khan_chacha_api/ &mdash; Update DB connection</div>
+      <button class="copy-btn" onclick="copyP(this,'p-env')">Copy</button>
+    </div>
+    <div class="prompt-body" id="p-env">Read the current .env file and server.js completely.
+
+Update .env with the Azure PostgreSQL connection details:
+  DB_HOST=khan-chacha-db.postgres.database.azure.com
+  DB_PORT=5432
+  DB_NAME=khan_chacha
+  DB_USER=kcadmin
+  DB_PASSWORD=[the password from Azure portal]
+  DB_SSL=true
+  PORT=3000
+
+In db/connection.js (or wherever the pg Pool is configured),
+ensure SSL is enabled for Azure:
+  const pool = new Pool({
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    database: process.env.DB_NAME,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    ssl: process.env.DB_SSL === 'true'
+      ? { rejectUnauthorized: false }
+      : false,
+  });
+
+Do not change any route files.
+After updating, run: node -e "require('./db/connection')" 
+and confirm no connection error appears.
+Then run: npm run dev
+Confirm terminal shows: "Database connected to khan_chacha"</div>
+  </div>
+
+  <div class="note">
+    <div class="note-lbl">&#9888; Test locally first</div>
+    <p>Run <code>npm run dev</code> after updating .env. The API must connect to Azure PostgreSQL from your local machine before you deploy. Test with Postman: <code>POST http://localhost:3000/api/auth/login</code> with manager credentials. If it works locally — deploy.</p>
+  </div>
+
+  <div class="step-banner cmd" style="margin-top:24px;">
+    <div class="step-num">&#9312;</div>
+    <div class="step-info">
+      <div class="step-type">&#128196; CLI Commands — Run in PowerShell</div>
+      <div class="step-title">Install Azure CLI and deploy to App Service</div>
+      <div class="step-desc">Run these commands in PowerShell inside khan_chacha_api/</div>
+    </div>
+  </div>
+
+  <h3>2a — Install Azure CLI (one time)</h3>
+  <pre>winget install Microsoft.AzureCLI</pre>
+  <p>Close and reopen PowerShell after installation. Verify: <code>az --version</code></p>
+
+  <h3>2b — Login to Azure</h3>
+  <pre>az login</pre>
+  <p>A browser window opens. Sign in with your Azure account. Return to PowerShell — it shows your subscription.</p>
+
+  <h3>2c — Deploy the API</h3>
+  <pre>cd R:\khanchacha-demo\khan_chacha_api
+
+az webapp up `
+  --name khan-chacha-api `
+  --resource-group khan-chacha-rg `
+  --runtime "NODE:20-lts" `
+  --sku B1 `
+  --location "Central India"</pre>
+  <p>This takes 3&ndash;7 minutes. At the end it shows a URL like <code>https://khan-chacha-api.azurewebsites.net</code></p>
+
+  <h3>2d — Set environment variables in Azure Portal (replaces .env)</h3>
+  <ol>
+    <li>Azure Portal &rarr; App Services &rarr; <strong>khan-chacha-api</strong></li>
+    <li>Left sidebar &rarr; <strong>Configuration</strong> &rarr; <strong>Application settings</strong></li>
+    <li>Click <strong>+ New application setting</strong> for each:</li>
+  </ol>
+  <table>
+    <tr><th>Name</th><th>Value</th></tr>
+    <tr><td>DB_HOST</td><td>khan-chacha-db.postgres.database.azure.com</td></tr>
+    <tr><td>DB_PORT</td><td>5432</td></tr>
+    <tr><td>DB_NAME</td><td>khan_chacha</td></tr>
+    <tr><td>DB_USER</td><td>kcadmin</td></tr>
+    <tr><td>DB_PASSWORD</td><td>[your Azure DB password]</td></tr>
+    <tr><td>DB_SSL</td><td>true</td></tr>
+    <tr><td>NODE_ENV</td><td>production</td></tr>
+  </table>
+  <ol start="4">
+    <li>Click <strong>Save</strong> at the top — the app restarts automatically</li>
+  </ol>
+
+  <h3>2e — Verify the live API</h3>
+  <ol>
+    <li>Azure Portal &rarr; App Services &rarr; khan-chacha-api &rarr; Click <strong>Browse</strong></li>
+    <li>You should see: <code>{"status":"healthy","message":"Khan Chacha API is running"}</code></li>
+    <li>If you don't have a health endpoint, add this to server.js:</li>
+  </ol>
+  <pre>app.get('/', (req, res) => {
+  res.json({ status: 'healthy', message: 'Khan Chacha API is running' });
+});</pre>
+
+  <div class="step-banner cmd" style="margin-top:16px;">
+    <div class="step-num">&#128196;</div>
+    <div class="step-info">
+      <div class="step-type">&#128196; CLI — Redeploy after adding health endpoint</div>
+      <div class="step-title">Push the health endpoint update</div>
+    </div>
+  </div>
+  <pre>az webapp up --name khan-chacha-api --resource-group khan-chacha-rg</pre>
+
+  <div class="card green">
+    <h4>&#10003; Step 2 complete when:</h4>
+    <ul style="margin:4px 0 0 16px;font-size:13.5px;color:#b4d9ba;">
+      <li>Azure Portal Browse button shows healthy JSON response</li>
+      <li>Postman POST to <code>https://khan-chacha-api.azurewebsites.net/api/auth/login</code> returns a user object</li>
+      <li>App Service logs show "Database connected to khan_chacha"</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══ TAB 4 · STEP 3 · FLUTTER ══ -->
+<div class="tabpanel" id="tab-step3">
+
+  <div class="step-banner claude">
+    <div class="step-num">&#129302;</div>
+    <div class="step-info">
+      <div class="step-type">&#129302; Claude Code — Flutter project</div>
+      <div class="step-title">Point Flutter at the live Azure API</div>
+      <div class="step-desc">Paste this in Claude Code inside khan_chacha_mrms/</div>
+    </div>
+  </div>
+
+  <div class="prompt-wrap">
+    <div class="prompt-hdr">
+      <div class="prompt-lbl">&#129302; Claude Code &mdash; Flutter &mdash; Switch to production API</div>
+      <button class="copy-btn" onclick="copyP(this,'p-flutter')">Copy</button>
+    </div>
+    <div class="prompt-body" id="p-flutter">Read lib/services/api_service.dart completely.
+
+Find the _baseUrl getter or constant. 
+Replace with a production-aware URL selector:
+
+  static String get _baseUrl {
+    const String productionUrl =
+      'https://khan-chacha-api.azurewebsites.net/api';
+    
+    // Set this to true when deploying production build
+    const bool isProduction = true;
+    
+    if (isProduction) return productionUrl;
+    
+    // Development fallback
+    if (Platform.isAndroid) {
+      return 'http://10.0.2.2:3000/api';
+    }
+    return 'http://localhost:3000/api';
+  }
+
+Make sure dart:io is imported for Platform.
+
+After the change:
+1. Run: flutter run -d windows
+2. Try logging in with manager/manager123
+3. Confirm the dashboard loads with data from Azure
+4. Try creating a new request
+5. Confirm it appears in the list
+
+If any screen fails to load, report the exact error from the
+debug console (red text starting with "Exception" or "Error").
+Do not change any other file.</div>
+  </div>
+
+  <h3>Test every screen after switching to production</h3>
+  <table>
+    <tr><th>Screen</th><th>What to verify</th><th>Status</th></tr>
+    <tr><td>Login</td><td>manager/manager123 and staff/staff123 both work</td><td>&#128994; Test</td></tr>
+    <tr><td>Dashboard</td><td>Status counts load, outlet name shows</td><td>&#128994; Test</td></tr>
+    <tr><td>Requests list</td><td>Cards visible with product name and status</td><td>&#128994; Test</td></tr>
+    <tr><td>New Request form</td><td>Outlet fields auto-fill, submit creates a request</td><td>&#128994; Test</td></tr>
+    <tr><td>Detail screen</td><td>All fields show values, WhatsApp share works</td><td>&#128994; Test</td></tr>
+    <tr><td>Notifications</td><td>Bell polls every 15s, badge increments on new request</td><td>&#128994; Test</td></tr>
+  </table>
+
+  <div class="card green">
+    <h4>&#10003; Step 3 complete when:</h4>
+    <ul style="margin:4px 0 0 16px;font-size:13.5px;color:#b4d9ba;">
+      <li>Login works with production credentials</li>
+      <li>Dashboard shows real data from Azure database</li>
+      <li>Creating a request saves to Azure PostgreSQL (visible in Azure Portal &rarr; Query Editor)</li>
+      <li>Both Windows and Android emulator connect to the live API</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══ TAB 5 · STEP 4 · EXPORT ══ -->
+<div class="tabpanel" id="tab-step4">
+
+  <div class="step-banner cmd">
+    <div class="step-num">&#128196;</div>
+    <div class="step-info">
+      <div class="step-type">&#128196; Commands — Run in PowerShell inside Flutter project</div>
+      <div class="step-title">Export Windows EXE and Android APK</div>
+    </div>
+  </div>
+
+  <h3>Export Windows EXE</h3>
+  <pre>cd R:\khanchacha-demo\khanchacha
+
+flutter build windows --release</pre>
+  <p>Build takes 3&ndash;5 minutes. When complete, the EXE is at:</p>
+  <pre>khan_chacha_mrms\build\windows\x64\runner\Release\khanchacha.exe</pre>
+  <p>The <strong>Release</strong> folder is what you share — not just the .exe file. The folder contains the exe and its DLL dependencies. Zip the entire Release folder:</p>
+  <pre>Compress-Archive -Path "build\windows\x64\runner\Release" `
+  -DestinationPath "KhanChacha_MRMS_Windows.zip"</pre>
+
+  <h3>Export Android APK</h3>
+  <pre>flutter build apk --release</pre>
+  <p>Build takes 4&ndash;8 minutes. When complete, the APK is at:</p>
+  <pre>khan_chacha_mrms\build\app\outputs\flutter-apk\app-release.apk</pre>
+  <p>This single file is what you send to Android users. Rename it for clarity:</p>
+  <pre>copy "build\app\outputs\flutter-apk\app-release.apk" "KhanChacha_MRMS.apk"</pre>
+
+  <div class="note">
+    <div class="note-lbl">&#128241; APK size expectation</div>
+    <p>The release APK will be 15&ndash;30MB. Much smaller than the debug APK or source zip. This is normal for Flutter release builds.</p>
+  </div>
+
+  <h3>How to distribute</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;">
+    <div class="card azure">
+      <h4>&#128241; Android APK — for phones</h4>
+      <ol style="margin:6px 0 0 16px;font-size:13.5px;color:#b0ccee;">
+        <li>Send <code>KhanChacha_MRMS.apk</code> via WhatsApp</li>
+        <li>Recipient opens the file on their phone</li>
+        <li>Android asks: <em>"Install from unknown sources?"</em> &rarr; Allow</li>
+        <li>Settings &rarr; Security &rarr; Enable "Install unknown apps" for WhatsApp</li>
+        <li>Tap Install &rarr; Open</li>
+        <li>Login with outlet staff credentials</li>
+      </ol>
+    </div>
+    <div class="card purple">
+      <h4>&#128187; Windows EXE — for outlet desktops</h4>
+      <ol style="margin:6px 0 0 16px;font-size:13.5px;color:#d8c0f7;">
+        <li>Send <code>KhanChacha_MRMS_Windows.zip</code> via email or WhatsApp</li>
+        <li>Recipient extracts the zip</li>
+        <li>Opens the Release folder</li>
+        <li>Double-clicks <code>khanchacha.exe</code></li>
+        <li>Windows SmartScreen may warn — click <em>"More info"</em> &rarr; <em>"Run anyway"</em></li>
+        <li>Login with manager credentials</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="card green">
+    <h4>&#10003; Step 4 complete when:</h4>
+    <ul style="margin:4px 0 0 16px;font-size:13.5px;color:#b4d9ba;">
+      <li>KhanChacha_MRMS.apk installs on a real Android phone</li>
+      <li>KhanChacha_MRMS_Windows.zip runs on another Windows machine</li>
+      <li>Both connect to the live Azure API without needing your development PC</li>
+      <li>A request raised on the phone appears in the manager's Windows app</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══ TAB 6 · ARCHITECTURE ══ -->
+<div class="tabpanel" id="tab-arch">
+  <h2>Production Architecture</h2>
+  <p>How everything connects once deployed. No local machine needed after this — the app runs independently forever.</p>
+
+  <div class="arch">
+    <span style="color:#374151;">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><br/>
+    <span style="color:#60b0ff;font-weight:700;">USER DEVICES (any location, internet required)</span><br/>
+    <span style="color:#374151;">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><br/>
+    &#128241; Android phone (staff) &nbsp;&nbsp;&nbsp;&nbsp; &#128187; Windows laptop (manager)<br/>
+    KhanChacha_MRMS.apk &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; KhanChacha_MRMS_Windows.zip<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&#9474; HTTPS requests &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9474; HTTPS requests<br/>
+    <span style="color:#374151;">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><br/>
+    <span style="color:#60b0ff;font-weight:700;">AZURE CLOUD (always on, 24/7)</span><br/>
+    <span style="color:#374151;">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><br/>
+    &#127760; <span style="color:#7dd3fc;">https://khan-chacha-api.azurewebsites.net</span><br/>
+    &nbsp;&nbsp;Azure App Service B1 &mdash; Node.js 20 LTS<br/>
+    &nbsp;&nbsp;server.js &rarr; routes/ &rarr; db/connection.js<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&#9474; pg SSL connection &rarr; port 5432<br/>
+    &#128024; <span style="color:#7dd3fc;">khan-chacha-db.postgres.database.azure.com</span><br/>
+    &nbsp;&nbsp;Azure PostgreSQL Flexible Server<br/>
+    &nbsp;&nbsp;Database: khan_chacha<br/>
+    &nbsp;&nbsp;Tables: outlets &larr;FK&mdash; users &larr;FK&mdash; maintenance_requests<br/>
+    <span style="color:#374151;">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+  </div>
+
+  <h3>How the app stays connected to the internet</h3>
+  <p>The Flutter app itself is installed on the device. It does not run on any server. When a user opens the app it connects to the Azure API over HTTPS — the same way a browser connects to a website. The app needs internet only when making API calls (login, loading requests, submitting). If internet is lost, the app shows a connection error. When internet returns, it works again automatically.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 0;">
+    <div class="card azure">
+      <h4>App Service (API)</h4>
+      <p style="font-size:13px;margin:0;color:var(--dim);">Azure keeps this running 24/7 on the B1 plan. It automatically restarts if it crashes. No manual intervention needed.</p>
+    </div>
+    <div class="card azure">
+      <h4>PostgreSQL (DB)</h4>
+      <p style="font-size:13px;margin:0;color:var(--dim);">Azure manages backups, patches, and availability. It does not pause like Supabase free tier. Always accessible.</p>
+    </div>
+    <div class="card purple">
+      <h4>Flutter app</h4>
+      <p style="font-size:13px;margin:0;color:var(--dim);">Installed on device. No server needed. Updated by distributing a new APK or EXE when features change.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TAB 7 · PERMISSIONS ══ -->
+<div class="tabpanel" id="tab-permissions">
+  <h2>Android App Permissions</h2>
+  <p>The app needs specific permissions on Android. These are declared in <code>android/app/src/main/AndroidManifest.xml</code> and requested at runtime when the user first needs them. Here is how to handle each one correctly.</p>
+
+  <h3>Permissions needed and why</h3>
+  <table>
+    <tr><th>Permission</th><th>Why needed</th><th>When asked</th></tr>
+    <tr><td>INTERNET</td><td>Connect to the Azure API over HTTPS</td><td>Automatically granted — no user prompt</td></tr>
+    <tr><td>READ_EXTERNAL_STORAGE / READ_MEDIA_IMAGES</td><td>Pick images from gallery for request attachment</td><td>First time user taps the image picker in New Request form</td></tr>
+    <tr><td>CAMERA</td><td>Take a photo of the equipment issue</td><td>First time user taps camera option in image picker</td></tr>
+    <tr><td>POST_NOTIFICATIONS</td><td>Show system push notifications (Android 13+)</td><td>On first app launch — Android 13+ only</td></tr>
+  </table>
+
+  <h3>Where to declare permissions — AndroidManifest.xml</h3>
+  <pre><!-- android/app/src/main/AndroidManifest.xml -->
+<!-- Add inside &lt;manifest&gt; tag, before &lt;application&gt; -->
+
+&lt;uses-permission android:name="android.permission.INTERNET" /&gt;
+&lt;uses-permission android:name="android.permission.CAMERA" /&gt;
+&lt;uses-permission android:name="android.permission.READ_MEDIA_IMAGES" /&gt;
+&lt;uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    android:maxSdkVersion="32" /&gt;
+&lt;uses-permission android:name="android.permission.POST_NOTIFICATIONS" /&gt;</pre>
+
+  <div class="step-banner claude" style="margin-top:20px;">
+    <div class="step-num">&#129302;</div>
+    <div class="step-info">
+      <div class="step-type">&#129302; Claude Code — Flutter project</div>
+      <div class="step-title">Add runtime permission handling</div>
+      <div class="step-desc">Paste this in Claude Code to handle permissions properly at runtime</div>
+    </div>
+  </div>
+
+  <div class="prompt-wrap">
+    <div class="prompt-hdr">
+      <div class="prompt-lbl">&#129302; Claude Code &mdash; Flutter &mdash; Permissions</div>
+      <button class="copy-btn" onclick="copyP(this,'p-perm')">Copy</button>
+    </div>
+    <div class="prompt-body" id="p-perm">Add proper Android permission handling to the Flutter app.
+
+Step 1 - Add to pubspec.yaml:
+  permission_handler: ^11.3.1
+Run: flutter pub get
+
+Step 2 - Add to android/app/src/main/AndroidManifest.xml
+inside the <manifest> tag before <application>:
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.CAMERA" />
+  <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+      android:maxSdkVersion="32" />
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+Step 3 - In lib/main.dart, add permission request on startup:
+Import: import 'package:permission_handler/permission_handler.dart';
+Import: import 'dart:io';
+
+In main() before runApp():
+  WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isAndroid) {
+    await _requestPermissions();
+  }
+  runApp(const MyApp());
+
+Add this function:
+  Future<void> _requestPermissions() async {
+    // Request notification permission (Android 13+)
+    if (await Permission.notification.isDenied) {
+      await Permission.notification.request();
+    }
+    // Camera and storage are requested lazily when needed
+    // (only when user taps the image picker)
+  }
+
+Step 4 - In the request form screen, find where image_picker is used.
+Before calling ImagePicker().pickImage(), request permission:
+  Future<void> _pickImage() async {
+    // Request camera or gallery permission first
+    PermissionStatus status;
+    if (source == ImageSource.camera) {
+      status = await Permission.camera.request();
+    } else {
+      status = await Permission.photos.request();
+    }
+    
+    if (status.isDenied || status.isPermanentlyDenied) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Permission denied. Please allow in Settings.'),
+          backgroundColor: Color(0xFFF85149),
+        ));
+      if (status.isPermanentlyDenied) openAppSettings();
+      return;
+    }
+    
+    // Permission granted — proceed with image picker
+    final picked = await ImagePicker().pickImage(source: source);
+    if (picked != null && mounted) {
+      setState(() => _imagePath = picked.path);
+    }
+  }
+
+Replace the variable name 'source' with the actual ImageSource 
+variable in your existing code. Do not change any other logic.
+
+Run: flutter analyze lib/ and fix all errors.</div>
+  </div>
+
+  <div class="perm-grid">
+    <div class="card green">
+      <h4>&#10003; Permission best practices</h4>
+      <ul style="margin:4px 0 0 16px;font-size:13px;color:#b4d9ba;">
+        <li>Never ask for all permissions at startup</li>
+        <li>Ask for camera/storage only when user needs it</li>
+        <li>Notification permission: ask once at startup</li>
+        <li>If permanently denied — open Settings so user can enable it</li>
+        <li>Always show a clear explanation before requesting</li>
+      </ul>
+    </div>
+    <div class="card amber">
+      <h4>&#128161; Teaching point</h4>
+      <p style="margin:0;font-size:13px;color:#d4c08a;">WhatsApp, Instagram, and every app you use follows this same pattern. Android requires explicit user consent for each sensitive permission. This is a security feature — the user controls what each app can access on their phone.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TAB 8 · CHECKLIST ══ -->
+<div class="tabpanel" id="tab-checklist">
+  <h2>Go-Live Checklist</h2>
+  <p>Work through this list in order. Click each item to mark it done. Everything must be checked before the app is considered production-ready.</p>
+
+  <h3>Step 1 — Azure Database</h3>
+  <ul class="checklist" id="cl">
+    <li><span class="ck" onclick="toggle(this)"></span>Azure PostgreSQL Flexible Server created and running</li>
+    <li><span class="ck" onclick="toggle(this)"></span>khan_chacha database created inside the server</li>
+    <li><span class="ck" onclick="toggle(this)"></span>schema.sql executed successfully on Azure DB</li>
+    <li><span class="ck" onclick="toggle(this)"></span>seed.sql executed — outlets and users tables have data</li>
+    <li><span class="ck" onclick="toggle(this)"></span>Connection string saved securely (host, port, user, password)</li>
+    <li><span class="ck" onclick="toggle(this)"></span>Local API connects to Azure DB — npm run dev shows "Database connected"</li>
+
+    <li style="margin-top:12px;border-top:2px solid var(--border);padding-top:12px;"><span class="ck" onclick="toggle(this)"></span><strong>Step 2 — API Deployment</strong></li>
+    <li><span class="ck" onclick="toggle(this)"></span>Azure CLI installed and az login completed</li>
+    <li><span class="ck" onclick="toggle(this)"></span>az webapp up command completed without errors</li>
+    <li><span class="ck" onclick="toggle(this)"></span>Environment variables set in Azure Portal Configuration</li>
+    <li><span class="ck" onclick="toggle(this)"></span>Browse button in Azure Portal shows healthy JSON response</li>
+    <li><span class="ck" onclick="toggle(this)"></span>Postman: POST to live Azure URL /api/auth/login returns user object</li>
+    <li><span class="ck" onclick="toggle(this)"></span>App Service logs show "Database connected" (Log stream in portal)</li>
+
+    <li style="margin-top:12px;border-top:2px solid var(--border);padding-top:12px;"><span class="ck" onclick="toggle(this)"></span><strong>Step 3 — Flutter App</strong></li>
+    <li><span class="ck" onclick="toggle(this)"></span>isProduction = true in api_service.dart</li>
+    <li><span class="ck" onclick="toggle(this)"></span>Production URL set to the Azure App Service URL</li>
+    <li><span class="ck" onclick="toggle(this)"></span>Login works with manager and staff credentials on live API</li>
+    <li><span class="ck" onclick="toggle(this)"></span>New request created — visible in Azure Portal Query Editor</li>
+    <li><span class="ck" onclick="toggle(this)"></span>Notifications working — bell shows badge on new request</li>
+
+    <li style="margin-top:12px;border-top:2px solid var(--border);padding-top:12px;"><span class="ck" onclick="toggle(this)"></span><strong>Step 4 — Export &amp; Distribute</strong></li>
+    <li><span class="ck" onclick="toggle(this)"></span>flutter build windows --release completed</li>
+    <li><span class="ck" onclick="toggle(this)"></span>Release folder zipped as KhanChacha_MRMS_Windows.zip</li>
+    <li><span class="ck" onclick="toggle(this)"></span>flutter build apk --release completed</li>
+    <li><span class="ck" onclick="toggle(this)"></span>APK renamed to KhanChacha_MRMS.apk</li>
+    <li><span class="ck" onclick="toggle(this)"></span>APK installed on a real Android device — login works</li>
+    <li><span class="ck" onclick="toggle(this)"></span>Windows EXE runs on another machine — login works</li>
+    <li><span class="ck" onclick="toggle(this)"></span>Permissions: camera and gallery work on Android</li>
+    <li><span class="ck" onclick="toggle(this)"></span>Real request raised from phone visible in manager Windows app</li>
+  </ul>
+
+  <div class="card green" style="margin-top:20px;">
+    <h4>&#127881; When all items are checked — you are live</h4>
+    <p style="margin:0;font-size:14px;color:#b4d9ba;">The Khan Chacha MRMS is in production. The API runs 24/7 on Azure. The database is managed and backed up by Azure. Staff can install the APK on their phones. Managers can run the Windows app. Every request raised by staff is visible to managers in real time. Congratulations — you built and deployed a production enterprise application.</p>
+  </div>
+</div>
+
+</main>
+
+<div class="beast-footer-nav">
+  <a href="day5.html">&larr; Phase 5</a>
+  <a href="home.html" class="fn-home">&#128218; All Sessions</a>
+  <a href="pre-launch-guide.html">Pre-Launch &rarr;</a>
+</div>
+
+<footer>
+  <div class="fi">
+    <span>Built, created and written by <strong>Raushan Ranjan</strong> &middot; MCT, Koenig Solutions &middot; Beast AI Initiative 2026</span>
+    <span style="color:var(--faint);">deploy.html &middot; Khan Chacha MRMS Production Deployment</span>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll('.tabnav button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tabnav button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tabpanel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+function copyP(btn,id){
+  navigator.clipboard.writeText(document.getElementById(id).innerText).then(()=>{
+    const t=btn.textContent;
+    btn.textContent='Copied ✓';btn.classList.add('ok');
+    setTimeout(()=>{btn.textContent=t;btn.classList.remove('ok');},1800);
+  });
+}
+function toggle(el){
+  el.classList.toggle('done');
+  el.textContent=el.classList.contains('done')?'✓':'';
+}
+</script>
+</body>
+</html>
