@@ -1,4 +1,4 @@
-# 🦁 Beast AI Initiative — Khan Chacha MRMS
+# 🦁 AI Co-Programmer Programme — Khan Chacha MRMS
 
 ### Non-Technical/ Non-Programmer Students → Production-Ready Full Stack App Using AI as a Co-Programmer
 
@@ -11,7 +11,7 @@
 
 ## What This Programme Is
 
-**Beast AI Initiative** is a live enterprise training programme designed and delivered by **Raushan Ranjan**, Microsoft Certified Trainer (MCT) at **Koenig Solutions**, Noida.
+**AI Co-Programmer Programme** is a live enterprise training programme designed and delivered by **Raushan Ranjan**, Microsoft Certified Trainer (MCT) at **Koenig Solutions**, Noida.
 
 The programme teaches **non-technical professionals** — analysts, operations managers, project coordinators, and business teams — how to build a complete, production-ready mobile application from scratch using **Claude AI as an AI pair-programmer** (vibe coding). No prior programming experience required.
 
@@ -29,7 +29,7 @@ By the end of the programme, every student has:
 
 The app built during this programme is a real-world use case: a **Maintenance Request Management System (MRMS)** for **Khan Chacha**, a multi-outlet restaurant chain operating across Delhi NCR.
 
-Khan Chacha previously managed maintenance requests through Google Forms → Google Sheets. The Beast AI Initiative replaces that with a proper app — role-based login, real-time request tracking, outlet-level dashboards, status history, and image attachments.
+Khan Chacha previously managed maintenance requests through Google Forms → Google Sheets. The AI Co-Programmer Programme replaces that with a proper app — role-based login, real-time request tracking, outlet-level dashboards, status history, and image attachments.
 
 ### App Screens
 
@@ -238,7 +238,7 @@ He is also the founder of **RR Skillverse** ([rrskillverse.in](https://rrskillve
 
 ### Teaching Philosophy — "Why Before How"
 
-Every session Raushan delivers follows one principle: students must understand *why* something works before they learn *how* to implement it. This is especially critical in AI-assisted development — you cannot responsibly use a tool you don't understand. The Beast AI Initiative is built entirely on this philosophy.
+Every session Raushan delivers follows one principle: students must understand *why* something works before they learn *how* to implement it. This is especially critical in AI-assisted development — you cannot responsibly use a tool you don't understand. The AI Co-Programmer Programme is built entirely on this philosophy.
 
 ---
 
@@ -295,7 +295,7 @@ The **Khan Chacha MRMS** application code built during sessions is available to 
 
 <div align="center">
 
-**Beast AI Initiative** · Khan Chacha MRMS Training Programme · 2026
+**AI Co-Programmer Programme** · Khan Chacha MRMS Training Programme · 2026
 
 Built with ❤️ by [Raushan Ranjan](https://rrskillverse.in) · Koenig Solutions × RR Skillverse
 
